@@ -1,34 +1,34 @@
 /* 외부 css 파일을 다른 css파일에서 import 가능. */
 @import url("./components.css");
 
-*{
-    margin : 0px;
-    padding: 0px;
+* {
+  margin: 0px;
+  padding: 0px;
 }
-:root{
-    --main-color : #EECBCB;
-    --main-gray-color : #EFEFEF;
-    --line-pink-color: #F89292;
-}
-@font-face {
-    font-family: 'LGOTFBold';
-    src: url('./fonts/런드리고딕\ Bold.woff')format('woff2');
-    font-weight: bold;
-    font-style: bold; 
+:root {
+  --main-color: #eecbcb;
+  --main-gray-color: #efefef;
+  --line-pink-color: #f89292;
 }
 @font-face {
-    font-family: 'LGOTFRegular';
-    src: url('./fonts/런드리고딕\ Regular.woff')format('woff2');
-    font-weight: bold;
-    font-style: bold; 
+  font-family: "LGOTFBold";
+  src: url("./fonts/런드리고딕\ Bold.woff") format("woff2");
+  font-weight: bold;
+  font-style: bold;
 }
-.fontBold{
-    font-family: 'LGOTFBold';
-    font-size: 130px;
+@font-face {
+  font-family: "LGOTFRegular";
+  src: url("./fonts/런드리고딕\ Regular.woff") format("woff2");
+  font-weight: bold;
+  font-style: bold;
 }
-body{
-    width: 1141px;
-    height: 2481px;
-    display: flex;
-    flex-direction: column;
+.fontBold {
+  font-family: "LGOTFBold";
+  font-size: 130px;
+}
+body {
+  width: 1141px;
+  height: 2481px;
+  display: flex;
+  flex-direction: column;
 }
