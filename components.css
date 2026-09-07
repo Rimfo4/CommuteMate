@@ -1,0 +1,72 @@
+/* 이건 상단바이고요. */
+#topColorBar{
+    background-color: var(--main-color);
+    height: 190px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+/* 이거는 아래 하단바 입ㄴ디ㅏ. */
+#footNavigationBar{
+    background-color: var(--main-gray-color);
+    height: 190px;
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+}
+.footBtn{
+    width: 130px;
+    height: 130px;
+    border: 0px;
+}
+#widgetAddBtn{
+    background-image: url('/assets/PlusCircle.svg');
+}
+#homeBtn{
+    background-image: url(/assets/home.svg);
+    background-repeat: no-repeat; 
+    background-position: center;
+    background-size: 90px; 
+}
+#settingBtn{
+    background-image: url(/assets/setting.svg);
+    background-repeat: no-repeat; 
+    background-position: center;
+    background-size: 110px; 
+}
+/* 아래는 위젯 바 입니다. */
+#widget{
+    width: 1025px;
+    height: 250px;
+    background-color: var(--main-gray-color);
+    display: flex;  
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-around;
+    border-radius: 40px;
+    border: 1px solid var(--line-pink-color);
+}
+
+#thirdsImg{
+    width: 85px;
+    height: 58px;
+    background-image: url(/assets/thrid.svg);
+    background-repeat: no-repeat; 
+    background-position: center;
+}
+
+#widgetText{
+    width: 462px;
+    height: 95px;
+    font-size: 100px;
+    font-family: "LGOTFRegular";
+    
+}
+
+#light{
+    width: 60px;
+    height: 60px;
+    background-color: #F89292;
+    border-radius: 100px;
+}
