@@ -6,36 +6,34 @@ class TopBar extends HTMLElement {
   }
 }
 
+// 하단 네비게이션 바 컴포넌트
 class FootNavigationBar extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `<div id="footNavigationBar">
-        <button id="widgetAddBtn" class="footBtn"></button>
+       <button id="widgetAddBtn" class="footBtn"></button>
         <button id="homeBtn" class="footBtn"></button>
         <button id="settingBtn" class="footBtn"></button></div>
         
         <div id = "widgetPopup">
-          <div id = "popupOuter"></div>
-          <div id = "popupInner">
-            <div class = "popupWidget">
-              <span>교통량 보기</span>
-            </div>
+          <div class="popupWidget">
+            <widget-btn id="navigation"></widget-btn>
+            <widget-btn id="weather"></widget-btn>
+            <widget-btn id="alarm"></widget-btn>
+            <widget-btn id="note"></widget-btn>
           </div>
         </div>`;
 
-    const addBtn = this.querySelector("#widgetAddBtn");
-    const popup = this.querySelector("#widgetPopup");
-    const popupOuter = this.querySelector("#popupOuter");
+    const addBtn = document.getElementById("widgetAddBtn");
+    const popup = document.getElementById("widgetPopup");
 
+    // 열기 버튼 클릭
     addBtn.addEventListener("click", () => {
       popup.classList.add("show");
-    });
-
-    popupOuter.addEventListener("click", () => {
-      popup.classList.remove("show");
     });
   }
 }
 
+// 위젯 버튼 컴포넌트
 class WidgetBtn extends HTMLElement {
   connectedCallback() {
     const id = this.id;
@@ -53,7 +51,7 @@ class WidgetBtn extends HTMLElement {
     }
 
     this.innerHTML = `<div id="widget">
-        <div id="thirdsImg"></div>
+        <div id="vectorImg"></div>
         <div id="widgetText">${text}</div>
         <div id="light"></div>
     </div>`;
