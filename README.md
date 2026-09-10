@@ -8,6 +8,6 @@
 2. 화면 뼈대가 될 HTML 파일
    - components.js
    - components.css
-     메인 HTML 파일
-   - home.html
-   - home.css
+   - 메인 HTML 파일
+     - home.html
+     - home.css

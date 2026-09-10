@@ -21,16 +21,16 @@
     border: 0px;
 }
 #widgetAddBtn{
-    background-image: url('/assets/PlusCircle.svg');
+    background-image: url('./assets/PlusCircle.svg');
 }
 #homeBtn{
-    background-image: url(/assets/home.svg);
+    background-image: url(./assets/home.svg);
     background-repeat: no-repeat; 
     background-position: center;
     background-size: 90px; 
 }
 #settingBtn{
-    background-image: url(/assets/setting.svg);
+    background-image: url(./assets/setting.svg);
     background-repeat: no-repeat; 
     background-position: center;
     background-size: 110px; 
@@ -51,7 +51,7 @@
 #thirdsImg{
     width: 85px;
     height: 58px;
-    background-image: url(/assets/thrid.svg);
+    background-image: url(./assets/thrid.svg);
     background-repeat: no-repeat; 
     background-position: center;
 }
