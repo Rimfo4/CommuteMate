@@ -19,6 +19,7 @@
     width: 130px;
     height: 130px;
     border: 0px;
+    
 }
 #widgetAddBtn{
     background-image: url('/assets/PlusCircle.svg');
