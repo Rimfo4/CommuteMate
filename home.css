@@ -8,7 +8,9 @@
 :root {
   --main-color: #eecbcb;
   --main-gray-color: #efefef;
+  --light-pink-color: #faebeb;
   --line-pink-color: #f89292;
+  --text-color: #f89292;
 }
 @font-face {
   font-family: "LGOTFBold";
