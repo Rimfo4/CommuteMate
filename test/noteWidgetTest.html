@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>업무기록 위젯 테스트</title>
+    <style>
+      .noteWidget {
+        width: 1000px;
+        height: 600px;
+        background-color: #efefef;
+        border-radius: 75px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+      }
+
+      .header {
+        display: flex;
+        justify-content: space-around;
+        flex-direction: row;
+        flex-shrink: 0;
+      }
+
+      #title {
+        font-size: 64px;
+        font-weight: bold;
+        width: 400px;
+        height: 85px;
+        margin: 50px 0 0 40px;
+        display: flex;
+        flex-direction: row;
+      }
+
+      #input {
+        width: 440px;
+        height: 60px;
+        display: flex;
+        margin: 30px;
+        margin-top: 50px;
+
+        font-size: 40px;
+        flex-direction: row;
+      }
+      #addBtn {
+        width: 79px;
+        height: 60px;
+        margin-top: 50px;
+        margin-right: 40px;
+        font-size: 30px;
+      }
+      li {
+        font-size: 50px;
+        margin: 40px;
+      }
+
+      #listContainer {
+        flex: 1;
+        overflow-y: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="noteWidget">
+      <div class="header">
+        <div id="title">TO DO LIST</div>
+        <input type="text" id="input" placeholder="할 일 입력" />
+        <button id="addBtn" onclick="addList()">추가</button>
+      </div>
+      <div id="listContainer">
+        <ul></ul>
+      </div>
+    </div>
+
+    <script>
+      const ul = document.querySelector("ul");
+      const input = document.querySelector("input");
+
+      // 리스트 띄우기
+      function renderList() {
+        ul.innerHTML = "";
+        const list = JSON.parse(localStorage.getItem("list")) || [];
+
+        for (let i = 0; i < list.length; i++) {
+          const li = document.createElement("li");
+          li.innerHTML = list[i];
+
+          ul.appendChild(li);
+        }
+      }
+
+      // 리스트 추가
+      function addList() {
+        const input_value = input.value; // 사용자가 입력한 값
+
+        if (input_value === "") {
+          return;
+        }
+
+        const list = JSON.parse(localStorage.getItem("list")) || []; //
+        list.push(input_value);
+        localStorage.setItem("list", JSON.stringify(list)); // 배열 -> 문자열 => 저장
+
+        renderList();
+
+        // document.getElementById("input").value = ""; // 입력창 초기화
+        input.value = "";
+      }
+
+      renderList();
+    </script>
+  </body>
+</html>
