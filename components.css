@@ -178,3 +178,62 @@ div#none {
   justify-content: center;
   font-family: "LGOTFRegular";
 }
+
+/* 업무 기록 위젯 */
+.noteWidget {
+  width: 1000px;
+  height: 600px;
+  background-color: #efefef;
+  border-radius: 75px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+  flex-shrink: 0; /* header 영역은 고정 */
+}
+
+#title {
+  font-size: 64px;
+  font-weight: bold;
+  width: 400px;
+  height: 85px;
+  margin: 50px 0 0 40px;
+  display: flex; /* 자식요소 flex 사용 */
+  flex-direction: row; /* 자식요소 가로 배치 */
+}
+
+#input {
+  width: 440px;
+  height: 60px;
+  display: flex;
+  margin: 30px;
+  margin-top: 50px;
+
+  font-size: 40px;
+  flex-direction: row;
+}
+#addBtn {
+  width: 79px;
+  height: 60px;
+  margin-top: 50px;
+  margin-right: 40px;
+  font-size: 30px;
+}
+li {
+  font-size: 50px;
+  margin: 40px;
+}
+
+#listContainer {
+  flex: 1;
+  overflow-y: auto;
+}
+
+li.completed {
+  text-decoration: line-through;
+}
