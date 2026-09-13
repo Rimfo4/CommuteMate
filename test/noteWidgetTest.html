@@ -78,7 +78,7 @@
 
     <script>
       const ul = document.querySelector("ul"); // ul 태그 선택
-      // 형식 :
+
       const input = document.querySelector("input"); // input 태그 선택
 
       const LIMIT_TIME = 24 * 60 * 60 * 1000; // 24시간 -> 밀리초 계산
@@ -111,10 +111,7 @@
           if (list[i].completed) {
             li.classList.add("completed");
           }
-          li.onclick = function () {
-            // 클릭 시 완료 처리
-            completeList(i);
-          };
+          li.addEventListener("click", () => completeList(i));
 
           ul.appendChild(li);
         }
