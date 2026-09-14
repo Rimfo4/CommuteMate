@@ -92,8 +92,8 @@
         list = list.filter((item) => {
           // 완료(true) + 완료 시간(not null)
           // 완료된 항목만 필터링
-          if (item.completed && item.completeTime) {
-            if (now - item.completeTime < LIMIT_TIME) {
+          if (item.completed && item.completedTime) {
+            if (now - item.completedTime < LIMIT_TIME) {
               return true; // 24시간 미만 - 유지
             } else {
               return false; // 24시간 이상 - 제거
@@ -123,10 +123,10 @@
 
         if (!list[index].completed) {
           list[index].completed = true;
-          list[index].completeTime = now; // 완료 시간
+          list[index].completedTime = now; // 완료 시간
         } else {
           list[index].completed = false;
-          list[index].completeTime = null;
+          list[index].completedTime = null;
         }
 
         localStorage.setItem("list", JSON.stringify(list));
