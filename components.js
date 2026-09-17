@@ -1,10 +1,12 @@
+// import {runWether} from './wether.js';
+
 //리액트 처럼 component 형식으로 제작할 수 있는 순수 custom tag 기능.
 class StartScreen extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `<div id="startScreen"><p id = "tong">통근</p><p>이</p></div>`;
 
     setTimeout(() => {
-      this.classList.add("hide");
+      this.classList.add('hide');
     }, 3000);
   }
 }
@@ -33,12 +35,12 @@ class FootNavigationBar extends HTMLElement {
           </div>
         </div>`;
 
-    const addBtn = document.getElementById("widgetAddBtn");
-    const popup = document.getElementById("widgetPopup");
+    const addBtn = document.getElementById('widgetAddBtn');
+    const popup = document.getElementById('widgetPopup');
 
     // 열기 버튼 클릭
-    addBtn.addEventListener("click", () => {
-      popup.classList.add("show");
+    addBtn.addEventListener('click', () => {
+      popup.classList.add('show');
     });
   }
 }
@@ -58,21 +60,21 @@ class WidgetBtn extends HTMLElement {
   connectedCallback() {
     const id = this.id;
 
-    let text = "";
-    let tagName = "";
+    let text = '';
+    let tagName = '';
 
-    if (id === "navigation") {
-      text = "네비게이션";
-      tagName = "navigation-widget";
-    } else if (id === "weather") {
-      text = "날씨 보기";
-      tagName = "weather-widget";
-    } else if (id === "alarm") {
-      text = "알람";
-      tagName = "alarm-widget";
-    } else if (id === "note") {
-      text = "업무 기록";
-      tagName = "note-widget";
+    if (id === 'navigation') {
+      text = '네비게이션';
+      tagName = 'navigation-widget';
+    } else if (id === 'weather') {
+      text = '날씨 보기';
+      tagName = 'weather-widget';
+    } else if (id === 'alarm') {
+      text = '알람';
+      tagName = 'alarm-widget';
+    } else if (id === 'note') {
+      text = '업무 기록';
+      tagName = 'note-widget';
     }
 
     this.innerHTML = `<div id="widget">
@@ -81,7 +83,7 @@ class WidgetBtn extends HTMLElement {
         <div id="light"></div>
     </div>`;
 
-    this.querySelector("#vectorImg").addEventListener("click", () => {
+    this.querySelector('#vectorImg').addEventListener('click', () => {
       this.innerHTML = `<${tagName}></${tagName}>`;
     });
   }
@@ -100,6 +102,8 @@ class NoteWidget extends HTMLElement {
 // 날씨 위젯
 class WeatherWidget extends HTMLElement {
   connectedCallback() {
+    let todayWether = runWether;
+    console.log(todayWether);
     this.innerHTML = `
       <div class = "noteWidget">
         <div id = "title">날씨</div>
@@ -129,9 +133,10 @@ class AlarmWidget extends HTMLElement {
 }
 
 // 커스텀 태그를 정의한다는 의미.
-customElements.define("start-screen", StartScreen);
-customElements.define("top-bar", TopBar);
-customElements.define("navigation-bar", FootNavigationBar);
-customElements.define("widget-btn", WidgetBtn);
-customElements.define("note-widget", NoteWidget);
-customElements.define("main-div", Main);
+customElements.define('start-screen', StartScreen);
+customElements.define('top-bar', TopBar);
+customElements.define('navigation-bar', FootNavigationBar);
+customElements.define('widget-btn', WidgetBtn);
+customElements.define('note-widget', NoteWidget);
+customElements.define('main-div', Main);
+customElements.define('weather-widget', WeatherWidget);
