@@ -1,4 +1,5 @@
 import wetherApiKey from './key.js';
+
 const SERVICE_KEY = wetherApiKey;
 const BASE_URL =
   'https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst';
@@ -149,29 +150,32 @@ function getNowWetherType(data) {
   const nowTime = Object.keys(data)[0];
   const nowData = data[nowTime];
 
-  //날씨 배열 0. 온도, 1.
-  let WetherType = [];
-  console.log(nowData.PTY);
+  // console.log(nowData.PTY);
+  // console.log(nowData.SKY);
 
-  switch (+nowData.PTY) {
-    case 1:
-      return '비';
-    case 2:
-      return '비/눈';
-    case 3:
-      return '눈';
-    case 4:
-      return '소나기';
-    case 0: {
-      switch (+nowData.SKY) {
-        case (1, 3):
-          return '맑음';
-        case 4:
-          return '흐름';
-      }
-    }
-  }
+  const wetherType = {
+    1: 4, //'비'
+    2: 5, //'비/눈'
+    3: 5, //'눈'
+    4: 4, //'소나기'
+    0: {
+      1: 2, //'맑음'
+      3: 1, //'구름많음'
+      4: 3, //'흐름'
+    },
+  };
+  //날씨 배열 0.온도, 1.습도, 2.날씨타입.
+  let wetherList = [nowData.TMP, nowData.REH];
+
+  if (+nowData.PTY === 0) {
+    wetherList.push(wetherType[nowData.PTY][nowData.SKY]);
+  } else wetherList.push(wetherType[nowData.PTY]);
+
+  return wetherList;
 }
+
+let nowWether;
+
 navigator.geolocation.getCurrentPosition(
   async (pos) => {
     const { latitude, longitude } = pos.coords;
@@ -179,9 +183,36 @@ navigator.geolocation.getCurrentPosition(
     try {
       const items = await fetchWeather(latitude, longitude);
       const data = groupTime(filterFromNow(items));
-      console.log(getNowWetherType(data));
+      const nowWether = getNowWetherType(data);
+
+      const getTime = new Date();
+      console.log(getTime.getMonth(), nowWether);
+      // 날씨 위젯
+      class WeatherWidget extends HTMLElement {
+        connectedCallback() {
+          // let type = this.getAttribute('type');
+
+          this.innerHTML = ` <div id="weather">
+          <div id="weather_1">
+            <div id="type${nowWether[2]}" class="weatherImg"></div>
+            <div class="date">${getTime.getMonth() + 1}월 ${getTime.getDate()}일 금요일</div>
+            <div class="time">${getTime.getHours()}:${getTime.getMinutes()}</div>
+          </div>
+          <div id="weather_2">
+            <div
+              style="display: flex; flex-direction: row; align-items: center">
+              <div id="water" class='weatherImg'></div>
+              <div id="humidity">${nowWether[1]}%</div>
+            </div>
+            <div id="temp">${nowWether[0]}°</div>
+          </div>
+        </div>  
+          `;
+        }
+      }
+      customElements.define('weather-widget', WeatherWidget);
     } catch (err) {
-      document.getElementById('result').textContent = '실패: ' + err.message;
+      console.log(err);
     }
   },
   () => {

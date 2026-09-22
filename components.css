@@ -17,7 +17,7 @@ start-screen {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "LGOTFBold";
+  font-family: 'LGOTFBold';
   font-size: 200px;
 }
 
@@ -27,7 +27,7 @@ start-screen.hide {
   pointer-events: none; /* 클릭이나 터치 이벤트를 받지 않음 */
 }
 
-/* 이건 상단바이고요. */
+/* 이건 상단바이에요. */
 #topColorBar {
   background-color: var(--main-color);
   height: 190px;
@@ -35,7 +35,7 @@ start-screen.hide {
   align-items: center;
   justify-content: center;
 }
-/* 이거는 아래 하단바 입ㄴ디ㅏ. */
+/* 이거는 아래 하단바 입니다. */
 #footNavigationBar {
   background-color: var(--main-gray-color);
   position: fixed;
@@ -56,7 +56,7 @@ start-screen.hide {
   border: 0px;
 }
 #widgetAddBtn {
-  background-image: url("./assets/PlusCircle.svg");
+  background-image: url('./assets/PlusCircle.svg');
 }
 #homeBtn {
   background-image: url(./assets/home.svg);
@@ -110,7 +110,7 @@ start-screen.hide {
   height: 95px;
   font-size: 90px;
   left: 10px;
-  font-family: "LGOTFRegular";
+  font-family: 'LGOTFRegular';
 }
 
 /* 위젯 추가 여부 표시*/
@@ -176,7 +176,7 @@ div#none {
   text-align: center;
   align-items: center;
   justify-content: center;
-  font-family: "LGOTFRegular";
+  font-family: 'LGOTFRegular';
 }
 
 /* 업무 기록 위젯 */
@@ -236,4 +236,111 @@ li {
 
 li.completed {
   text-decoration: line-through;
+}
+
+/* 날씨 위젯 관련 css */
+div#weather {
+  height: 500px;
+  width: 500px;
+  background-color: #89baff;
+  border-radius: 116px;
+  display: flex;
+  flex-direction: column;
+}
+
+#weather > div {
+  color: white;
+}
+#weather_1 > div {
+  margin-left: 50px;
+}
+
+#weather_1 > .date {
+  font-size: 40px;
+  margin-top: 30px;
+}
+#weather_1 > .time {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+#water {
+  width: 27px;
+  height: 40px;
+  margin: 0px !important;
+  background-image: url(./assets/weather/water.svg);
+  background-size: contain;
+}
+#weather_2 {
+  margin-top: -70px;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  margin-right: 32px;
+  overflow: visible;
+}
+#weather_2 > div {
+  font-weight: 700;
+}
+#humidity {
+  padding-left: 10px;
+  font-size: 48px;
+}
+#temp {
+  font-size: 128px;
+  line-height: 0.7;
+  margin-top: 0;
+}
+
+weather-widget[type='2'] > div#weather {
+  width: 1000px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+weather-widget[type='2'] #weather_1 div {
+  margin: 0px 0px 0px 100px;
+}
+
+weather-widget[type='2'] #weather_2 {
+  margin: 240px 100px 0px 0px;
+}
+
+/* 날씨 이미지 */
+.weatherImg {
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-top: 50px !important;
+  margin-bottom: 30px !important;
+}
+weather-widget[type='1'] #type1 {
+  width: 242px;
+  height: 160px;
+  margin-top: 54px;
+  background-image: url(./assets/weather/cloud1.svg);
+}
+weather-widget[type='2'] #type1 {
+  width: 371px;
+  height: 160px;
+  background-image: url(./assets/weather/cloud2.svg);
+}
+weather-widget #type2 {
+  width: 160px;
+  height: 160px;
+  background-image: url(./assets/weather/sunny.svg);
+}
+weather-widget #type3 {
+  width: 245px;
+  height: 182px;
+  background-image: url(./assets/weather/cloud_sunny.svg);
+}
+weather-widget #type4 {
+  width: 160px;
+  height: 160px;
+  background-image: url(./assets/weather/rainy.svg);
+}
+weather-widget #type5 {
+  width: 160px;
+  height: 160px;
+  background-image: url(./assets/weather/snow.svg);
 }
