@@ -97,7 +97,7 @@ class NoteWidget extends HTMLElement {
         <div class="header">
           <div id="title">TO DO LIST</div>
           <input type="text" id="input" placeholder="할 일 입력" />
-          <button id="addBtn" onclick="addList()">추가</button>
+          <button id="addBtn">추가</button>
         </div>
         <div id="listContainer">
           <ul></ul>
@@ -105,9 +105,10 @@ class NoteWidget extends HTMLElement {
       </div>
     `;
 
-    const ul = document.querySelector("ul"); // ul 태그 선택
-    // 형식 :
-    const input = document.querySelector("input"); // input 태그 선택
+    const ul = this.querySelector("ul"); // ul 태그 선택
+
+    const input = this.querySelector("input"); // input 태그 선택
+    const addBtn = this.querySelector("#addBtn");
 
     const LIMIT_TIME = 24 * 60 * 60 * 1000; // 24시간 -> 밀리초 계산
 
@@ -120,8 +121,8 @@ class NoteWidget extends HTMLElement {
       list = list.filter((item) => {
         // 완료(true) + 완료 시간(not null)
         // 완료된 항목만 필터링
-        if (item.completed && item.completeTime) {
-          if (now - item.completeTime < LIMIT_TIME) {
+        if (item.completed && item.completedTime) {
+          if (now - item.completedTime < LIMIT_TIME) {
             return true; // 24시간 미만 - 유지
           } else {
             return false; // 24시간 이상 - 제거
@@ -139,10 +140,7 @@ class NoteWidget extends HTMLElement {
         if (list[i].completed) {
           li.classList.add("completed");
         }
-        li.onclick = function () {
-          // 클릭 시 완료 처리
-          completeList(i);
-        };
+        li.addEventListener("click", () => completeList(i));
 
         ul.appendChild(li);
       }
@@ -154,10 +152,10 @@ class NoteWidget extends HTMLElement {
 
       if (!list[index].completed) {
         list[index].completed = true;
-        list[index].completeTime = now; // 완료 시간
+        list[index].completedTime = now; // 완료 시간
       } else {
         list[index].completed = false;
-        list[index].completeTime = null;
+        list[index].completedTime = null;
       }
 
       localStorage.setItem("list", JSON.stringify(list));
@@ -188,6 +186,7 @@ class NoteWidget extends HTMLElement {
       input.value = "";
     }
 
+    addBtn.addEventListener("click", addList);
     renderList();
   }
 }
