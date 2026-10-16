@@ -1,10 +1,5 @@
-<<<<<<< HEAD
-const ODSAY_API_KEY = ''; // 본인 ODsay 키 입력
-const SEOUL_API_KEY = '서울데이터광장_발급키'; // 'sample' 대신 발급받은 키 입력
-=======
 const ODSAY_API_KEY = "	TsgSkHceogtz%2BR3Z4aDF0w"; // 본인 ODsay 키 입력
 const SEOUL_API_KEY = "서울데이터광장_발급키"; // 'sample' 대신 발급받은 키 입력
->>>>>>> origin/user/hanni
 
 document.getElementById("searchBtn").addEventListener("click", async () => {
   const query = document.getElementById("stationInput").value.trim();

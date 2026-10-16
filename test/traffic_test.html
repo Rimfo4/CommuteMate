@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script src="traffic.js"></script>
+    <script>
+      let currentLat = 0;
+      let currentLng = 0;
+      navigator.geolocation.getCurrentPosition((position) => {
+        doSomething(position.coords.latitude, position.coords.longitude);
+        let currentLat = position.coords.latitude;
+        let currentLng = position.coords.longitude;
+      });
+
+      // 신림역 위치
+      let schoolLat = 37.484201;
+      let schoolLng = 126.929715;
+
+      function doSomething(lat, lng) {
+        console.log(`위도:${lat}
+              경도:${lng}`);
+      }
+
+      //   const km = getDistance(currentLat, currentLng, schoolLat, schoolLng);
+      //   console.log(km);
+
+      //강남역
+      const lat1 = 37.49813943152925;
+      const lng1 = 127.02827170358093;
+
+      //양재역
+      const lat2 = 37.48390185679575;
+      const lng2 = 127.03450754512691;
+
+      console.log(getDistance(lat1, lng1, lat2, lng2));
+    </script>
+  </body>
+</html>
