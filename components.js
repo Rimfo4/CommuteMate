@@ -4,7 +4,7 @@ class StartScreen extends HTMLElement {
     this.innerHTML = `<div id="startScreen"><p id = "tong">통근</p><p>이</p></div>`;
 
     setTimeout(() => {
-      this.classList.add('hide');
+      this.classList.add("hide");
     }, 1000);
   }
 }
@@ -34,12 +34,12 @@ class FootNavigationBar extends HTMLElement {
           </div>
         </div>`;
 
-    const addBtn = document.getElementById('widgetAddBtn');
-    const popup = document.getElementById('widgetPopup');
+    const addBtn = document.getElementById("widgetAddBtn");
+    const popup = document.getElementById("widgetPopup");
 
     // 열기 버튼 클릭
-    addBtn.addEventListener('click', () => {
-      popup.classList.add('show');
+    addBtn.addEventListener("click", () => {
+      popup.classList.add("show");
     });
   }
 }
@@ -51,7 +51,10 @@ class Main extends HTMLElement {
       <div id = "none">
         원하는 위젯을<br>추가해주세요
       </div>
-    </div>`;
+    </div>
+    
+    <div id="widgetContent"></div>
+    `;
   }
 }
 
@@ -60,21 +63,21 @@ class WidgetBtn extends HTMLElement {
   connectedCallback() {
     const id = this.id;
 
-    let text = '';
-    let tagName = '';
+    let text = "";
+    let tagName = "";
 
-    if (id === 'navigation') {
-      text = '네비게이션';
-      tagName = 'navigation-widget';
-    } else if (id === 'weather') {
-      text = '날씨 보기';
-      tagName = 'weather-widget';
-    } else if (id === 'alarm') {
-      text = '알람';
-      tagName = 'alarm-widget';
-    } else if (id === 'note') {
-      text = '업무 기록';
-      tagName = 'note-widget';
+    if (id === "navigation") {
+      text = "네비게이션";
+      tagName = "navigation-widget";
+    } else if (id === "weather") {
+      text = "날씨 보기";
+      tagName = "weather-widget";
+    } else if (id === "alarm") {
+      text = "알람";
+      tagName = "alarm-widget";
+    } else if (id === "note") {
+      text = "업무 기록";
+      tagName = "note-widget";
     }
 
     this.innerHTML = `<div id="widget">
@@ -83,8 +86,18 @@ class WidgetBtn extends HTMLElement {
         <div id="light"></div>
     </div>`;
 
-    this.querySelector('#vectorImg').addEventListener('click', () => {
-      this.innerHTML = `<${tagName}></${tagName}>`;
+    this.querySelector("#vectorImg").addEventListener("click", () => {
+      // const content = this.querySelector("#vectorImg").nextElementSibling;
+
+      this.innerHTML = `
+      <div id="widget">
+        <div id="vectorImg" id = id></div>
+        <div id="widgetText">${text}</div>
+        <div id="light"></div>
+        <${tagName}></${tagName}>
+      </div>
+       
+      `;
     });
   }
 }
@@ -114,8 +127,8 @@ class NoteWidget extends HTMLElement {
 
     // 리스트 띄우기
     function renderList() {
-      ul.innerHTML = ''; // ul 태그 초기화
-      let list = JSON.parse(localStorage.getItem('list')) || [];
+      ul.innerHTML = ""; // ul 태그 초기화
+      let list = JSON.parse(localStorage.getItem("list")) || [];
       const now = Date.now(); // 밀리초 현재 시간
 
       list = list.filter((item) => {
@@ -131,14 +144,14 @@ class NoteWidget extends HTMLElement {
         return true; // 완료되지 않은 항목 유지
       });
 
-      localStorage.setItem('list', JSON.stringify(list));
+      localStorage.setItem("list", JSON.stringify(list));
 
       for (let i = 0; i < list.length; i++) {
-        const li = document.createElement('li');
+        const li = document.createElement("li");
         li.innerHTML = list[i].text;
 
         if (list[i].completed) {
-          li.classList.add('completed');
+          li.classList.add("completed");
         }
         li.addEventListener("click", () => completeList(i));
 
@@ -147,7 +160,7 @@ class NoteWidget extends HTMLElement {
     }
 
     function completeList(index) {
-      const list = JSON.parse(localStorage.getItem('list')) || [];
+      const list = JSON.parse(localStorage.getItem("list")) || [];
       const now = Date.now();
 
       if (!list[index].completed) {
@@ -158,7 +171,7 @@ class NoteWidget extends HTMLElement {
         list[index].completedTime = null;
       }
 
-      localStorage.setItem('list', JSON.stringify(list));
+      localStorage.setItem("list", JSON.stringify(list));
 
       renderList();
     }
@@ -167,23 +180,23 @@ class NoteWidget extends HTMLElement {
     function addList() {
       const input_value = input.value.trim(); // 사용자가 입력한 값
 
-      if (input_value === '') {
+      if (input_value === "") {
         return;
       }
 
-      const list = JSON.parse(localStorage.getItem('list')) || [];
+      const list = JSON.parse(localStorage.getItem("list")) || [];
       list.push({
         text: input_value, // 사용자가 입력한 값 (string)
         completed: false, // 완료 여부 (boolean)
         createdAt: Date.now(), // 리스트 등록 시간 (number)
         completedTime: null, // 완료한 시간 (number)
       });
-      localStorage.setItem('list', JSON.stringify(list)); // 배열 -> 문자열 => 저장
+      localStorage.setItem("list", JSON.stringify(list)); // 배열 -> 문자열 => 저장
 
       renderList();
 
       // document.getElementById("input").value = ""; // 입력창 초기화
-      input.value = '';
+      input.value = "";
     }
 
     addBtn.addEventListener("click", addList);
@@ -213,9 +226,9 @@ class AlarmWidget extends HTMLElement {
 }
 
 // 커스텀 태그를 정의한다는 의미.
-customElements.define('start-screen', StartScreen);
-customElements.define('top-bar', TopBar);
-customElements.define('navigation-bar', FootNavigationBar);
-customElements.define('widget-btn', WidgetBtn);
-customElements.define('note-widget', NoteWidget);
-customElements.define('main-div', Main);
+customElements.define("start-screen", StartScreen);
+customElements.define("top-bar", TopBar);
+customElements.define("navigation-bar", FootNavigationBar);
+customElements.define("widget-btn", WidgetBtn);
+customElements.define("note-widget", NoteWidget);
+customElements.define("main-div", Main);

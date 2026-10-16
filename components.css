@@ -17,7 +17,7 @@ start-screen {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: 'LGOTFBold';
+  font-family: "LGOTFBold";
   font-size: 200px;
 }
 
@@ -56,7 +56,7 @@ start-screen.hide {
   border: 0px;
 }
 #widgetAddBtn {
-  background-image: url('./assets/PlusCircle.svg');
+  background-image: url("./assets/PlusCircle.svg");
 }
 #homeBtn {
   background-image: url(./assets/home.svg);
@@ -110,7 +110,7 @@ start-screen.hide {
   height: 95px;
   font-size: 90px;
   left: 10px;
-  font-family: 'LGOTFRegular';
+  font-family: "LGOTFRegular";
 }
 
 /* 위젯 추가 여부 표시*/
@@ -121,29 +121,36 @@ start-screen.hide {
   border-radius: 100px;
 }
 
-/* 팝업 안 위젯*/
 #widgetPopup {
   position: fixed;
   bottom: 190px;
+  left: 0;
+  box-sizing: border-box;
   width: 100%;
+
+  height: auto;
+  max-height: calc(100vh - 190px);
+  overflow-y: auto;
+  overflow-x: hidden;
+
   visibility: hidden;
-  padding: 20px;
   display: flex;
+  flex-direction: column;
+
   background-color: var(--light-pink-color);
-  border-radius: 113px 113px 0px 0px;
-  padding-top: 40px;
-  padding-bottom: 40px;
+  border-radius: 113px 113px 0 0;
+  padding: 40px 20px;
+}
+
+.popupWidget {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
 }
 
 #widgetPopup.show {
   visibility: visible;
-}
-
-/* 위젯 팝업창 */
-.popupWidget {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
 }
 
 #noteWidget {
@@ -176,7 +183,7 @@ div#none {
   text-align: center;
   align-items: center;
   justify-content: center;
-  font-family: 'LGOTFRegular';
+  font-family: "LGOTFRegular";
 }
 
 /* 업무 기록 위젯 */
@@ -250,7 +257,7 @@ div#weather {
 }
 
 #weather > div {
-  color: white;
+  color: black;
 }
 #weather_1 > div {
   margin-left: 50px;
@@ -293,17 +300,17 @@ div#weather {
   margin-top: 0;
 }
 
-weather-widget[type='2'] > div#weather {
+weather-widget[type="2"] > div#weather {
   width: 1000px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-weather-widget[type='2'] #weather_1 div {
+weather-widget[type="2"] #weather_1 div {
   margin: 0px 0px 0px 100px;
 }
 
-weather-widget[type='2'] #weather_2 {
+weather-widget[type="2"] #weather_2 {
   margin: 240px 100px 0px 0px;
 }
 
@@ -314,13 +321,13 @@ weather-widget[type='2'] #weather_2 {
   margin-top: 50px !important;
   margin-bottom: 30px !important;
 }
-weather-widget[type='1'] #type1 {
+weather-widget[type="1"] #type1 {
   width: 242px;
   height: 160px;
   margin-top: 54px;
   background-image: url(./assets/weather/cloud1.svg);
 }
-weather-widget[type='2'] #type1 {
+weather-widget[type="2"] #type1 {
   width: 371px;
   height: 160px;
   background-image: url(./assets/weather/cloud2.svg);
@@ -344,4 +351,25 @@ weather-widget #type5 {
   width: 160px;
   height: 160px;
   background-image: url(./assets/weather/snow.svg);
+}
+widget-btn {
+  display: block;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+#widget {
+  display: flex;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+}
+
+.widget-content {
+  display: block;
+  width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
+  margin-top: 10px;
+  margin-bottom: 20px;
 }
