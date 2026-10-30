@@ -1,0 +1,85 @@
+<result>
+    <record>
+    <incidentId>L93174666163</incidentId>
+    <incidenteTypeCd>1</incidenteTypeCd>
+    <incidenteSubTypeCd>255</incidenteSubTypeCd>
+    <addressJibun>서울 관악구 호암로 578</addressJibun>
+    <addressJibunCd>1141011700</addressJibunCd>
+    <addressNew>서울 관악구 호암로 578</addressNew>
+    <linkId>1120005302</linkId>
+    <locationDataX>126.932646</locationDataX>
+    <locationDataY>37.469501</locationDataY>
+    <locationTypeCd>C0101</locationTypeCd>
+    <locationData/>
+    <incidenteTrafficCd>A0503</incidenteTrafficCd>
+    <incidenteGradeCd>A0402</incidenteGradeCd>
+    <incidentTitle>[사고] 연희로 연희삼거리 에서 연희IC 방향 3차로 교통사고 (승용차 단독 충돌) 후미 지체 서울청</incidentTitle>
+    <incTrafficCode>A0503</incTrafficCode>
+    <incidentRegionCd>01</incidentRegionCd>
+    <startDate>2026년 10월 22일 21시 31분</startDate>
+    <endDate>2026년 10월 22일 22시 08분</endDate>
+    <lane>3차로</lane>
+    <roadName>연희로</roadName>
+    <sourceCode>W001</sourceCode>
+    <lineLinkId>1120005302</lineLinkId>
+    <controlType>0</controlType>
+    <important>00</important>
+    <updateDate/>
+    </record>
+
+    <record>
+    <incidentId>L93174666163</incidentId>
+    <incidenteTypeCd>1</incidenteTypeCd>
+    <incidenteSubTypeCd>255</incidenteSubTypeCd>
+    <addressJibun>서울 서대문구 연희동 209-2</addressJibun>
+    <addressJibunCd>1141011700</addressJibunCd>
+    <addressNew>서울 서대문구 연희로 79</addressNew>
+    <linkId>1120005302</linkId>
+    <locationDataX>126.92961948304469</locationDataX>
+    <locationDataY>37.565363561034296</locationDataY>
+    <locationTypeCd>C0101</locationTypeCd>
+    <locationData/>
+    <incidenteTrafficCd>A0503</incidenteTrafficCd>
+    <incidenteGradeCd>A0402</incidenteGradeCd>
+    <incidentTitle>[사고] 연희로 연희삼거리 에서 연희IC 방향 3차로 교통사고 (승용차 단독 충돌) 후미 지체 서울청</incidentTitle>
+    <incTrafficCode>A0503</incTrafficCode>
+    <incidentRegionCd>01</incidentRegionCd>
+    <startDate>2026년 10월 22일 21시 31분</startDate>
+    <endDate>2026년 10월 22일 22시 08분</endDate>
+    <lane>3차로</lane>
+    <roadName>연희로</roadName>
+    <sourceCode>W001</sourceCode>
+    <lineLinkId>1120005302</lineLinkId>
+    <controlType>0</controlType>
+    <important>00</important>
+    <updateDate/>
+    </record>
+        <record>
+    <incidentId>L93174666163</incidentId>
+    <incidenteTypeCd>1</incidenteTypeCd>
+    <incidenteSubTypeCd>255</incidenteSubTypeCd>
+    <addressJibun>서울 서대문구 연희동 209-2</addressJibun>
+    <addressJibunCd>1141011700</addressJibunCd>
+    <addressNew>서울 서대문구 연희로 79</addressNew>
+    <linkId>1120005302</linkId>
+    <locationDataX>126.92961948304469</locationDataX>
+    <locationDataY>37.565363561034296</locationDataY>
+    <locationTypeCd>C0101</locationTypeCd>
+    <locationData/>
+    <incidenteTrafficCd>A0503</incidenteTrafficCd>
+    <incidenteGradeCd>A0402</incidenteGradeCd>
+    <incidentTitle>[사고] 연희로 연희삼거리 에서 연희IC 방향 3차로 교통사고 (승용차 단독 충돌) 후미 지체 서울청</incidentTitle>
+    <incTrafficCode>A0503</incTrafficCode>
+    <incidentRegionCd>01</incidentRegionCd>
+    <startDate>2026년 10월 22일 21시 31분</startDate>
+    <endDate>2026년 10월 22일 22시 08분</endDate>
+    <lane>3차로</lane>
+    <roadName>연희로</roadName>
+    <sourceCode>W001</sourceCode>
+    <lineLinkId>1120005302</lineLinkId>
+    <controlType>0</controlType>
+    <important>00</important>
+    <updateDate/>
+    </record>
+    
+</result>
