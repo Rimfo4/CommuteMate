@@ -35,11 +35,17 @@ class FootNavigationBar extends HTMLElement {
         </div>`;
 
     const addBtn = document.getElementById("widgetAddBtn");
+    const homeBtn = document.getElementById("homeBtn");
     const popup = document.getElementById("widgetPopup");
 
-    // 열기 버튼 클릭
+    // 위젯 추가 버튼 → 팝업 열기
     addBtn.addEventListener("click", () => {
       popup.classList.add("show");
+    });
+
+    // 홈 버튼 → 홈 페이지 이동
+    homeBtn.addEventListener("click", () => {
+      popup.classList.remove("show");
     });
   }
 }
@@ -58,7 +64,6 @@ class Main extends HTMLElement {
   }
 }
 
-// 위젯 버튼 컴포넌트
 class WidgetBtn extends HTMLElement {
   connectedCallback() {
     const id = this.id;
@@ -80,24 +85,41 @@ class WidgetBtn extends HTMLElement {
       tagName = "note-widget";
     }
 
-    this.innerHTML = `<div id="widget">
-        <div id="vectorImg" id = id></div>
-        <div id="widgetText">${text}</div>
-        <div id="light"></div>
-    </div>`;
+    this.innerHTML = `
+      <div class="widgetWrapper">
 
-    this.querySelector("#vectorImg").addEventListener("click", () => {
-      // const content = this.querySelector("#vectorImg").nextElementSibling;
+        <div class="widgetButton">
+          <button type="button" class="vectorImg"></button>
+          <div class="widgetText">${text}</div>
+          <div class="light"></div>
+        </div>
 
-      this.innerHTML = `
-      <div id="widget">
-        <div id="vectorImg" id = id></div>
-        <div id="widgetText">${text}</div>
-        <div id="light"></div>
-        <${tagName}></${tagName}>
+        <div class="widgetOption">
+          <div class="optionBody">
+
+            <div class="smallOption">
+              <${tagName} type="1"></${tagName}>
+            </div>
+
+            <div class="bigOption">
+              <${tagName} type="2"></${tagName}>
+            </div>
+
+          </div>
+        </div>
+
       </div>
-       
-      `;
+    `;
+
+    const vectorImg = this.querySelector(".vectorImg");
+    const option = this.querySelector(".widgetOption");
+    const wrapper = this.querySelector(".widgetWrapper");
+
+    vectorImg.addEventListener("click", () => {
+      const isOpen = option.classList.toggle("show");
+
+      vectorImg.classList.toggle("open", isOpen);
+      wrapper.classList.toggle("expanded", isOpen);
     });
   }
 }
@@ -208,12 +230,21 @@ class NoteWidget extends HTMLElement {
 class NavigationWidget extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
-      <div class = "noteWidget">
+      <div class = "navigationWidget">
         <div id = "title">네비게이션</div>
       </div>
     `;
   }
 }
+
+class TrafficWidget extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `<div class = "trafficWidget">
+        <div id = "title">교통량</div>
+      </div>`;
+  }
+}
+
 // 알람 위젯
 class AlarmWidget extends HTMLElement {
   connectedCallback() {
@@ -231,4 +262,5 @@ customElements.define("top-bar", TopBar);
 customElements.define("navigation-bar", FootNavigationBar);
 customElements.define("widget-btn", WidgetBtn);
 customElements.define("note-widget", NoteWidget);
+customElements.define("traffic-widget", TrafficWidget);
 customElements.define("main-div", Main);
