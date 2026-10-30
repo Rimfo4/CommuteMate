@@ -1,10 +1,14 @@
+import { getWeather } from './weatherWidget.js';
+import { getStorage, setStorage } from './db.js';
+import './localStroge.js';
+
 //리액트 처럼 component 형식으로 제작할 수 있는 순수 custom tag 기능.
 class StartScreen extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `<div id="startScreen"><p id = "tong">통근</p><p>이</p></div>`;
 
     setTimeout(() => {
-      this.classList.add('hide');
+      this.hidden = true;
     }, 1000);
   }
 }
@@ -20,20 +24,21 @@ class TopBar extends HTMLElement {
 // 하단 네비게이션 바 컴포넌트
 class FootNavigationBar extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<div id="footNavigationBar">
+    this.innerHTML = `
        <button id="widgetAddBtn" class="footBtn"></button>
         <button id="homeBtn" class="footBtn"></button>
-        <button id="settingBtn" class="footBtn"></button></div>
+        <button id="settingBtn" class="footBtn"></button>
         
-        <div id = "widgetPopup">
-          <div class="popupWidget">
-            <widget-btn id="navigation"></widget-btn>
-            <widget-btn id="weather"></widget-btn>
-            <widget-btn id="alarm"></widget-btn>
-            <widget-btn id="note"></widget-btn>
-          </div>
-        </div>`;
+        `;
 
+    //<div id = "widgetPopup">
+    //   <div class="popupWidget">
+    //     <widget-btn id="navigation"></widget-btn>
+    //     <widget-btn id="weather"></widget-btn>
+    //     <widget-btn id="alarm"></widget-btn>
+    //     <widget-btn id="note"></widget-btn>
+    //   </div>
+    // </div>
     const addBtn = document.getElementById('widgetAddBtn');
     const popup = document.getElementById('widgetPopup');
 
@@ -47,11 +52,56 @@ class FootNavigationBar extends HTMLElement {
 // 내용 컴포넌트
 class Main extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<div id = "mainPart">
-      <div id = "none">
-        원하는 위젯을<br>추가해주세요
-      </div>
-    </div>`;
+    const user = getStorage('user');
+    console.log(user);
+
+    if (user.firstStart) {
+      const noneDiv = document.createElement('div');
+      noneDiv.id = 'none';
+      noneDiv.style.marginTop = '140px';
+      noneDiv.style.marginBottom = '70px';
+      noneDiv.innerHTML = '원하는 위젯을<br>추가해주세요';
+
+      const widgetScroll = document.createElement('widget-list');
+      widgetScroll.hidden = true;
+
+      noneDiv.addEventListener('click', () => {
+        // noneDiv.classList.add('widgetSlideUp');
+        widgetScroll.classList.add('widgetSlideUp');
+        widgetScroll.hidden = false;
+      });
+
+      const mainPartDiv = document.createElement('div');
+      mainPartDiv.id = 'mainPart';
+      mainPartDiv.appendChild(noneDiv);
+      mainPartDiv.appendChild(widgetScroll);
+
+      this.appendChild(mainPartDiv);
+    } 
+    else {
+
+      
+    }
+  }
+}
+
+class WidgetList extends HTMLElement {
+  connectedCallback() {
+    const widgetList = document.createElement('div');
+    widgetList.id = 'widgetList';
+
+    //유저가 선택한 위젯을 배열에 담고 => localStorage에 저장.
+    const list = [];
+
+    for (let i = 0; i < list.length; i++) {}
+    list.push('navigation');
+    let nav = document.createElement('widget-btn');
+    nav.id = 'navigation';
+    nav.style.zIndex = '100';
+    widgetList.style.zIndex = '1000';
+
+    widgetList.appendChild(nav);
+    this.appendChild(widgetList);
   }
 }
 
@@ -78,7 +128,7 @@ class WidgetBtn extends HTMLElement {
     }
 
     this.innerHTML = `<div id="widget">
-        <div id="vectorImg" id = id></div>
+        <div id="vectorImg"></div>
         <div id="widgetText">${text}</div>
         <div id="light"></div>
     </div>`;
@@ -105,10 +155,10 @@ class NoteWidget extends HTMLElement {
       </div>
     `;
 
-    const ul = this.querySelector("ul"); // ul 태그 선택
+    const ul = this.querySelector('ul'); // ul 태그 선택
 
-    const input = this.querySelector("input"); // input 태그 선택
-    const addBtn = this.querySelector("#addBtn");
+    const input = this.querySelector('input'); // input 태그 선택
+    const addBtn = this.querySelector('#addBtn');
 
     const LIMIT_TIME = 24 * 60 * 60 * 1000; // 24시간 -> 밀리초 계산
 
@@ -140,7 +190,7 @@ class NoteWidget extends HTMLElement {
         if (list[i].completed) {
           li.classList.add('completed');
         }
-        li.addEventListener("click", () => completeList(i));
+        li.addEventListener('click', () => completeList(i));
 
         ul.appendChild(li);
       }
@@ -186,7 +236,7 @@ class NoteWidget extends HTMLElement {
       input.value = '';
     }
 
-    addBtn.addEventListener("click", addList);
+    addBtn.addEventListener('click', addList);
     renderList();
   }
 }
@@ -212,6 +262,33 @@ class AlarmWidget extends HTMLElement {
   }
 }
 
+//날씨 위젯.
+class WeatherWidget extends HTMLElement {
+  async connectedCallback() {
+    // let type = this.getAttribute('type');
+
+    const getTime = new Date();
+    const nowWeather = await getWeather();
+
+    this.innerHTML = ` <div id="weather">
+          <div id="weather_1">
+            <div id="type${nowWeather[2]}" class="weatherImg"></div>
+            <div class="date">${getTime.getMonth() + 1}월 ${getTime.getDate()}일 금요일</div>
+            <div class="time">${getTime.getHours().toString().padStart(2, '0')}:${getTime.getMinutes().toString().padStart(2, '0')}</div>
+          </div>
+          <div id="weather_2">
+            <div
+              style="display: flex; flex-direction: row; align-items: center">
+              <div id="water" class='weatherImg'></div>
+              <div id="humidity">${nowWeather[1]}%</div>
+            </div>
+            <div id="temp">${nowWeather[0]}°</div>
+          </div>
+        </div>  
+          `;
+  }
+}
+
 // 커스텀 태그를 정의한다는 의미.
 customElements.define('start-screen', StartScreen);
 customElements.define('top-bar', TopBar);
@@ -219,3 +296,5 @@ customElements.define('navigation-bar', FootNavigationBar);
 customElements.define('widget-btn', WidgetBtn);
 customElements.define('note-widget', NoteWidget);
 customElements.define('main-div', Main);
+customElements.define('weather-widget', WeatherWidget);
+customElements.define('widget-list', WidgetList);

@@ -29,9 +29,10 @@
   font-family: 'LGOTFBold';
   font-size: 130px;
 }
-body {
+.app {
   width: 1141px;
   height: 2481px;
   display: flex;
   flex-direction: column;
+  
 }

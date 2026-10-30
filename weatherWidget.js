@@ -118,7 +118,6 @@ async function fetchWeather(lat, lon) {
   if (!res.ok) throw new Error('API 응답 오류: ' + res.status);
 
   const json = await res.json();
-  console.log(json);
   // ? => 확실하지 않다는 의미 (null 일수있음.)라고 생각하면 편함. => 예외처리 해야한다는 것.
   const header = json?.response?.header;
   if (!header || header.resultCode !== '00') {
@@ -174,49 +173,26 @@ function getNowWetherType(data) {
   return wetherList;
 }
 
-let nowWether;
+export const getWeather = () => {
+  return new Promise((resolve, reject) => {
+    navigator.geolocation.getCurrentPosition(
+      async (pos) => {
+        const { latitude, longitude } = pos.coords;
+        try {
+          const items = await fetchWeather(latitude, longitude);
+          const data = groupTime(filterFromNow(items));
+          const nowWeather = getNowWetherType(data);
 
-navigator.geolocation.getCurrentPosition(
-  async (pos) => {
-    const { latitude, longitude } = pos.coords;
-    // console.log(latitude, longitude);
-    try {
-      const items = await fetchWeather(latitude, longitude);
-      const data = groupTime(filterFromNow(items));
-      const nowWether = getNowWetherType(data);
-
-      const getTime = new Date();
-      console.log(getTime.getMonth(), nowWether);
-      // 날씨 위젯
-      class WeatherWidget extends HTMLElement {
-        connectedCallback() {
-          // let type = this.getAttribute('type');
-
-          this.innerHTML = ` <div id="weather">
-          <div id="weather_1">
-            <div id="type${nowWether[2]}" class="weatherImg"></div>
-            <div class="date">${getTime.getMonth() + 1}월 ${getTime.getDate()}일 금요일</div>
-            <div class="time">${getTime.getHours()}:${getTime.getMinutes()}</div>
-          </div>
-          <div id="weather_2">
-            <div
-              style="display: flex; flex-direction: row; align-items: center">
-              <div id="water" class='weatherImg'></div>
-              <div id="humidity">${nowWether[1]}%</div>
-            </div>
-            <div id="temp">${nowWether[0]}°</div>
-          </div>
-        </div>  
-          `;
+          resolve(nowWeather); // 흭득 성공 시 데이터 반환
+        } catch (err) {
+          reject(err);
         }
-      }
-      customElements.define('weather-widget', WeatherWidget);
-    } catch (err) {
-      console.log(err);
-    }
-  },
-  () => {
-    document.getElementById('result').textContent =
-      '위치 권한이 거부되었습니다.';
-  },
-);
+      },
+      () => {
+        document.getElementById('result').textContent =
+          '위치 권한이 거부되었습니다.';
+        reject(new Error('위치 권한 거부'));
+      },
+    );
+  });
+};
