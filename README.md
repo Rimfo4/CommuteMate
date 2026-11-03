@@ -15,11 +15,11 @@
    - Figma
 
 2. 중요 파일
-  - components.js
-  - components.css
-    메인 HTML 파일
-    - home.html
-    - home.css
-  - localStroge.js
-  - db.js
+   - components.js
+   - components.css
+   - 메인 HTML 파일
+     - home.html
+     - home.css
+   - localStroge.js
+   - db.js
 3. 
