@@ -245,11 +245,12 @@ class TrafficWidget extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
     <!-- /* 데이터 불러오기 상태 표시 */ -->
-    <p id="status"></p>
+    
 
     <div class="trafficWidget">
     <div id="trafficHeader">
       <div id="widgetTitle">교통정보</div>
+      <div id="status"></div>
       <button type="button" class="repeatImg"></button>
     </div>
     <div id="trafficData"></div>
@@ -311,9 +312,8 @@ class TrafficWidget extends HTMLElement {
       // 사용자 현재 날짜(숫자 형)
       // const userDate = Number(`${year}${month}${date}${hour}${min}`);
 
-      const status = document.getElementById("status");
-      // const list = document.getElementById("incidentList");
-      const list = document.getElementById("trafficData");
+      const status = this.querySelector("#status");
+      const list = this.querySelector("#trafficData");
 
       status.textContent = "교통돌발정보를 불러오는 중...";
       list.replaceChildren(); // 새로운 정보로 업데이트
