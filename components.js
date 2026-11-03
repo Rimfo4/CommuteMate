@@ -243,182 +243,183 @@ class NavigationWidget extends HTMLElement {
 
 class TrafficWidget extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<button id="loadTraffic">교통돌발정보 불러오기</button>
+    this.innerHTML = `
     <!-- /* 데이터 불러오기 상태 표시 */ -->
     <p id="status"></p>
-    <!-- /* 불러온 데이터 표시*/ -->
-    <div id="incidentList"></div>
 
     <div class="trafficWidget">
-      <p id="widgetTitle">교통정보</p>
-      <div id="trafficData"></div>
+    <div id="trafficHeader">
+      <div id="widgetTitle">교통정보</div>
+      <button type="button" class="repeatImg"></button>
+    </div>
+    <div id="trafficData"></div>
+
     </div>`;
 
-    document
-      .getElementById("loadTraffic")
-      .addEventListener("click", async () => {
-        // 현재 위치 좌표 변수 선언
-        let currentLat = 0;
-        let currentLng = 0;
+    const repeatImg = this.querySelector(".repeatImg");
 
-        // 현재 위치를 가져오는 함수
-        function getCurrentPosition() {
-          return new Promise((resolve, reject) => {
-            navigator.geolocation.getCurrentPosition(
-              (position) => {
-                resolve({
-                  lat: position.coords.latitude,
-                  lng: position.coords.longitude,
-                });
-              },
-              (error) => reject(error),
-            );
-          });
+    repeatImg.addEventListener("click", async () => {
+      // 현재 위치 좌표 변수 선언
+      let currentLat = 0;
+      let currentLng = 0;
+
+      // 현재 위치를 가져오는 함수
+      function getCurrentPosition() {
+        return new Promise((resolve, reject) => {
+          navigator.geolocation.getCurrentPosition(
+            (position) => {
+              resolve({
+                lat: position.coords.latitude,
+                lng: position.coords.longitude,
+              });
+            },
+            (error) => reject(error),
+          );
+        });
+      }
+
+      // 두 지점 간의 거리 계산 함수
+      function getDistance(currentLat, currentLng, lat, lng) {
+        function degToRad(deg) {
+          // 각도(degree) -> 라디안(radian)
+          return deg * (Math.PI / 180);
         }
 
-        // 두 지점 간의 거리 계산 함수
-        function getDistance(currentLat, currentLng, lat, lng) {
-          function degToRad(deg) {
-            // 각도(degree) -> 라디안(radian)
-            return deg * (Math.PI / 180);
-          }
+        var R = 6371; // 지구에서 반지름 km로
+        var dLat = degToRad(lat - currentLat);
+        var dLng = degToRad(lng - currentLng);
+        var a =
+          Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+          Math.cos(degToRad(currentLat)) *
+            Math.cos(degToRad(lat)) *
+            Math.sin(dLng / 2) *
+            Math.sin(dLng / 2);
+        var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+        var distance = R * c; // 거리 -> km로
+        return distance;
+      }
 
-          var R = 6371; // 지구에서 반지름 km로
-          var dLat = degToRad(lat - currentLat);
-          var dLng = degToRad(lng - currentLng);
-          var a =
-            Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-            Math.cos(degToRad(currentLat)) *
-              Math.cos(degToRad(lat)) *
-              Math.sin(dLng / 2) *
-              Math.sin(dLng / 2);
-          var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-          var distance = R * c; // 거리 -> km로
-          return distance;
-        }
+      // 현재 날짜 + 시각
+      // const now = new Date();
 
-        // 현재 날짜 + 시각
-        // const now = new Date();
+      // const year = now.getFullYear();
+      // const month = String(now.getMonth() + 1).padStart(2, "0");
+      // const date = String(now.getDate()).padStart(2, "0");
+      // const hour = String(now.getHours()).padStart(2, "0");
+      // const min = String(now.getMinutes()).padStart(2, "0");
 
-        // const year = now.getFullYear();
-        // const month = String(now.getMonth() + 1).padStart(2, "0");
-        // const date = String(now.getDate()).padStart(2, "0");
-        // const hour = String(now.getHours()).padStart(2, "0");
-        // const min = String(now.getMinutes()).padStart(2, "0");
+      // 사용자 현재 날짜(숫자 형)
+      // const userDate = Number(`${year}${month}${date}${hour}${min}`);
 
-        // 사용자 현재 날짜(숫자 형)
-        // const userDate = Number(`${year}${month}${date}${hour}${min}`);
+      const status = document.getElementById("status");
+      // const list = document.getElementById("incidentList");
+      const list = document.getElementById("trafficData");
 
-        const status = document.getElementById("status");
-        // const list = document.getElementById("incidentList");
-        const list = document.getElementById("trafficData");
+      status.textContent = "교통돌발정보를 불러오는 중...";
+      list.replaceChildren(); // 새로운 정보로 업데이트
 
-        status.textContent = "교통돌발정보를 불러오는 중...";
-        list.replaceChildren(); // 새로운 정보로 업데이트
+      try {
+        // const position = await getCurrentPosition();
 
-        try {
-          // const position = await getCurrentPosition();
+        // 현재 위치
+        // currentLat = position.lat;
+        // currentLng = position.lng;
 
-          // 현재 위치
-          // currentLat = position.lat;
-          // currentLng = position.lng;
+        // 학교 위치
+        currentLat = 37.4661018035835;
+        currentLng = 126.931927855676;
 
-          // 학교 위치
-          currentLat = 37.4661018035835;
-          currentLng = 126.931927855676;
+        fetch("traffic.xml")
+          .then((response) => response.text())
+          .then((xmlString) => {
+            const parser = new DOMParser();
+            const xmlDoc = parser.parseFromString(xmlString, "text/xml");
 
-          fetch("traffic.xml")
-            .then((response) => response.text())
-            .then((xmlString) => {
-              const parser = new DOMParser();
-              const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+            const records = [...xmlDoc.querySelectorAll("record")];
 
-              const records = [...xmlDoc.querySelectorAll("record")];
+            if (records.length === 0) {
+              const message = xml.querySelector("resultMsg")?.textContent;
 
-              if (records.length === 0) {
-                const message = xml.querySelector("resultMsg")?.textContent;
+              status.textContent =
+                message ||
+                "표시할 돌발정보가 없거나 API 응답을 확인해야 합니다.";
 
-                status.textContent =
-                  message ||
-                  "표시할 돌발정보가 없거나 API 응답을 확인해야 합니다.";
+              console.log("UTIC 응답:", responseText);
+              return;
+            }
 
-                console.log("UTIC 응답:", responseText);
-                return;
+            let lat = "";
+            let lng = "";
+            let count = 0; // 사건 건수 카운트
+            let startDate = "";
+            let endDate = "";
+
+            //사고 데이터 출력
+            for (const record of records) {
+              lat = record.querySelector("locationDataY")?.textContent;
+              lng = record.querySelector("locationDataX")?.textContent;
+
+              let between = getDistance(currentLat, currentLng, lat, lng);
+
+              // ---년 --월 --일  --시 --분
+              let startDate =
+                record.querySelector("startDate")?.textContent || "";
+              let endDate = record.querySelector("endDate")?.textContent || "";
+
+              // 시작 시간이나 종료 시간이 없으면 건너뛰기
+              if (!startDate || !endDate) {
+                continue;
               }
 
-              let lat = "";
-              let lng = "";
-              let count = 0; // 사건 건수 카운트
-              let startDate = "";
-              let endDate = "";
+              // 숫자형태로 바꾸기 (202610190034)
+              startDate = Number(startDate.replace(/[^0-9]/g, ""));
+              endDate = Number(endDate.replace(/[^0-9]/g, ""));
 
-              //사고 데이터 출력
-              for (const record of records) {
-                lat = record.querySelector("locationDataY")?.textContent;
-                lng = record.querySelector("locationDataX")?.textContent;
+              // if (
+              //   +between <= 3 &&
+              //   startDate <= userDate &&
+              //   userDate <= endDate
+              // )
+              if (between <= 5) {
+                const title =
+                  record.querySelector("incidentTitle")?.textContent ||
+                  "제목 없음";
 
-                let between = getDistance(currentLat, currentLng, lat, lng);
+                const road =
+                  record.querySelector("roadName")?.textContent || "";
 
-                // ---년 --월 --일  --시 --분
-                let startDate =
+                const address =
+                  record.querySelector("addressNew")?.textContent ||
+                  record.querySelector("addressJibun")?.textContent ||
+                  "";
+
+                const start =
                   record.querySelector("startDate")?.textContent || "";
-                let endDate =
-                  record.querySelector("endDate")?.textContent || "";
 
-                // 시작 시간이나 종료 시간이 없으면 건너뛰기
-                if (!startDate || !endDate) {
-                  continue;
-                }
+                const type = record.querySelector("title");
 
-                // 숫자형태로 바꾸기 (202610190034)
-                startDate = Number(startDate.replace(/[^0-9]/g, ""));
-                endDate = Number(endDate.replace(/[^0-9]/g, ""));
+                const item = document.createElement("article");
+                const heading = document.createElement("h3");
+                const detail = document.createElement("p");
 
-                // if (
-                //   +between <= 3 &&
-                //   startDate <= userDate &&
-                //   userDate <= endDate
-                // )
-                if (between <= 5) {
-                  const title =
-                    record.querySelector("incidentTitle")?.textContent ||
-                    "제목 없음";
+                heading.textContent = title;
+                detail.textContent = [road, address, start]
+                  .filter(Boolean)
+                  .join(" · ");
 
-                  const road =
-                    record.querySelector("roadName")?.textContent || "";
-
-                  const address =
-                    record.querySelector("addressNew")?.textContent ||
-                    record.querySelector("addressJibun")?.textContent ||
-                    "";
-
-                  const start =
-                    record.querySelector("startDate")?.textContent || "";
-
-                  const type = record.querySelector("title");
-
-                  const item = document.createElement("article");
-                  const heading = document.createElement("h3");
-                  const detail = document.createElement("p");
-
-                  heading.textContent = title;
-                  detail.textContent = [road, address, start]
-                    .filter(Boolean)
-                    .join(" · ");
-
-                  item.append(heading, detail);
-                  list.appendChild(item);
-                  console.log(item);
-                  count++;
-                }
+                item.append(heading, detail);
+                list.appendChild(item);
+                console.log(item);
+                count++;
               }
-              status.textContent = `돌발정보 ${count}건을 불러왔습니다.`;
-            });
-        } catch (error) {
-          console.error("API 요청 실패:", error);
-          status.textContent = error.message;
-        }
-      });
+            }
+            status.textContent = `돌발정보 ${count}건을 불러왔습니다.`;
+          });
+      } catch (error) {
+        console.error("API 요청 실패:", error);
+        status.textContent = error.message;
+      }
+    });
   }
 }
 
