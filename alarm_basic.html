@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>알람</title>
+    <style>
+      body {
+        margin: 0px;
+      }
+
+      .header {
+        /*맨 위 줄: 뒤로가기 + 아이콘 + 제목*/
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        height: 203px;
+        border-bottom: 2px solid black;
+      }
+
+      #backBtn {
+        /*뒤로가기 화살표*/
+        position: absolute;
+        left: 71px;
+        padding: 0px;
+        border: none;
+        background-color: transparent;
+        font-size: 100px;
+        cursor: pointer;
+      }
+
+      #clock {
+        /*알람 아이콘*/
+        width: 160px;
+        height: 160px;
+      }
+
+      .title {
+        /*알람 제목*/
+        margin-left: 30px;
+        font-size: 115px;
+        font-weight: bold;
+      }
+
+      .deleteRow {
+        /*삭제 버튼이 오른쪽에 들어가는 줄*/
+        display: flex;
+        justify-content: flex-end;
+        padding: 39px 75px 43px 0px;
+      }
+
+      #deleteBtn {
+        /*삭제 모드 켜고 끄는 버튼*/
+        width: 120px;
+        height: 120px;
+        padding: 0px;
+        border: none;
+        border-radius: 50%;
+        background-color: transparent;
+        background-image: url("../assets/delete.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        cursor: pointer;
+      }
+
+      #deleteBtn.active {
+        /*삭제 모드가 켜져 있을 때*/
+        background-color: #f9eaea;
+      }
+
+      .alarmList {
+        /*알람 카드가 쌓이는 칸 (높이 고정, 넘치면 스크롤)*/
+        height: 1570px;
+        overflow-y: auto;
+      }
+
+      .alarmList::-webkit-scrollbar {
+        width: 24px;
+      }
+      .alarmList::-webkit-scrollbar-thumb {
+        background-color: #eecbcb;
+        border-radius: 12px;
+      }
+
+      .card {
+        /*알람 하나*/
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        box-sizing: border-box;
+        width: 1050px;
+        height: 464px;
+        margin: 0px auto 43px auto;
+        padding: 0px 61px;
+        background-color: #efefef;
+        border: 2px solid #dcdcdc;
+        border-radius: 85px;
+      }
+
+      .cardTime {
+        /*오전 07:00*/
+        font-size: 140px;
+        font-weight: bold;
+        color: #555555;
+      }
+
+      .cardDelete {
+        /*삭제 모드일 때 카드 오른쪽에 나오는 휴지통*/
+        width: 120px;
+        height: 120px;
+        padding: 0px;
+        border: none;
+        background-color: transparent;
+        background-image: url("../assets/delete.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        cursor: pointer;
+      }
+
+      .empty {
+        /*저장된 알람이 없을 때*/
+        text-align: center;
+        font-size: 60px;
+        font-weight: bold;
+        color: #888888;
+        margin-top: 100px;
+      }
+
+      /* 토글 스위치 */
+      .switch {
+        position: relative;
+        display: inline-block;
+        width: 160px;
+        height: 80px;
+        flex-shrink: 0;
+      }
+
+      .switch input {
+        /*진짜 체크박스는 숨기고 slider로 모양을 만듦*/
+        opacity: 0;
+        width: 0px;
+        height: 0px;
+      }
+
+      .slider {
+        /*꺼진 상태: 회색 바탕*/
+        position: absolute;
+        top: 0px;
+        left: 0px;
+        right: 0px;
+        bottom: 0px;
+        background-color: #c8c8c8;
+        border-radius: 40px;
+        cursor: pointer;
+        transition: background-color 0.2s;
+      }
+
+      .slider::before {
+        /*하얀 동그라미*/
+        content: "";
+        position: absolute;
+        top: 8px;
+        left: 8px;
+        width: 64px;
+        height: 64px;
+        background-color: white;
+        border-radius: 50%;
+        transition: transform 0.2s;
+      }
+
+      .switch input:checked + .slider {
+        /*켜진 상태: 초록 바탕*/
+        background-color: #19c319;
+      }
+
+      .switch input:checked + .slider::before {
+        /*동그라미가 오른쪽으로 이동*/
+        transform: translateX(80px);
+      }
+
+      #addBtn {
+        /*아래 + 버튼*/
+        display: block;
+        width: 1050px;
+        height: 160px;
+        margin: 45px auto 0px auto;
+        padding: 0px;
+        background-color: white;
+        border: 8px solid #888888;
+        border-radius: 80px;
+        font-size: 110px;
+        color: black;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="page">
+      <div class="header">
+        <button type="button" id="backBtn">←</button>
+        <img id="clock" src="../assets/clock.svg" alt="알람" />
+        <div class="title">알람</div>
+      </div>
+
+      <div class="deleteRow">
+        <button type="button" id="deleteBtn"></button>
+      </div>
+
+      <div class="alarmList" id="alarmList"></div>
+
+      <button type="button" id="addBtn">+</button>
+    </div>
+
+    <script>
+      const alarmList = document.getElementById("alarmList");
+      const addBtn = document.getElementById("addBtn");
+      const backBtn = document.getElementById("backBtn");
+      const deleteBtn = document.getElementById("deleteBtn");
+
+      let deleteMode = false; // 삭제 모드가 켜져 있는지
+
+      // 숫자를 두 자리로 (7 -> "07")
+      function pad(n) {
+        return String(n).padStart(2, "0");
+      }
+
+      // "19:17" -> "오후 07:17"
+      function formatTime(time) {
+        const parts = time.split(":");
+        let hour = Number(parts[0]);
+        const min = parts[1];
+
+        const ampm = hour >= 12 ? "오후" : "오전";
+
+        hour = hour % 12;
+        if (hour === 0) {
+          hour = 12;
+        }
+
+        return ampm + " " + pad(hour) + ":" + min;
+      }
+
+      // 저장된 알람 목록 읽기 / 저장하기
+      // 저장 모양: [{ time: "07:00", on: true }, { time: "07:40", on: false }, ...]
+      function loadAlarms() {
+        return JSON.parse(localStorage.getItem("alarms") || "[]");
+      }
+
+      function saveAlarms(alarms) {
+        localStorage.setItem("alarms", JSON.stringify(alarms));
+      }
+
+      // 삭제 모드에 따라 위쪽 휴지통 버튼 모양 바꾸기
+      function updateDeleteBtn() {
+        if (deleteMode) {
+          deleteBtn.classList.add("active");
+        } else {
+          deleteBtn.classList.remove("active");
+        }
+      }
+
+      // 알람 카드들을 화면에 그리는 함수
+      function render() {
+        const alarms = loadAlarms();
+        alarmList.innerHTML = "";
+
+        // 알람이 하나도 없으면 삭제 모드도 끄고 안내 글자만 보여주기
+        if (alarms.length === 0) {
+          deleteMode = false;
+          updateDeleteBtn();
+
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = "설정된 알람이 없습니다";
+          alarmList.appendChild(empty);
+          return;
+        }
+
+        alarms.forEach(function (alarm, index) {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          const timeText = document.createElement("div");
+          timeText.className = "cardTime";
+          timeText.textContent = formatTime(alarm.time);
+
+          card.appendChild(timeText);
+
+          if (deleteMode) {
+            // 삭제 모드: 토글 대신 휴지통 버튼
+            const delBtn = document.createElement("button");
+            delBtn.type = "button";
+            delBtn.className = "cardDelete";
+
+            // 누르면 이 알람을 목록에서 빼고 다시 저장
+            delBtn.addEventListener("click", function () {
+              const list = loadAlarms();
+              list.splice(index, 1); // index번째 알람 1개 삭제
+              saveAlarms(list);
+              render();
+            });
+
+            card.appendChild(delBtn);
+          } else {
+            // 평소: 토글 스위치 (label 안에 체크박스 + 모양(slider))
+            const label = document.createElement("label");
+            label.className = "switch";
+
+            const checkbox = document.createElement("input");
+            checkbox.type = "checkbox";
+            checkbox.checked = alarm.on;
+
+            const slider = document.createElement("span");
+            slider.className = "slider";
+
+            label.appendChild(checkbox);
+            label.appendChild(slider);
+
+            // 스위치를 누를 때마다 on/off 값을 바꿔서 저장
+            checkbox.addEventListener("change", function () {
+              const list = loadAlarms();
+              list[index].on = checkbox.checked;
+              saveAlarms(list);
+            });
+
+            card.appendChild(label);
+          }
+
+          alarmList.appendChild(card);
+        });
+      }
+
+      // 1. 처음 열 때 저장된 알람 보여주기
+      render();
+
+      // 2. + 버튼 누르면 알람 설정창으로 이동
+      addBtn.addEventListener("click", function () {
+        location.href = "alarm_ setting.html";
+      });
+
+      // 3. 뒤로가기 화살표
+      backBtn.addEventListener("click", function () {
+        history.back();
+      });
+
+      // 4. 위쪽 휴지통: 삭제 모드 켜기/끄기
+      deleteBtn.addEventListener("click", function () {
+        deleteMode = !deleteMode;
+        updateDeleteBtn();
+        render();
+      });
+    </script>
+  </body>
+</html>
