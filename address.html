@@ -1,0 +1,252 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>address</title>
+    <style>
+      .adress {
+        width: 100%;
+        height: 1229px;
+        margin-top: 533px;
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .title {
+        /*제목*/
+        text-align: center; /*가운데 정렬*/
+        margin: 10px 0px 10px 0px;
+        font-size: 100px;
+        font-weight: bold;
+      }
+
+      .subheading {
+        /*소제목*/
+        text-align: center;
+        margin: 10px 0px 10px 0px;
+        font-size: 30px;
+        font-weight: bold;
+      }
+
+      .scrollArea {
+        /*집/회사/장소가 들어가는 스크롤 영역*/
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 100%;
+        max-height: 1310px; /*칸이 이 높이까지는 늘어나고, 넘으면 스크롤이 생김*/
+        overflow-y: auto;
+      }
+
+      .scrollArea > * {
+        /*스크롤 영역 안에서 칸이 찌그러지지 않게*/
+        flex-shrink: 0;
+      }
+
+      /* 스크롤바 모양 (지우면 기본 스크롤바로 나옴) */
+      .scrollArea::-webkit-scrollbar {
+        width: 24px;
+      }
+      .scrollArea::-webkit-scrollbar-track {
+        background-color: #f9eaea;
+      }
+      .scrollArea::-webkit-scrollbar-thumb {
+        background-color: #eecbcb;
+        border-radius: 12px;
+      }
+
+      #ushome {
+        /*집*/
+        display: inline-block;
+        font-size: 100px;
+        font-weight: bold;
+        margin: 50px 130px 0px 60px;
+      }
+
+      #uscompany {
+        /*회사*/
+        display: inline-block;
+        font-size: 100px;
+        font-weight: bold;
+        margin: 50px 38px 0px 60px;
+      }
+
+      .usplace {
+        /*장소 (여러 개 만들어지니까 id 대신 class)*/
+        display: inline-block;
+        font-size: 100px;
+        font-weight: bold;
+        color: #000000;
+        margin: 50px 38px 0px 60px;
+      }
+
+      #home,
+      #company,
+      .placeInput {
+        width: 751px;
+        height: 107px;
+        font-size: 45px;
+        padding-left: 20px;
+        box-sizing: border-box;
+      }
+
+      input {
+        margin: 50px 50px 50px 0px;
+        background-color: #f9eaea;
+        border: 2px solid #b0a3a3;
+        border-radius: 5px; /* 모서리 둥글게*/
+      }
+
+      .bottom {
+        /*+ 버튼과 저장 버튼이 들어가는 칸 (스크롤 영역 밖)*/
+        position: relative;
+        display: flex;
+        justify-content: center;
+        width: 100%;
+      }
+
+      #addBtn {
+        /*+ 버튼*/
+        position: absolute;
+        left: 113px;
+        top: 84px;
+        width: 90px;
+        height: 90px;
+        padding: 0px;
+        border: none;
+        background-color: transparent;
+        background-image: url("../assets/addition.svg");
+        background-repeat: no-repeat;
+        background-position: center;
+        background-size: contain;
+        cursor: pointer;
+      }
+
+      #saveBtn {
+        /*저장 버튼*/
+        text-align: center;
+        width: 215px;
+        height: 100px;
+        font-size: 50px;
+        font-weight: bold;
+        margin-top: 153px;
+        background-color: #eecbcb;
+        border-radius: 5px;
+        border: 2px solid #b0a3a3;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="adress">
+      <div class="title">주소를 입력해주세요</div>
+      <div class="subheading">네비게이션에 사용합니다</div>
+
+      <form id="addressForm">
+        <div class="scrollArea" id="scrollArea">
+          <div>
+            <span id="ushome">집</span>
+            <input id="home" type="text" placeholder="주소를 입력해주세요" />
+          </div>
+          <br />
+          <div>
+            <span id="uscompany">회사</span>
+            <input id="company" type="text" placeholder="주소를 입력해주세요" />
+          </div>
+          <br />
+
+          <!-- + 누를 때마다 장소 칸이 여기에 추가됨 -->
+          <div id="placeBox"></div>
+        </div>
+
+        <div class="bottom">
+          <button type="button" id="addBtn"></button>
+          <button type="submit" id="saveBtn">저장</button>
+        </div>
+      </form>
+    </div>
+
+    <script>
+      const form = document.getElementById("addressForm");
+      const scrollArea = document.getElementById("scrollArea");
+      const homeInput = document.getElementById("home");
+      const companyInput = document.getElementById("company");
+      const placeBox = document.getElementById("placeBox");
+      const addBtn = document.getElementById("addBtn");
+
+      // 장소 칸 하나를 새로 만들어서 placeBox에 붙이는 함수
+      function addPlaceRow(value) {
+        const row = document.createElement("div");
+
+        const label = document.createElement("span");
+        label.className = "usplace";
+        label.textContent = "장소";
+
+        const input = document.createElement("input");
+        input.type = "text";
+        input.className = "placeInput";
+        input.placeholder = "주소를 입력해주세요";
+        input.value = value || "";
+
+        row.appendChild(label);
+        row.appendChild(input);
+        placeBox.appendChild(row);
+
+        return input;
+      }
+
+      // 1. 페이지 열 때 저장된 주소가 있으면 입력창에 채우기
+      homeInput.value = localStorage.getItem("homeAddress") || "";
+      companyInput.value = localStorage.getItem("companyAddress") || "";
+
+      // 저장된 장소들(배열)을 꺼내서 장소 칸을 그 개수만큼 만들기
+      const savedPlaces = JSON.parse(
+        localStorage.getItem("placeAddresses") || "[]",
+      );
+      savedPlaces.forEach(function (place) {
+        addPlaceRow(place);
+      });
+
+      // 2. + 버튼 누르면 새 장소 칸 추가
+      addBtn.addEventListener("click", function () {
+        const newInput = addPlaceRow("");
+        scrollArea.scrollTop = scrollArea.scrollHeight; // 스크롤이 생겼다면 맨 아래로 내려서 새 칸이 보이게
+        newInput.focus(); // 바로 입력할 수 있게 커서 이동
+      });
+
+      // 3. 저장 버튼 누르면 실행
+      form.addEventListener("submit", function (e) {
+        e.preventDefault(); // 페이지 새로고침 막기
+
+        const home = homeInput.value.trim();
+        const company = companyInput.value.trim();
+
+        // 4. 집, 회사가 빈칸이면 저장 안 함
+        if (home === "" || company === "") {
+          alert("집과 회사 주소를 모두 입력해주세요.");
+          return;
+        }
+
+        // 5. 장소 칸들의 값을 모아서 배열로 만들기 (빈칸은 제외)
+        const places = [];
+        document.querySelectorAll(".placeInput").forEach(function (input) {
+          const value = input.value.trim();
+          if (value !== "") {
+            places.push(value);
+          }
+        });
+
+        // 6. 브라우저에 저장
+        localStorage.setItem("homeAddress", home);
+        localStorage.setItem("companyAddress", company);
+        localStorage.setItem("placeAddresses", JSON.stringify(places));
+
+        alert("저장되었습니다.");
+      });
+    </script>
+  </body>
+</html>
