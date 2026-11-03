@@ -1,0 +1,304 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>알람 설정창</title>
+    <style>
+      .alarm {
+        width: 1060px;
+        height: 838px;
+        margin: 300px auto 0px auto;
+        background-color: white;
+        border-radius: 90px;
+        box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.3);
+      }
+
+      form {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .top {
+        width: 100%;
+        height: 125px;
+      }
+
+      #close {
+        display: block;
+        width: 120px;
+        height: 120px;
+        margin: 57px 46px 0px auto;
+        font-size: 70px;
+        background-color: white;
+        border: 6px solid #888888;
+        border-radius: 50%;
+      }
+
+      .picker {
+        /*휠 3개가 들어가는 칸 (한 줄 150px x 3줄)*/
+        position: relative;
+        display: flex;
+        width: 902px;
+        height: 450px;
+      }
+
+      .selectLine {
+        /*가운데 선택된 줄의 위아래 선*/
+        position: absolute;
+        left: 0px;
+        top: 150px;
+        width: 100%;
+        height: 150px;
+        box-sizing: border-box;
+        border-top: 4px solid black;
+        border-bottom: 4px solid black;
+        pointer-events: none; /*선이 터치/클릭을 막지 않게*/
+      }
+
+      .wheel {
+        /*위아래로 돌아가는 칸*/
+        height: 450px;
+        padding: 150px 0px; /*처음/마지막 값도 가운데로 올 수 있게 위아래 여백*/
+        box-sizing: border-box;
+        overflow-y: auto;
+        scroll-snap-type: y mandatory; /*스크롤하면 한 줄씩 딱딱 멈춤*/
+        scrollbar-width: none; /*스크롤바 숨기기*/
+      }
+
+      .wheel::-webkit-scrollbar {
+        display: none;
+      }
+
+      .item {
+        height: 150px;
+        line-height: 150px;
+        text-align: center;
+        font-size: 55px;
+        font-weight: bold;
+        scroll-snap-align: center;
+        cursor: pointer;
+      }
+
+      .ampm {
+        width: 348px;
+      }
+
+      .hour {
+        width: 194px;
+      }
+
+      .colon {
+        /*가운데 줄에만 보이는 :*/
+        width: 68px;
+        height: 150px;
+        margin-top: 150px;
+        line-height: 150px;
+        text-align: center;
+        font-size: 55px;
+        font-weight: bold;
+      }
+
+      .min {
+        width: 208px;
+      }
+
+      #ok {
+        width: 966px;
+        height: 133px;
+        font-size: 55px;
+        font-weight: bold;
+        margin-top: 83px;
+        background-color: #eaeaea;
+        border: none;
+        border-radius: 67px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="alarm">
+      <form id="alarmForm">
+        <div class="top">
+          <button type="button" id="close">✕</button>
+        </div>
+
+        <div class="picker">
+          <div class="selectLine"></div>
+          <div class="wheel ampm" id="ampmWheel"></div>
+          <div class="wheel hour" id="hourWheel"></div>
+          <div class="colon">:</div>
+          <div class="wheel min" id="minWheel"></div>
+        </div>
+
+        <!-- 실제 값이 저장되는 input (화면에는 안 보임) -->
+        <input type="time" id="alarmTime" name="alarmTime" hidden />
+
+        <button type="submit" id="ok">확인</button>
+      </form>
+    </div>
+
+    <script>
+      const ITEM_H = 150; // 한 줄 높이 (CSS의 .item height와 같아야 함)
+
+      const form = document.getElementById("alarmForm");
+      const ampmWheel = document.getElementById("ampmWheel");
+      const hourWheel = document.getElementById("hourWheel");
+      const minWheel = document.getElementById("minWheel");
+      const alarmTime = document.getElementById("alarmTime");
+
+      // 숫자를 두 자리로 (7 -> "07")
+      function pad(n) {
+        return String(n).padStart(2, "0");
+      }
+
+      // 휠에 들어갈 값 목록
+      const ampmList = ["오전", "오후"];
+      const hourList = [
+        "12",
+        "1",
+        "2",
+        "3",
+        "4",
+        "5",
+        "6",
+        "7",
+        "8",
+        "9",
+        "10",
+        "11",
+      ];
+      const minList = [];
+      for (let i = 0; i < 60; i++) {
+        minList.push(pad(i));
+      }
+
+      // 무한 반복용: 목록을 몇 번 이어 붙일지
+      const hourCopies = 25; // 12 x 25 = 300줄
+      const minCopies = 5; // 60 x 5 = 300줄
+
+      // 목록을 copies번 반복해서 휠 안에 한 줄씩 만들어 넣는 함수
+      function fillWheel(wheel, list, copies) {
+        for (let c = 0; c < copies; c++) {
+          list.forEach(function (text, i) {
+            const itemIndex = c * list.length + i;
+
+            const item = document.createElement("div");
+            item.className = "item";
+            item.textContent = text;
+
+            // 줄을 누르면 그 줄이 가운데로 오게 이동
+            item.addEventListener("click", function () {
+              wheel.scrollTo({ top: itemIndex * ITEM_H, behavior: "smooth" });
+            });
+
+            wheel.appendChild(item);
+          });
+        }
+      }
+
+      // 지금 가운데에 있는 줄이 몇 번째인지 (0부터)
+      function getIndex(wheel) {
+        return Math.round(wheel.scrollTop / ITEM_H);
+      }
+
+      // 몇 번째 줄이 가운데 오게 이동
+      function setIndex(wheel, i) {
+        wheel.scrollTop = i * ITEM_H;
+      }
+
+      // 반복되는 휠에서 지금 선택된 값이 목록의 몇 번째인지 (0 ~ 목록길이-1)
+      function getValue(wheel, list) {
+        return getIndex(wheel) % list.length;
+      }
+
+      // 반복되는 휠을 가운데 복사본의 value번째 값으로 맞추기
+      function setValue(wheel, list, copies, value) {
+        setIndex(wheel, Math.floor(copies / 2) * list.length + value);
+      }
+
+      // 휠이 멈추면 같은 값의 가운데 복사본으로 몰래 옮겨서 끝없이 돌게 하기
+      function loopWheel(wheel, list, copies) {
+        let timer;
+        wheel.addEventListener("scroll", function () {
+          clearTimeout(timer);
+          timer = setTimeout(function () {
+            const value = getValue(wheel, list);
+            const middle = Math.floor(copies / 2) * list.length + value;
+            if (getIndex(wheel) !== middle) {
+              setIndex(wheel, middle); // 보이는 글자는 똑같아서 눈치채지 못함
+            }
+          }, 150);
+        });
+      }
+
+      // 휠 3개의 위치를 읽어서 숨겨둔 time input에 "HH:MM"(24시간) 형식으로 넣기
+      function updateTime() {
+        const isPm = getIndex(ampmWheel) === 1;
+        const hourIndex = getValue(hourWheel, hourList); // 0이면 12시, 나머지는 번호 그대로
+        const min = getValue(minWheel, minList);
+
+        let hour24 = hourIndex % 12; // 12시는 0으로
+        if (isPm) {
+          hour24 += 12;
+        }
+
+        alarmTime.value = pad(hour24) + ":" + pad(min);
+      }
+
+      // "HH:MM" 값을 받아서 휠을 그 시간으로 맞추기
+      function setTime(value) {
+        const parts = value.split(":");
+        const hour24 = Number(parts[0]);
+        const min = Number(parts[1]);
+
+        setIndex(ampmWheel, hour24 >= 12 ? 1 : 0);
+        setValue(hourWheel, hourList, hourCopies, hour24 % 12);
+        setValue(minWheel, minList, minCopies, min);
+      }
+
+      // 1. 휠 채우기
+      fillWheel(ampmWheel, ampmList, 1);
+      fillWheel(hourWheel, hourList, hourCopies);
+      fillWheel(minWheel, minList, minCopies);
+
+      // 2. 시, 분 휠은 무한 반복
+      loopWheel(hourWheel, hourList, hourCopies);
+      loopWheel(minWheel, minList, minCopies);
+
+      // 3. 휠이 움직일 때마다 값 갱신
+      [ampmWheel, hourWheel, minWheel].forEach(function (wheel) {
+        wheel.addEventListener("scroll", updateTime);
+      });
+
+      // 4. 처음에는 현재 시간으로 맞추기
+      const now = new Date();
+      setTime(pad(now.getHours()) + ":" + pad(now.getMinutes()));
+      updateTime();
+
+      // 5. 확인 버튼
+      form.addEventListener("submit", function (e) {
+        e.preventDefault(); // 페이지 새로고침 막기
+        updateTime();
+
+        // 저장된 알람 목록에 새 알람 추가 (처음에는 켜진 상태)
+        const alarms = JSON.parse(localStorage.getItem("alarms") || "[]");
+        alarms.push({ time: alarmTime.value, on: true });
+
+        // 시간 순서대로 정렬 ("07:00" < "07:40" 글자 순서가 곧 시간 순서)
+        alarms.sort(function (a, b) {
+          return a.time.localeCompare(b.time);
+        });
+
+        localStorage.setItem("alarms", JSON.stringify(alarms));
+
+        location.href = "alarm_basic.html"; // 알람 목록으로 돌아가기
+      });
+
+      // 6. X 버튼 누르면 저장 안 하고 알람 목록으로 돌아가기
+      document.getElementById("close").addEventListener("click", function () {
+        location.href = "alarm_basic.html";
+      });
+    </script>
+  </body>
+</html>
