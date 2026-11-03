@@ -125,6 +125,35 @@ class WidgetBtn extends HTMLElement {
       vectorImg.classList.toggle("open", isOpen);
       wrapper.classList.toggle("expanded", isOpen);
     });
+
+    const smallOption = this.querySelector(".smallOption");
+    const bigOption = this.querySelector(".bigOption");
+
+    // 공통 선택 함수
+    const selectWidget = (selectedOption, type) => {
+      // 모든 위젯의 선택 테두리 제거
+      document
+        .querySelectorAll(".smallOption, .bigOption")
+        .forEach((option) => {
+          option.classList.remove("selected");
+        });
+
+      // 현재 클릭한 위젯에만 테두리 표시
+      selectedOption.classList.add("selected");
+
+      console.log("선택한 위젯:", tagName);
+      console.log("선택한 크기:", type);
+    };
+
+    // 작은 위젯 클릭
+    smallOption.addEventListener("click", () => {
+      selectWidget(smallOption, "1");
+    });
+
+    // 큰 위젯 클릭
+    bigOption.addEventListener("click", () => {
+      selectWidget(bigOption, "2");
+    });
   }
 }
 

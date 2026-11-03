@@ -576,6 +576,12 @@ widget-btn {
   cursor: pointer;
 }
 
+/* 선택된 위젯 */
+.smallOption.selected,
+.bigOption.selected {
+  border: 10px solid #f89292;
+}
+
 .trafficWidget {
   width: 1000px;
   height: 500px;
