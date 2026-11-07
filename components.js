@@ -1,15 +1,29 @@
 import { getWeather } from './weatherWidget.js';
-import { getStorage, setStorage } from './db.js';
+import { getStorage, setStorage, removeStorage } from './db.js';
 import './localStroge.js';
+
+const widgetName = ['navigation', 'weather', 'alarm', 'note', 'traffic'];
+const widgetKind = [
+  '네비게이션',
+  '날씨 보기',
+  '알람',
+  '업무 기록',
+  '교통량 보기',
+];
 
 //리액트 처럼 component 형식으로 제작할 수 있는 순수 custom tag 기능.
 class StartScreen extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<div id="startScreen"><p id = "tong">통근</p><p>이</p></div>`;
+    this.innerHTML = `<div id="startScreen">
+    <p id = "tong">통근</p>
+    <p>이</p></div>`;
+
+    const userData = getStorage('user');
+    console.log(userData);
 
     setTimeout(() => {
       this.hidden = true;
-    }, 1000);
+    }, 3000);
   }
 }
 
@@ -60,20 +74,20 @@ class FootNavigationBar extends HTMLElement {
 class Main extends HTMLElement {
   connectedCallback() {
     const user = getStorage('user');
-    console.log(user);
 
-    if (user.firstStart) {
+    if (user.firstStart || user.widgetList.length === 0) {
+      //div 가이드 추가 코드
       const noneDiv = document.createElement('div');
       noneDiv.id = 'none';
       noneDiv.style.marginTop = '140px';
       noneDiv.style.marginBottom = '70px';
       noneDiv.innerHTML = '원하는 위젯을<br>추가해주세요';
 
+      //widget 스크롤
       const widgetScroll = document.createElement('widget-list');
       widgetScroll.hidden = true;
 
       noneDiv.addEventListener('click', () => {
-        // noneDiv.classList.add('widgetSlideUp');
         widgetScroll.classList.add('widgetSlideUp');
         widgetScroll.hidden = false;
       });
@@ -85,27 +99,81 @@ class Main extends HTMLElement {
 
       this.appendChild(mainPartDiv);
     } else {
+      //app > footNav 추가.
+      const app = document.querySelector('.app');
+      const footNav = document.createElement('navigation-bar');
+      app.appendChild(footNav);
+
+      //유저 데이터의 위젯 리스트 가지고 와서 뿌리기.
+      const widgetBoard = document.createElement('div');
+      widgetBoard.id = 'widgetBoard';
+
+      user.widgetList.forEach((el) => {
+        const widget = document.createElement(`${el.name}-widget`);
+        widget.setAttribute('type', el.type);
+        widgetBoard.appendChild(widget);
+      });
+
+      this.appendChild(widgetBoard);
     }
   }
+}
+
+// 저장된 배열을 기준으로 번호와 불빛을 다시 그림
+function renderWidgetOrder() {
+  const { widgetList } = getStorage('user');
+
+  document.querySelectorAll('.widgetOrder').forEach((el) => el.remove());
+  document
+    .querySelectorAll('widget-btn .light')
+    .forEach((el) => el.classList.remove('on'));
+
+  widgetList.forEach((widget, index) => {
+    const option = document.querySelector(
+      `[data-name="${widget.name}"][data-type="${widget.type}"]`,
+    );
+
+    const order = document.createElement('div');
+    order.className = 'widgetOrder';
+    order.textContent = index + 1;
+    option.appendChild(order);
+
+    option.closest('widget-btn').querySelector('.light').classList.add('on');
+  });
+}
+
+// 위젯을 눌렀을 때 배열을 바꾸고 localStorage에 저장
+function toggleWidget(name, type) {
+  const user = getStorage('user');
+  const found = user.widgetList.find((widget) => widget.name === name);
+
+  if (!found) {
+    user.widgetList.push({ name, type }); // 처음 고른 위젯
+  } else if (found.type === type) {
+    user.widgetList = user.widgetList.filter((widget) => widget.name !== name); // 같은 크기를 다시 누르면 취소
+  } else {
+    found.type = type; // 다른 크기를 누르면 번호는 유지하고 크기만 변경
+  }
+
+  setStorage('user', user);
+  renderWidgetOrder();
 }
 
 class WidgetList extends HTMLElement {
   connectedCallback() {
     const widgetList = document.createElement('div');
     widgetList.id = 'widgetList';
-
-    //유저가 선택한 위젯을 배열에 담고 => localStorage에 저장.
-    const list = [];
-
-    for (let i = 0; i < list.length; i++) {}
-    list.push('navigation');
-    let nav = document.createElement('widget-btn');
-    nav.id = 'navigation';
-    nav.style.zIndex = '100';
     widgetList.style.zIndex = '1000';
 
-    widgetList.appendChild(nav);
+    for (let i = 0; i < widgetName.length; i++) {
+      let nav = document.createElement(`widget-btn`);
+      nav.id = i;
+      nav.style.zIndex = '100';
+      widgetList.appendChild(nav);
+    }
+
     this.appendChild(widgetList);
+    renderWidgetOrder(); // 새로고침 후 저장된 번호 복원
   }
 }
 
@@ -113,58 +181,37 @@ class WidgetBtn extends HTMLElement {
   connectedCallback() {
     const id = this.id;
 
-    let text = '';
-    let tagName = '';
+    // const widgetName = ['navigation', 'weather', 'alarm', 'note', 'traffic'];
+    // const widgetKind = [
+    //   '네비게이션',
+    //   '날씨 보기',
+    //   '알람',
+    //   '업무 기록',
+    //   '교통량 보기',
+    // ];
 
-    if (id === 'navigation') {
-      text = '네비게이션';
-      tagName = 'navigation-widget';
-    } else if (id === 'weather') {
-      text = '날씨 보기';
-      tagName = 'weather-widget';
-    } else if (id === 'alarm') {
-      text = '알람';
-      tagName = 'alarm-widget';
-    } else if (id === 'note') {
-      text = '업무 기록';
-      tagName = 'note-widget';
-    } else if (id === 'traffic') {
-      text = '교통량 보기';
-      tagName = 'traffic-widget';
-    }
+    let text = `${widgetKind[id]}`;
+    let tagName = `${widgetName[id]}-widget`;
 
-    this.innerHTML = `<div id="widget">
-        <div id="vectorImg"></div>
-        <div id="widgetText">${text}</div>
-        <div id="light"></div>
-    </div>`;
-
-    this.querySelector('#vectorImg').addEventListener('click', () => {
-      this.innerHTML = `<${tagName}></${tagName}>`;
-    });
     this.innerHTML = `
       <div class="widgetWrapper">
-
         <div class="widgetButton">
           <button type="button" class="vectorImg"></button>
           <div class="widgetText">${text}</div>
           <div class="light"></div>
         </div>
-
         <div class="widgetOption">
           <div class="optionBody">
 
-            <div class="smallOption">
+            <div class="smallOption" data-name="${widgetName[id]}" data-type="1">
               <${tagName} type="1"></${tagName}>
             </div>
 
-            <div class="bigOption">
+            <div class="bigOption" data-name="${widgetName[id]}" data-type="2">
               <${tagName} type="2"></${tagName}>
             </div>
-
           </div>
         </div>
-
       </div>
     `;
 
@@ -177,6 +224,12 @@ class WidgetBtn extends HTMLElement {
 
       vectorImg.classList.toggle('open', isOpen);
       wrapper.classList.toggle('expanded', isOpen);
+    });
+
+    this.querySelectorAll('.smallOption, .bigOption').forEach((option) => {
+      option.addEventListener('click', () => {
+        toggleWidget(option.dataset.name, option.dataset.type);
+      });
     });
   }
 }
@@ -310,9 +363,9 @@ class TrafficWidget extends HTMLElement {
 
     </div>`;
 
-    const repeatImg = this.querySelector(".repeatImg");
+    const repeatImg = this.querySelector('.repeatImg');
 
-    repeatImg.addEventListener("click", async () => {
+    repeatImg.addEventListener('click', async () => {
       // 현재 위치 좌표 변수 선언
       let currentLat = 0;
       let currentLng = 0;
@@ -365,10 +418,10 @@ class TrafficWidget extends HTMLElement {
       // 사용자 현재 날짜(숫자 형)
       // const userDate = Number(`${year}${month}${date}${hour}${min}`);
 
-      const status = this.querySelector("#status");
-      const list = this.querySelector("#trafficData");
+      const status = this.querySelector('#status');
+      const list = this.querySelector('#trafficData');
 
-      status.textContent = "교통돌발정보를 불러오는 중...";
+      status.textContent = '교통돌발정보를 불러오는 중...';
       list.replaceChildren(); // 새로운 정보로 업데이트
 
       try {
@@ -382,42 +435,42 @@ class TrafficWidget extends HTMLElement {
         currentLat = 37.4661018035835;
         currentLng = 126.931927855676;
 
-        fetch("traffic.xml")
+        fetch('traffic.xml')
           .then((response) => response.text())
           .then((xmlString) => {
             const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+            const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
 
-            const records = [...xmlDoc.querySelectorAll("record")];
+            const records = [...xmlDoc.querySelectorAll('record')];
 
             if (records.length === 0) {
-              const message = xml.querySelector("resultMsg")?.textContent;
+              const message = xml.querySelector('resultMsg')?.textContent;
 
               status.textContent =
                 message ||
-                "표시할 돌발정보가 없거나 API 응답을 확인해야 합니다.";
+                '표시할 돌발정보가 없거나 API 응답을 확인해야 합니다.';
 
-              console.log("UTIC 응답:", responseText);
+              console.log('UTIC 응답:', responseText);
               return;
             }
 
-            let lat = "";
-            let lng = "";
+            let lat = '';
+            let lng = '';
             let count = 0; // 사건 건수 카운트
-            let startDate = "";
-            let endDate = "";
+            let startDate = '';
+            let endDate = '';
 
             //사고 데이터 출력
             for (const record of records) {
-              lat = record.querySelector("locationDataY")?.textContent;
-              lng = record.querySelector("locationDataX")?.textContent;
+              lat = record.querySelector('locationDataY')?.textContent;
+              lng = record.querySelector('locationDataX')?.textContent;
 
               let between = getDistance(currentLat, currentLng, lat, lng);
 
               // ---년 --월 --일  --시 --분
               let startDate =
-                record.querySelector("startDate")?.textContent || "";
-              let endDate = record.querySelector("endDate")?.textContent || "";
+                record.querySelector('startDate')?.textContent || '';
+              let endDate = record.querySelector('endDate')?.textContent || '';
 
               // 시작 시간이나 종료 시간이 없으면 건너뛰기
               if (!startDate || !endDate) {
@@ -425,8 +478,8 @@ class TrafficWidget extends HTMLElement {
               }
 
               // 숫자형태로 바꾸기 (202610190034)
-              startDate = Number(startDate.replace(/[^0-9]/g, ""));
-              endDate = Number(endDate.replace(/[^0-9]/g, ""));
+              startDate = Number(startDate.replace(/[^0-9]/g, ''));
+              endDate = Number(endDate.replace(/[^0-9]/g, ''));
 
               // if (
               //   +between <= 3 &&
@@ -435,30 +488,30 @@ class TrafficWidget extends HTMLElement {
               // )
               if (between <= 5) {
                 const title =
-                  record.querySelector("incidentTitle")?.textContent ||
-                  "제목 없음";
+                  record.querySelector('incidentTitle')?.textContent ||
+                  '제목 없음';
 
                 const road =
-                  record.querySelector("roadName")?.textContent || "";
+                  record.querySelector('roadName')?.textContent || '';
 
                 const address =
-                  record.querySelector("addressNew")?.textContent ||
-                  record.querySelector("addressJibun")?.textContent ||
-                  "";
+                  record.querySelector('addressNew')?.textContent ||
+                  record.querySelector('addressJibun')?.textContent ||
+                  '';
 
                 const start =
-                  record.querySelector("startDate")?.textContent || "";
+                  record.querySelector('startDate')?.textContent || '';
 
-                const type = record.querySelector("title");
+                const type = record.querySelector('title');
 
-                const item = document.createElement("article");
-                const heading = document.createElement("h3");
-                const detail = document.createElement("p");
+                const item = document.createElement('article');
+                const heading = document.createElement('h3');
+                const detail = document.createElement('p');
 
                 heading.textContent = title;
                 detail.textContent = [road, address, start]
                   .filter(Boolean)
-                  .join(" · ");
+                  .join(' · ');
 
                 item.append(heading, detail);
                 list.appendChild(item);
@@ -469,7 +522,7 @@ class TrafficWidget extends HTMLElement {
             status.textContent = `돌발정보 ${count}건을 불러왔습니다.`;
           });
       } catch (error) {
-        console.error("API 요청 실패:", error);
+        console.error('API 요청 실패:', error);
         status.textContent = error.message;
       }
     });

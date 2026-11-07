@@ -26,6 +26,6 @@ export function getStorage(key) {
 }
 
 //  데이터 삭제
-// export function removeStorage(key) {
-//   localStorage.removeItem(key);
-// }
+export function removeStorage(key) {
+  localStorage.removeItem(key);
+}

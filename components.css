@@ -24,6 +24,14 @@ start-screen {
   color: var(--text-color);
 }
 
+@keyframes behind {
+  40% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 /* 시작 화면 */
 #startScreen {
   width: 100%;
@@ -31,8 +39,9 @@ start-screen {
   display: flex;
   align-items: center;
   justify-content: center;
-  font-family: "LGOTFBold";
+  font-family: 'LGOTFBold';
   font-size: 200px;
+  animation: behind 1s forwards;
 }
 
 /* 이건 상단바이에요. */
@@ -64,7 +73,7 @@ navigation-bar {
   border: 0px;
 }
 #widgetAddBtn {
-  background-image: url("./assets/PlusCircle.svg");
+  background-image: url('./assets/PlusCircle.svg');
 }
 #homeBtn {
   background-image: url(./assets/home.svg);
@@ -81,7 +90,7 @@ navigation-bar {
 .repeatImg {
   width: 100px;
   height: 100px;
-  background-image: url("./assets/ArrowRepeat.svg");
+  background-image: url('./assets/ArrowRepeat.svg');
   background-repeat: no-repeat;
   background-position: center;
   border: none;
@@ -185,7 +194,7 @@ navigation-bar {
   border-radius: 75px;
 }
 
-note-widget[type="1"] .noteWidget {
+note-widget[type='1'] .noteWidget {
   width: 1000px;
   height: 620px;
   border-radius: 75px;
@@ -194,7 +203,7 @@ note-widget[type="1"] .noteWidget {
   justify-content: center;
 }
 
-note-widget[type="2"] .noteWidget {
+note-widget[type='2'] .noteWidget {
   width: 1000px;
   height: 1000px;
   border-radius: 75px;
@@ -208,7 +217,7 @@ note-widget[type="2"] .noteWidget {
   height: 80px;
 }
 
-div#mainPart {
+#mainPart {
   width: 100%;
   min-height: 1500px;
   display: flex;
@@ -218,15 +227,25 @@ div#mainPart {
   overflow: auto;
 }
 
+/* 위젯 화면. 한 줄에 안 들어가는 위젯은 다음 줄로 내려감 */
+#widgetBoard {
+  width: 1040px;
+  margin: 40px auto 230px; /* 아래쪽은 하단 바(190px)에 가리지 않게 함 */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+}
+
 /* 위젯 추가되어있지 않을 때*/
-div#none {
+#none {
   font-size: 100px;
   width: 550px;
   height: 210px;
   text-align: center;
   align-items: center;
   justify-content: center;
-  font-family: "LGOTFRegular";
+  font-family: 'LGOTFRegular';
 }
 
 /* 업무 기록 위젯 */
@@ -357,16 +376,16 @@ widget-list {
   margin-top: 0;
 }
 
-weather-widget[type="2"] > div#weather {
+weather-widget[type='2'] > div#weather {
   width: 1000px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-weather-widget[type="2"] #weather_1 div {
+weather-widget[type='2'] #weather_1 div {
   margin: 0px 0px 0px 100px;
 }
-weather-widget[type="2"] #weather_2 {
+weather-widget[type='2'] #weather_2 {
   margin: 240px 100px 0px 0px;
 }
 
@@ -377,13 +396,13 @@ weather-widget[type="2"] #weather_2 {
   margin-top: 50px !important;
   margin-bottom: 30px !important;
 }
-weather-widget[type="1"] #type1 {
+weather-widget[type='1'] #type1 {
   width: 242px;
   height: 160px;
   margin-top: 54px;
   background-image: url(./assets/weather/cloud1.svg);
 }
-weather-widget[type="2"] #type1 {
+weather-widget[type='2'] #type1 {
   width: 371px;
   height: 160px;
   background-image: url(./assets/weather/cloud2.svg);
@@ -421,6 +440,13 @@ widget-btn {
   width: 100%;
 }
 
+/* 위젯 하나를 감싸는 영역 */
+widget-btn {
+  display: block;
+  width: 100%;
+  margin-top: 30px;
+}
+
 /* 기존 위젯 버튼 */
 .widgetButton {
   width: 1025px;
@@ -435,13 +461,15 @@ widget-btn {
   align-items: center;
   justify-content: space-around;
   flex-shrink: 0;
+  position: relative;
+  z-index: 1;
 }
 
 /* 펼치기 아이콘 */
 #vectorImg {
   width: 85px;
   height: 58px;
-  background-image: url("./assets/Vector.svg");
+  background-image: url('./assets/Vector.svg');
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
@@ -451,7 +479,7 @@ widget-btn {
   width: 85px;
   height: 58px;
 
-  background-image: url("./assets/clickVector.png");
+  background-image: url('./assets/clickVector.png');
   background-size: 50px 50px;
   background-repeat: no-repeat;
   background-position: center;
@@ -461,7 +489,7 @@ widget-btn {
 #widgetText {
   width: 462px;
   font-size: 90px;
-  font-family: "LGOTFRegular";
+  font-family: 'LGOTFRegular';
 }
 
 /* 오른쪽 표시 원 */
@@ -471,12 +499,11 @@ widget-btn {
   background-color: #f89292;
   border-radius: 50%;
 }
-
-/* 위젯 하나를 감싸는 영역 */
-widget-btn {
-  display: block;
-  width: 100%;
-  margin-bottom: 30px;
+#lightOn {
+  width: 60px;
+  height: 60px;
+  background-color: #92f897;
+  border-radius: 50%;
 }
 
 .widgetWrapper {
@@ -487,25 +514,6 @@ widget-btn {
   display: flex;
   flex-direction: column;
   align-items: stretch;
-}
-
-/* 위젯 버튼 */
-.widgetButton {
-  width: 100%;
-  height: 250px;
-  box-sizing: border-box;
-
-  display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: space-around;
-
-  background-color: var(--main-gray-color);
-  border: 1px solid var(--line-pink-color);
-  border-radius: 40px;
-
-  position: relative;
-  z-index: 1;
 }
 
 /* 옵션이 펼쳐졌을 때 버튼 아래쪽 모서리 변경 */
@@ -520,7 +528,7 @@ widget-btn {
   flex-shrink: 0;
 
   background-color: transparent;
-  background-image: url("./assets/Vector.svg");
+  background-image: url('./assets/Vector.svg');
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -531,7 +539,7 @@ widget-btn {
 
 /* 클릭 후 아이콘 */
 .vectorImg.open {
-  background-image: url("./assets/clickVector.png");
+  background-image: url('./assets/clickVector.png');
   background-size: 50px auto;
 }
 
@@ -539,7 +547,7 @@ widget-btn {
 .widgetText {
   width: 462px;
   font-size: 90px;
-  font-family: "LGOTFRegular";
+  font-family: 'LGOTFRegular';
   text-align: center;
 }
 
@@ -551,6 +559,11 @@ widget-btn {
 
   background-color: #f89292;
   border-radius: 50%;
+}
+
+/* 선택된 위젯의 표시 원 */
+.light.on {
+  background-color: #a3f59a;
 }
 
 /* 위젯 옵션 영역 */
@@ -585,7 +598,8 @@ widget-btn {
 
 /* 작은 위젯 */
 .smallOption {
-  width: 100%;
+  position: relative;
+  width: fit-content; /* 옆의 빈 공간을 눌러도 선택되지 않게 함 */
   display: flex;
   justify-content: flex-start; /* 왼쪽 정렬 */
   cursor: pointer; /* 클릭 가능 */
@@ -593,10 +607,36 @@ widget-btn {
 
 /* 큰 위젯 */
 .bigOption {
+  position: relative;
   width: 100%;
   display: flex;
   justify-content: center;
   cursor: pointer;
+}
+
+/* 미리보기 안쪽의 입력창과 버튼이 눌리지 않게 함 */
+.optionBody [type] {
+  pointer-events: none;
+}
+
+/* 누른 순서 번호 */
+.widgetOrder {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--text-color);
+  border-radius: 50%;
+  color: white;
+  font-size: 50px;
+  font-weight: bold;
 }
 
 .trafficWidget {
@@ -632,13 +672,13 @@ widget-btn {
   padding: 20px 40px;
 }
 
-traffic-widget[type="2"] .trafficWidget {
+traffic-widget[type='2'] .trafficWidget {
   width: 1000px;
   height: 1000px;
   border-radius: 75px;
   /* pointer-events: none; */
 }
-traffic-widget[type="1"] .trafficWidget {
+traffic-widget[type='1'] .trafficWidget {
   width: 1000px;
   height: 500px;
   border-radius: 75px;
