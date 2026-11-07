@@ -6,12 +6,18 @@ const userProfile = {
   name: 'ㅈㅈㅁ',
   password: '1234',
   place: [],
-  firstStart: false,
+  firstStart: true,
   //user가 선택한 위젯들을 모아놓은 stroge임.
-  widgetList: [123],
+  widgetList: [],
 };
-setStorage('user', userProfile);
+//widgetList: [
+//   { name: 'weather', type: '1' },
+//   { name: 'note', type: '1' },
+//   { name: 'traffic', type: '2' },
+// ],
+// setStorage('user', userProfile);
 if (!getStorage('user')) {
+  setStorage('user', userProfile);
 }
 
 // 데이터 읽어오기 (자동으로 객체로 변환됨)

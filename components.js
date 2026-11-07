@@ -70,39 +70,86 @@ class FootNavigationBar extends HTMLElement {
   }
 }
 
+class Login extends HTMLElement {
+  connectedCallback() {
+    // <div class="title">사용자 확인</div>
+    //   <form class="user">
+    //     <div>
+    //       <span id="usname">이름</span>
+    //       <input id="name" type = "text" placeholder="이름을 입력해주세요"></input>
+    //     </div>
+    //   </br>
+    //   <div>
+    //     <span id="uspw">비밀번호</span>
+    //     <input id="pw" type = "password" placeholder="비밀번호를 입력해주세요"></input>
+    //   </div>
+    //   </br>
+    //     <button type="submit">로그인</button>
+    //   </form>
+
+    let title = document.createElement('div');
+    title.innerHTML = '사용자 확인';
+    title.id = 'formTitle';
+
+    let form = document.createElement('div');
+    form.innerHTML =
+      '<form class="user"><div id="name"><span id="usname">이름</span><input id="usname" type = "text" placeholder="이름을 입력해주세요"></input></div></br><div id="pw"><span id="uspw">비밀번호</span><input id="uspw" type = "password" placeholder="비밀번호를 입력해주세요"></input></div></br><button type="submit">로그인</button></form>';
+
+    this.appendChild(title);
+    this.appendChild(form);
+  }
+}
+
+class AddWidget extends HTMLElement {
+  connectedCallback() {
+    //div 가이드 추가 코드
+    const noneDiv = document.createElement('div');
+    noneDiv.id = 'none';
+    noneDiv.style.marginTop = '140px';
+    noneDiv.style.marginBottom = '70px';
+    noneDiv.innerHTML = '원하는 위젯을<br>추가해주세요';
+
+    //widget 스크롤
+    const widgetScroll = document.createElement('widget-list');
+    widgetScroll.hidden = true;
+
+    noneDiv.addEventListener('click', () => {
+      widgetScroll.classList.add('widgetSlideUp');
+      widgetScroll.hidden = false;
+    });
+
+    const mainPartDiv = document.createElement('div');
+    mainPartDiv.id = 'mainPart';
+    mainPartDiv.appendChild(noneDiv);
+    mainPartDiv.appendChild(widgetScroll);
+
+    this.appendChild(mainPartDiv);
+
+    // + 버튼처럼 바로 열어야 할 때 사용
+    // if (this.hasAttribute('open')) openList();
+  }
+}
+
 // 내용 컴포넌트
 class Main extends HTMLElement {
+  //얘는 한번 실행 후 끝.
   connectedCallback() {
+    this.render();
+  }
+
+  //렌더 할때 마다 그리는 거임
+  render() {
+    this.innerHTML = ''; // 이전 화면 비우기
     const user = getStorage('user');
 
-    if (user.firstStart || user.widgetList.length === 0) {
-      //div 가이드 추가 코드
-      const noneDiv = document.createElement('div');
-      noneDiv.id = 'none';
-      noneDiv.style.marginTop = '140px';
-      noneDiv.style.marginBottom = '70px';
-      noneDiv.innerHTML = '원하는 위젯을<br>추가해주세요';
-
-      //widget 스크롤
-      const widgetScroll = document.createElement('widget-list');
-      widgetScroll.hidden = true;
-
-      noneDiv.addEventListener('click', () => {
-        widgetScroll.classList.add('widgetSlideUp');
-        widgetScroll.hidden = false;
-      });
-
-      const mainPartDiv = document.createElement('div');
-      mainPartDiv.id = 'mainPart';
-      mainPartDiv.appendChild(noneDiv);
-      mainPartDiv.appendChild(widgetScroll);
-
-      this.appendChild(mainPartDiv);
+    if (user.firstStart) {
+      const login = document.createElement('login-screen');
+      this.appendChild(login);
+    } else if (user.widgetList.length === 0) {
+      const addWidget = document.createElement('add-widget');
+      this.appendChild(addWidget);
     } else {
-      //app > footNav 추가.
-      const app = document.querySelector('.app');
-      const footNav = document.createElement('navigation-bar');
-      app.appendChild(footNav);
+      document.querySelector('navigation-bar').hidden = false;
 
       //유저 데이터의 위젯 리스트 가지고 와서 뿌리기.
       const widgetBoard = document.createElement('div');
@@ -165,14 +212,30 @@ class WidgetList extends HTMLElement {
     widgetList.id = 'widgetList';
     widgetList.style.zIndex = '1000';
 
-    for (let i = 0; i < widgetName.length; i++) {
+    for (let i in widgetName) {
       let nav = document.createElement(`widget-btn`);
       nav.id = i;
       nav.style.zIndex = '100';
       widgetList.appendChild(nav);
     }
 
+    //확인 버튼
+    const finishDiv = document.createElement('div');
+    finishDiv.id = 'widgetSubmit';
+
+    finishDiv.addEventListener('click', () => {
+      const user = getStorage('user');
+      // 고른 위젯이 없으면 넘어가지 않음
+      if (user.widgetList.length === 0) return;
+
+      user.firstStart = false;
+      setStorage('user', user);
+
+      this.closest('main-div').render();
+    });
+
     this.appendChild(widgetList);
+    this.appendChild(finishDiv);
     renderWidgetOrder(); // 새로고침 후 저장된 번호 복원
   }
 }
@@ -569,8 +632,12 @@ class WeatherWidget extends HTMLElement {
 
 // 커스텀 태그를 정의한다는 의미.
 customElements.define('start-screen', StartScreen);
+customElements.define('login-screen', Login);
+customElements.define('add-widget', AddWidget);
 customElements.define('top-bar', TopBar);
 customElements.define('navigation-bar', FootNavigationBar);
+customElements.define('navigation-widget', NavigationWidget);
+customElements.define('alarm-widget', AlarmWidget);
 customElements.define('widget-btn', WidgetBtn);
 customElements.define('note-widget', NoteWidget);
 customElements.define('traffic-widget', TrafficWidget);

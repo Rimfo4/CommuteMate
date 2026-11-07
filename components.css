@@ -67,6 +67,9 @@ navigation-bar {
   align-items: center;
   justify-content: space-around; /* 공간을 균등하게 배분 */
 }
+navigation-bar[hidden] {
+  display: none;
+}
 .footBtn {
   width: 130px;
   height: 130px;
@@ -96,6 +99,58 @@ navigation-bar {
   border: none;
   margin: 40px 40px 0px 0px;
 }
+
+/* //signUp, login 위젯용 */
+login-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'LGOTFRegular';
+}
+#formTitle {
+  height: 210px;
+  font-size: 100px;
+  margin-top: 500px;
+  text-align: center;
+  font-family: 'LGOTFRegular';
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.title {
+  text-align: center;
+  margin: 10px 0px 120px 0px;
+  font-size: 100px;
+}
+#usname {
+  display: inline-block;
+  font-size: 80px;
+}
+#uspw {
+  display: inline-block;
+  font-size: 70px;
+}
+#name,
+#pw {
+  width: 950px;
+  margin-top: 130px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+Login Input {
+  width: 750px;
+  border: 2px solid black;
+  border-radius: 5px; /* 모서리 둥글게*/
+}
+#formButton {
+  text-align: center;
+}
+
 /* 기존 위젯 버튼 */
 #widget {
   width: 1025px;
@@ -118,11 +173,19 @@ navigation-bar {
   flex-direction: column;
   align-items: center;
 }
+#widgetSubmit {
+  width: 100px;
+  height: 100px;
+  margin-top: 80px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(./assets/submit.svg);
+}
 
 #clickVectorImg {
   width: 85px;
   height: 58px;
-  background-image: url(./assets/Vector_1.svg);
+  background-image: url(./assets/Vector.svg);
   background-repeat: no-repeat;
   background-position: center;
 }
@@ -315,6 +378,10 @@ widget-list {
   background-color: var(--light-pink-color);
   border-radius: 100px;
   overflow: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
 #widgetList {
   display: flex;
