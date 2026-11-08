@@ -1,9 +1,14 @@
 /* 외부 css 파일을 다른 css파일에서 import 가능. */
 @import url('./components.css');
+@import url('./navigationWidget.css');
 
 * {
   margin: 0px;
   padding: 0px;
+  scrollbar-width: none; /* 스크롤바 숨기기 (스크롤은 그대로 됨) */
+}
+*::-webkit-scrollbar {
+  display: none; /* Safari 등 scrollbar-width를 모르는 브라우저용 */
 }
 :root {
   --main-color: #eecbcb;
