@@ -9,6 +9,7 @@ const userProfile = {
   firstStart: true,
   //user가 선택한 위젯들을 모아놓은 stroge임.
   widgetList: [],
+  alarm: [],
 };
 //widgetList: [
 //   { name: 'weather', type: '1' },

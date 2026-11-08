@@ -571,6 +571,344 @@ weather-widget #type5 {
   height: 160px;
   background-image: url(./assets/weather/snow.svg);
 }
+
+/* type="1" : 500*500 */
+.alarmWidget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 500px;
+  height: 500px;
+  padding-top: 32px;
+  background-color: #efefef;
+  border-radius: 116px;
+}
+.alarmTop {
+  /* 아이콘 + 시간이 들어가는 윗줄 */
+  display: flex;
+  align-items: center;
+  width: 432px;
+  height: 160px;
+}
+.alarmClock {
+  width: 160px;
+  height: 160px;
+  margin-left: 13px;
+}
+.alarmTime {
+  margin-left: 40px;
+  font-size: 64px;
+  font-weight: bold;
+  line-height: 80px;
+  color: #555555;
+}
+.alarmInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 432px;
+  height: 113px;
+  margin-top: 19px;
+  font-size: 50px;
+  font-weight: bold;
+  color: #555555;
+  background-color: #cfcfcf;
+  border-radius: 56px;
+}
+.alarmAddBtn {
+  /* 아래 빈칸 = + 버튼 */
+  padding: 0px;
+  border: none;
+  font-size: 80px;
+  cursor: pointer;
+}
+
+/* type="2" : 1000*1000 (시간 한 줄 + 알람 칸 4개) */
+alarm-widget[type='2'] .alarmWidget {
+  width: 1000px;
+  height: 1000px;
+  padding-top: 70px;
+  border-radius: 100px;
+}
+alarm-widget[type='2'] .alarmTop {
+  width: 864px;
+  height: 180px;
+  margin-bottom: 20px;
+}
+alarm-widget[type='2'] .alarmClock {
+  width: 180px;
+  height: 180px;
+  margin-left: 30px;
+}
+alarm-widget[type='2'] .alarmTime {
+  /* 오전/오후와 시간을 한 줄로 */
+  display: flex;
+  gap: 28px;
+  margin-left: 80px;
+  font-size: 100px;
+  line-height: normal;
+}
+alarm-widget[type='2'] .alarmInfo {
+  /* 글자를 왼쪽에 붙임 */
+  justify-content: flex-start;
+  width: 864px;
+  height: 110px;
+  margin-top: 36px;
+  padding-left: 50px;
+  font-size: 48px;
+  border-radius: 55px;
+}
+/* 마지막 칸 = + 버튼 (가운데 정렬) */
+alarm-widget[type='2'] .alarmAddBtn {
+  justify-content: center;
+  padding-left: 0px;
+  font-size: 90px;
+}
+/* 위젯의 알람 칸 (누르면 알람 모달) */
+.alarmRow {
+  cursor: pointer;
+}
+.alarmRow.off {
+  /* 꺼진 알람은 흐리게 */
+  color: #9a9a9a;
+}
+
+/* ===== 알람 모달 ===== */
+alarm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000; /* 하단바보다 위 */
+}
+@keyframes alarmSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.alarmPanel {
+  /* 아래에서 올라오는 분홍 판 */
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 75%;
+  box-sizing: border-box;
+  padding: 50px 40px;
+  overflow-y: auto;
+  background-color: var(--light-pink-color);
+  border-radius: 100px 100px 0px 0px;
+  box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.15);
+  animation: alarmSlideUp 0.3s ease-out;
+}
+.alarmPanelTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+.alarmPanelClock {
+  width: 150px;
+  height: 150px;
+}
+.alarmClose {
+  width: 110px;
+  height: 110px;
+  padding: 0px;
+  font-size: 60px;
+  background-color: #e3e3e3;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* 알람 카드 (alarm_basic.html 기준) */
+.alarmCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  height: 464px;
+  margin-bottom: 43px;
+  padding: 0px 61px;
+  background-color: #efefef;
+  border: 2px solid #9a9a9a;
+  border-radius: 85px;
+}
+.alarmCardTime {
+  font-size: 140px;
+  font-weight: bold;
+  color: #555555;
+}
+.alarmCardDelete {
+  /* 카드 오른쪽 위 휴지통 */
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  width: 100px;
+  height: 100px;
+  padding: 0px;
+  background-color: #e3e3e3;
+  background-image: url(./assets/delete.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 60%;
+  border: 4px solid #555555;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.alarmEmpty {
+  margin: 100px 0px;
+  text-align: center;
+  font-size: 60px;
+  font-weight: bold;
+  color: #888888;
+}
+
+/* 토글 스위치 */
+.alarmSwitch {
+  position: relative;
+  display: inline-block;
+  width: 160px;
+  height: 80px;
+  flex-shrink: 0;
+}
+.alarmSwitch input {
+  /* 진짜 체크박스는 숨기고 slider로 모양을 만듦 */
+  opacity: 0;
+  width: 0px;
+  height: 0px;
+}
+.alarmSlider {
+  /* 꺼진 상태: 회색 바탕 */
+  position: absolute;
+  inset: 0;
+  background-color: #c8c8c8;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.alarmSlider::before {
+  /* 하얀 동그라미 */
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 64px;
+  height: 64px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.alarmSwitch input:checked + .alarmSlider {
+  /* 켜진 상태: 초록 바탕 */
+  background-color: #19c319;
+}
+.alarmSwitch input:checked + .alarmSlider::before {
+  transform: translateX(80px);
+}
+
+/* 목록 아래 + 버튼 */
+.alarmPlus {
+  display: block;
+  width: 100%;
+  height: 160px;
+  padding: 0px;
+  background-color: white;
+  border: 8px solid #888888;
+  border-radius: 80px;
+  font-size: 110px;
+  color: black;
+  cursor: pointer;
+}
+
+/* 시간 설정 화면 (alarm_ setting.html 기준) */
+.alarmPicker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 60px 0px;
+  background-color: white;
+  border-radius: 90px;
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.3);
+}
+.alarmWheels {
+  /* 휠 3개가 들어가는 칸 (한 줄 150px x 3줄) */
+  position: relative;
+  display: flex;
+  width: 902px;
+  height: 450px;
+}
+.alarmSelectLine {
+  /* 가운데 선택된 줄의 위아래 선 */
+  position: absolute;
+  left: 0px;
+  top: 150px;
+  width: 100%;
+  height: 150px;
+  box-sizing: border-box;
+  border-top: 4px solid black;
+  border-bottom: 4px solid black;
+  pointer-events: none; /* 선이 터치/클릭을 막지 않게 */
+}
+.alarmWheel {
+  /* 위아래로 돌아가는 칸 */
+  height: 450px;
+  padding: 150px 0px; /* 처음/마지막 값도 가운데로 올 수 있게 위아래 여백 */
+  box-sizing: border-box;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory; /* 스크롤하면 한 줄씩 딱딱 멈춤 */
+  scrollbar-width: none; /* 스크롤바 숨기기 */
+}
+.alarmWheel::-webkit-scrollbar {
+  display: none;
+}
+.alarmWheel.ampm {
+  width: 348px;
+}
+.alarmWheel.hour {
+  width: 194px;
+}
+.alarmWheel.min {
+  width: 208px;
+}
+.alarmItem {
+  height: 150px;
+  line-height: 150px;
+  text-align: center;
+  font-size: 55px;
+  font-weight: bold;
+  scroll-snap-align: center;
+  cursor: pointer;
+}
+.alarmColon {
+  /* 가운데 줄에만 보이는 : */
+  width: 68px;
+  height: 150px;
+  margin-top: 150px;
+  line-height: 150px;
+  text-align: center;
+  font-size: 55px;
+  font-weight: bold;
+}
+.alarmOk {
+  width: 860px;
+  height: 133px;
+  margin-top: 60px;
+  font-size: 55px;
+  font-weight: bold;
+  background-color: #eaeaea;
+  border: none;
+  border-radius: 67px;
+  cursor: pointer;
+}
 widget-btn {
   display: block;
   width: 100%;
@@ -864,4 +1202,51 @@ traffic-widget[type='1'] .trafficWidget {
   font-size: 32px;
   font-weight: bold;
   margin: 60px 0 20px 40px;
+}
+
+/* ===== 알람 울림 창 ===== */
+alarm-ring {
+  /* 화면 전체를 어둡게 덮고 가운데에 창 */
+  position: fixed;
+  inset: 0;
+  z-index: 3000; /* 알람 모달보다 위 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.alarmRingBox {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 880px;
+  padding: 50px 70px 70px;
+  background-color: white;
+  border-radius: 90px;
+}
+.alarmRingClock {
+  align-self: center;
+  width: 110px;
+  height: 110px;
+}
+.alarmRingAmpm {
+  margin-top: 20px;
+  font-size: 90px;
+  font-weight: bold;
+}
+.alarmRingTime {
+  text-align: center;
+  font-size: 180px;
+  font-weight: bold;
+  line-height: 1.1;
+}
+.alarmRingOff {
+  height: 170px;
+  margin-top: 50px;
+  font-size: 90px;
+  font-weight: bold;
+  background-color: #e3e3e3;
+  border: 4px solid #9a9a9a;
+  border-radius: 85px;
+  cursor: pointer;
 }

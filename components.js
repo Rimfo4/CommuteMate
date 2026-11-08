@@ -1,6 +1,12 @@
 import { getWeather } from './weatherWidget.js';
 import { getStorage, setStorage, removeStorage } from './db.js';
 import './localStroge.js';
+import {
+  loadAlarms,
+  pad,
+  formatAlarmShort,
+  openAlarmModal,
+} from './alarmWidget.js';
 
 const widgetName = ['navigation', 'weather', 'alarm', 'note', 'traffic'];
 const widgetKind = [
@@ -668,14 +674,82 @@ class TrafficWidget extends HTMLElement {
   }
 }
 
-// 알람 위젯
+// 알람 위젯 (type="1" → 500*500, type="2" → 1000*1000)
 class AlarmWidget extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
-      <div class = "alarmWidget">
-        <div id = "title">알람</div>
+      <div class="alarmWidget">
+        <div class="alarmTop">
+          <img class="alarmClock" src="./assets/clock.svg" alt="알람" />
+          <div class="alarmTime">
+            <div class="ampmText"></div>
+            <div class="timeText"></div>
+          </div>
+        </div>
+
+        <!-- 이 자리에 renderList()가 알람 칸을 넣음 -->
+        <button type="button" class="alarmInfo alarmAddBtn">+</button>
       </div>
     `;
+
+    this.renderList();
+
+    const ampmText = this.querySelector('.ampmText');
+    const timeText = this.querySelector('.timeText');
+
+    // 현재 시각을 읽어서 화면에 넣는 함수
+    const updateClock = () => {
+      const now = new Date();
+      let hour = now.getHours();
+      const min = now.getMinutes();
+
+      ampmText.textContent = hour >= 12 ? '오후' : '오전';
+
+      hour = hour % 12;
+      if (hour === 0) hour = 12; // 0시, 12시는 12로 표시
+
+      timeText.textContent = `${pad(hour)}:${pad(min)}`;
+    };
+
+    updateClock(); // 처음에 한 번 바로 실행
+    this.timer = setInterval(updateClock, 1000); // 1초마다 실시간으로 바꾸기
+
+    // + 버튼 → 모달을 시간 설정 화면으로 열기
+    this.querySelector('.alarmAddBtn').addEventListener('click', () => {
+      openAlarmModal('setting');
+    });
+  }
+
+  // 저장된 알람으로 위젯의 알람 칸 다시 그리기 (작은 위젯 1칸, 큰 위젯 3칸)
+  renderList() {
+    const box = this.querySelector('.alarmWidget');
+    const addBtn = this.querySelector('.alarmAddBtn');
+    const alarms = loadAlarms();
+    const count = this.getAttribute('type') === '2' ? 3 : 1;
+
+    box.querySelectorAll('.alarmRow').forEach((el) => el.remove());
+
+    for (let i = 0; i < count; i++) {
+      const row = document.createElement('div');
+      row.className = 'alarmInfo alarmRow';
+
+      if (alarms[i]) {
+        row.textContent = formatAlarmShort(alarms[i].time);
+        if (!alarms[i].on) row.classList.add('off'); // 꺼진 알람은 흐리게
+      } else if (i === 0) {
+        row.textContent = '설정된 알람 없음';
+      }
+
+      // 알람 칸 누르면 → 알람 목록 모달
+      row.addEventListener('click', () => openAlarmModal());
+
+      box.insertBefore(row, addBtn);
+    }
+  }
+
+  // 화면이 바뀌어 위젯이 사라지면 시계도 멈춤 (Main.render()가 innerHTML을 비울 때)
+  disconnectedCallback() {
+    clearInterval(this.timer);
   }
 }
 
