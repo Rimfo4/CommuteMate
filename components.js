@@ -54,18 +54,18 @@ class FootNavigationBar extends HTMLElement {
     //     <widget-btn id="traffic"></widget-btn>
     //   </div>
     // </div>
-    const addBtn = document.getElementById('widgetAddBtn');
-    const homeBtn = document.getElementById('homeBtn');
+    const addBtn = this.querySelector('#widgetAddBtn');
+    const homeBtn = this.querySelector('#homeBtn');
     const popup = document.getElementById('widgetPopup');
 
-    // 위젯 추가 버튼 → 팝업 열기
+    // + 버튼 → 위젯 추가 화면
     addBtn.addEventListener('click', () => {
-      popup.classList.add('show');
+      document.querySelector('main-div').render('addWidget');
     });
 
-    // 홈 버튼 → 홈 페이지 이동
+    // home 버튼 → Main의 if문 맨 아래 home 화면
     homeBtn.addEventListener('click', () => {
-      popup.classList.remove('show');
+      document.querySelector('main-div').render();
     });
   }
 }
@@ -198,9 +198,17 @@ class Main extends HTMLElement {
   }
 
   //렌더 할때 마다 그리는 거임
-  render() {
+  render(screen) {
     this.innerHTML = ''; // 이전 화면 비우기
     const user = getStorage('user');
+
+    // 하단바 + 버튼 → 위젯이 있어도 위젯 추가 화면
+    if (screen === 'addWidget') {
+      const addWidget = document.createElement('add-widget');
+      addWidget.setAttribute('open', ''); // 목록을 바로 열기
+      this.appendChild(addWidget);
+      return;
+    }
 
     //첫 시작 => 로그인 창
     if (user.firstStart) {
