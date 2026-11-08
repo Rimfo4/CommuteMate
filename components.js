@@ -1,6 +1,14 @@
-import { getWeather } from './weatherWidget.js';
 import { getStorage, setStorage, removeStorage } from './db.js';
 import './localStroge.js';
+import { getWeather } from './weatherWidget.js';
+import {
+  loadKakaoMap,
+  getCoords,
+  searchRoute,
+  drawRoute,
+  sortPaths,
+  makeRouteCard,
+} from './navigationWidget.js';
 import {
   loadAlarms,
   pad,
@@ -71,7 +79,19 @@ class FootNavigationBar extends HTMLElement {
 
     // home 버튼 → Main의 if문 맨 아래 home 화면
     homeBtn.addEventListener('click', () => {
-      document.querySelector('main-div').render();
+      const main = document.querySelector('main-div');
+
+      // 이미 home 화면이면 다시 그리지 않음 (위젯이 새로 만들어지면서 API를 또 부르는 것 방지)
+      if (main.screen === 'home') return;
+
+      main.render();
+    });
+
+    const settingBtn = this.querySelector('#settingBtn');
+
+    // 리스트 버튼 → 장소(주소) 수정 화면
+    settingBtn.addEventListener('click', () => {
+      document.querySelector('main-div').render('address');
     });
   }
 }
@@ -129,14 +149,36 @@ class AddressScreen extends HTMLElement {
     const form = this.querySelector('form');
     const bottom = this.querySelector('.formBottom');
 
-    // + 버튼 → 장소 입력칸 추가 (저장 버튼 위에)
+    // 장소 입력칸 하나 추가 (저장 버튼 위에)
     let placeCount = 1; // 처음 화면에 장소1부터 시작
-    this.querySelector('.plusBtn').addEventListener('click', () => {
+    const addRow = (value = '') => {
       placeCount++;
       const row = document.createElement('div');
       row.className = 'formRow extra';
       row.innerHTML = `<span>장소${placeCount}</span><input type="text" data-name="장소${placeCount}" />`;
+      row.querySelector('input').value = value;
       form.insertBefore(row, bottom);
+    };
+
+    // + 버튼 → 장소 입력칸 추가
+    this.querySelector('.plusBtn').addEventListener('click', () => addRow());
+
+    // 저장된 장소가 있으면 입력칸에 채워 넣기 (하단바 리스트 버튼으로 다시 열었을 때)
+    const saved = getStorage('user').place;
+    const extras = saved.filter((p) => p.name !== '집' && p.name !== '회사');
+
+    saved.forEach((p) => {
+      if (p.name === '집' || p.name === '회사') {
+        this.querySelector(`input[data-name="${p.name}"]`).value = p.address;
+      }
+    });
+
+    extras.forEach((p, i) => {
+      if (i === 0) {
+        this.querySelector('input[data-name="장소1"]').value = p.address; // 첫 장소는 원래 있는 칸에
+      } else {
+        addRow(p.address); // 나머지는 칸을 늘려서
+      }
     });
 
     // 저장 버튼 → localStorage에 저장 후 다음 화면
@@ -206,6 +248,7 @@ class Main extends HTMLElement {
   //렌더 할때 마다 그리는 거임
   render(screen) {
     this.innerHTML = ''; // 이전 화면 비우기
+    this.screen = screen; // 지금 보이는 화면 (home 화면이면 아래에서 'home'으로 바뀜)
     const user = getStorage('user');
 
     // 하단바 + 버튼 → 위젯이 있어도 위젯 추가 화면
@@ -213,6 +256,12 @@ class Main extends HTMLElement {
       const addWidget = document.createElement('add-widget');
       addWidget.setAttribute('open', ''); // 목록을 바로 열기
       this.appendChild(addWidget);
+      return;
+    }
+
+    // 하단바 리스트 버튼 → 장소 수정 화면
+    if (screen === 'address') {
+      this.appendChild(document.createElement('address-screen'));
       return;
     }
 
@@ -233,6 +282,7 @@ class Main extends HTMLElement {
     }
     //메인 home화면 창
     else {
+      this.screen = 'home';
       document.querySelector('navigation-bar').hidden = false;
 
       //유저 데이터의 위젯 리스트 가지고 와서 뿌리기.
@@ -294,12 +344,10 @@ class WidgetList extends HTMLElement {
   connectedCallback() {
     const widgetList = document.createElement('div');
     widgetList.id = 'widgetList';
-    widgetList.style.zIndex = '1000';
 
     for (let i in widgetName) {
       let nav = document.createElement(`widget-btn`);
       nav.id = i;
-      nav.style.zIndex = '100';
       widgetList.appendChild(nav);
     }
 
@@ -484,12 +532,256 @@ class NoteWidget extends HTMLElement {
 
 // 네비게이션 위젯
 class NavigationWidget extends HTMLElement {
-  connectedCallback() {
+  async connectedCallback() {
     this.innerHTML = `
-      <div class = "navigationWidget">
-        <div id = "title">네비게이션</div>
+      <div class="navigationWidget">
+        <div class="mapArea">
+          <div class="mapBox"></div>
+          <div class="routeBox" hidden>
+            <select class="routeSort">
+              <option value="best">최적 경로순</option>
+              <option value="time">최소 시간순</option>
+              <option value="transfer">최소 환승순</option>
+              <option value="walk">최소 도보순</option>
+            </select>
+            <div class="routeCards"></div>
+          </div>
+          <div class="mapMessage" hidden></div>
+          <div class="placeList" hidden></div>
+        </div>
+        <div class="navFooter">
+          <div class="navBtns">
+            <button type="button" class="navBtn" data-mode="work">
+              <img src="./assets/redPing.svg" alt="" />출근
+            </button>
+            <button type="button" class="navBtn" data-mode="home">
+              <img src="./assets/bluePing.svg" alt="" />퇴근
+            </button>
+          </div>
+          <div class="navInfo"></div>
+        </div>
       </div>
     `;
+
+    const info = this.querySelector('.navInfo');
+    const buttons = this.querySelectorAll('.navBtn');
+    const placeList = this.querySelector('.placeList');
+    const mapMessage = this.querySelector('.mapMessage');
+    const routeBox = this.querySelector('.routeBox');
+    const routeSort = this.querySelector('.routeSort');
+    const routeCards = this.querySelector('.routeCards');
+
+    let routePaths = null; // 마지막으로 검색한 경로 목록 (대중교통 화면에서 씀)
+
+    // 대중교통 경로 카드 그리기 (큰 위젯 3개, 작은 위젯 1개)
+    const renderRoutes = () => {
+      routeCards.innerHTML = '';
+
+      if (!routePaths) {
+        const empty = document.createElement('div');
+        empty.className = 'routeEmpty';
+        empty.textContent = '출근이나 퇴근 경로를 먼저 골라주세요.';
+        routeCards.appendChild(empty);
+        return;
+      }
+
+      const count = this.getAttribute('type') === '2' ? 3 : 1;
+      sortPaths(routePaths, routeSort.value)
+        .slice(0, count)
+        .forEach((path) => routeCards.appendChild(makeRouteCard(path)));
+    };
+
+    routeSort.addEventListener('change', renderRoutes);
+    renderRoutes();
+
+    // 지도 위에 안내 문구 띄우기 (빈 문자열이면 숨김)
+    const showMessage = (text) => {
+      mapMessage.textContent = text;
+      mapMessage.hidden = !text;
+    };
+
+    // 위젯 선택 화면의 미리보기에서는 API를 부르지 않음 (호출 횟수 절약)
+    if (this.closest('.optionBody')) {
+      info.textContent = '미리보기';
+      return;
+    }
+
+    try {
+      await loadKakaoMap();
+    } catch (err) {
+      showMessage(err.message);
+      return;
+    }
+
+    // 주소를 못 찾아도 지도는 먼저 띄움 (처음엔 서울시청, 경로를 그리면 경로에 맞춰 이동)
+    const map = new kakao.maps.Map(this.querySelector('.mapBox'), {
+      center: new kakao.maps.LatLng(37.5665, 126.978),
+      level: 6,
+    });
+
+    const drawn = []; // 지도에 그린 선과 마커 (다시 그릴 때 지우려고 보관)
+
+    // 경로 그리기. work = 집 → 고른 장소, home = 고른 장소 → 집
+    const showRoute = async (mode, target) => {
+      const { place } = getStorage('user');
+      const home = place.find((p) => p.name === '집');
+
+      buttons.forEach((btn) =>
+        btn.classList.toggle('active', btn.dataset.mode === mode),
+      );
+
+      if (!home) {
+        info.textContent = '';
+        showMessage('집 주소를 먼저 입력해주세요.');
+        return;
+      }
+
+      showMessage('');
+      info.textContent = '경로를 찾는 중...';
+
+      try {
+        const [homeXY, targetXY] = await Promise.all([
+          getCoords(home.address),
+          getCoords(target.address),
+        ]);
+        const [start, end] =
+          mode === 'work' ? [homeXY, targetXY] : [targetXY, homeXY];
+
+        const route = await searchRoute(start, end);
+        drawRoute(map, route, start, end, drawn);
+
+        routePaths = route.paths;
+        renderRoutes();
+        info.textContent = `${target.name} · ${route.info.totalTime}분 · ${route.info.payment.toLocaleString()}원`;
+      } catch (err) {
+        info.textContent = '';
+        showMessage(err.message);
+      }
+    };
+
+    // 목적지 목록 열기 (집을 뺀 저장된 장소들)
+    const openList = (mode) => {
+      const { place } = getStorage('user');
+      const targets = place.filter((p) => p.name !== '집');
+
+      placeList.innerHTML = '';
+
+      const title = document.createElement('div');
+      title.className = 'placeListTitle';
+      title.textContent =
+        mode === 'work' ? '어디로 출근할까요?' : '어디서 퇴근할까요?';
+      placeList.appendChild(title);
+
+      if (targets.length === 0) {
+        const empty = document.createElement('div');
+        empty.className = 'placeRow';
+        empty.textContent = '저장된 장소가 없습니다.';
+        placeList.appendChild(empty);
+      }
+
+      targets.forEach((target) => {
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'placeRow';
+
+        const name = document.createElement('span');
+        name.className = 'placeName';
+        name.textContent = target.name;
+
+        const address = document.createElement('span');
+        address.className = 'placeAddress';
+        address.textContent = target.address;
+
+        row.append(name, address);
+
+        // 장소를 고르면 목록을 닫고 경로 그리기
+        row.addEventListener('click', () => {
+          placeList.hidden = true;
+          showRoute(mode, target);
+        });
+
+        placeList.appendChild(row);
+      });
+
+      placeList.dataset.mode = mode;
+      placeList.hidden = false;
+    };
+
+    buttons.forEach((btn) =>
+      btn.addEventListener('click', () => {
+        const mode = btn.dataset.mode;
+
+        // 같은 버튼을 다시 누르면 목록 닫기
+        if (!placeList.hidden && placeList.dataset.mode === mode) {
+          placeList.hidden = true;
+          return;
+        }
+
+        openList(mode);
+      }),
+    );
+
+    // 지도 영역을 꾹 누르면(0.6초) 지도 ↔ 대중교통 경로 목록 전환
+    const area = this.querySelector('.mapArea');
+    const LONG_PRESS_TIME = 600;
+    let pressTimer = null;
+    let pressX = 0;
+    let pressY = 0;
+    let justToggled = false; // 꾹 누른 뒤 손을 뗄 때 생기는 클릭은 무시
+
+    const toggleView = () => {
+      if (!placeList.hidden) return; // 목적지 목록이 열려 있으면 전환하지 않음
+
+      routeBox.hidden = !routeBox.hidden;
+      if (!routeBox.hidden) renderRoutes(); // 열 때마다 출발·도착 시각을 지금 기준으로
+      justToggled = true;
+    };
+
+    const cancelPress = () => clearTimeout(pressTimer);
+
+    // capture: true → 카카오맵이 이벤트를 가져가기 전에 먼저 받음
+    area.addEventListener(
+      'pointerdown',
+      (e) => {
+        pressX = e.clientX;
+        pressY = e.clientY;
+        justToggled = false;
+        pressTimer = setTimeout(toggleView, LONG_PRESS_TIME);
+      },
+      true,
+    );
+
+    // 지도를 끌고 있으면(10px 넘게 움직이면) 꾹 누르기 취소
+    area.addEventListener(
+      'pointermove',
+      (e) => {
+        if (Math.abs(e.clientX - pressX) > 10 || Math.abs(e.clientY - pressY) > 10) {
+          cancelPress();
+        }
+      },
+      true,
+    );
+
+    area.addEventListener('pointerup', cancelPress, true);
+    area.addEventListener('pointercancel', cancelPress, true);
+
+    area.addEventListener(
+      'click',
+      (e) => {
+        if (!justToggled) return;
+        e.stopPropagation();
+        e.preventDefault();
+        justToggled = false;
+      },
+      true,
+    );
+
+    // 모바일에서 꾹 누를 때 뜨는 메뉴 막기
+    area.addEventListener('contextmenu', (e) => e.preventDefault());
+
+    // 처음에는 회사 경로를 보여줌 (오전이면 출근, 오후면 퇴근)
+    const work = getStorage('user').place.find((p) => p.name === '회사');
+    if (work) showRoute(new Date().getHours() < 12 ? 'work' : 'home', work);
   }
 }
 
@@ -759,7 +1051,17 @@ class WeatherWidget extends HTMLElement {
     // let type = this.getAttribute('type');
 
     const getTime = new Date();
-    const nowWeather = await getWeather();
+    let nowWeather;
+
+    try {
+      nowWeather = await getWeather();
+    } catch (err) {
+      // 실패해도 위젯 칸은 그대로 두고 이유를 표시
+      this.innerHTML = `<div id="weather">
+          <div class="weatherError">날씨를 불러오지 못했습니다.<br>${err.message}</div>
+        </div>`;
+      return;
+    }
 
     this.innerHTML = ` <div id="weather">
           <div id="weather_1">

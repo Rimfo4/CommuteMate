@@ -1,4 +1,4 @@
-import wetherApiKey from './key.js';
+import { wetherApiKey } from './key.js';
 
 const SERVICE_KEY = wetherApiKey;
 const BASE_URL =
@@ -89,7 +89,8 @@ function filterFromNow(items) {
   let filterItem = items.filter((item) => {
     const itemDateTime = item.fcstDate + item.fcstTime;
     const nowDateTime = nowStr + nowTimeStr;
-    return itemDateTime >= nowDateTime && item.fcstDate === nowStr;
+    // 날짜+시간 문자열끼리 비교 (23시 이후에는 다음 날 예보만 오기 때문에 날짜 조건은 넣지 않음)
+    return itemDateTime >= nowDateTime;
   });
   // console.log(filterItem);
   return filterItem;
@@ -149,6 +150,10 @@ function getNowWetherType(data) {
   const nowTime = Object.keys(data)[0];
   const nowData = data[nowTime];
 
+  if (!nowData) {
+    throw new Error('예보 데이터가 없습니다.');
+  }
+
   // console.log(nowData.PTY);
   // console.log(nowData.SKY);
 
@@ -189,9 +194,8 @@ export const getWeather = () => {
         }
       },
       () => {
-        document.getElementById('result').textContent =
-          '위치 권한이 거부되었습니다.';
-        reject(new Error('위치 권한 거부'));
+        // 안내 문구는 날씨 위젯이 화면에 표시함
+        reject(new Error('위치 권한이 거부되었습니다.'));
       },
     );
   });

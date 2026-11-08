@@ -8,16 +8,19 @@ start-screen {
     visibility 0.3s; /* 의미 : 투명도와 가시성을 3초 동안 전환 */
 }
 @keyframes slideUp {
-  100% {
-    height: 1900px;
+  from {
+    max-height: 0;
+  }
+  to {
+    max-height: 1900px;
   }
 }
-/* 위젯이 위로 올라가는 애니메이션. */
+/* 위젯 목록이 펼쳐지는 애니메이션. */
 .widgetSlideUp {
-  /* div 태그가 y좌료 기준 위로 1초동안 -700px 이동 */
-  /* 따로 키프레임을 지정하여 애니메이션 구현 */
-  animation: slideUp 1s forwards;
-  transform-origin: top;
+  /* 1초 동안 max-height를 0 → 1900px로 늘려 펼침
+     forwards를 안 써서 끝나면 max-height가 풀림 → 옵션을 펼쳐도 높이가 내용만큼 늘어남 */
+  animation: slideUp 1s;
+  overflow: hidden; /* 펼쳐지는 동안 아직 안 보일 부분은 가림 */
 }
 
 #tong {
@@ -60,6 +63,7 @@ navigation-bar {
   bottom: 0px;
   width: 100%;
   height: 190px;
+  z-index: 500; /* 위젯보다 위, 시작 화면(1000)·알람 모달(2000)보다 아래 */
   display: flex; /* 요소들을 가로로 나열 */
   /* 하단에 고정시키기 :*/
 
@@ -338,16 +342,12 @@ note-widget[type='1'] .noteWidget {
   width: 1000px;
   height: 620px;
   border-radius: 75px;
-  pointer-events: none;
-  align-items: center;
-  justify-content: center;
 }
 
 note-widget[type='2'] .noteWidget {
   width: 1000px;
   height: 1000px;
   border-radius: 75px;
-  pointer-events: none;
 }
 
 /* 위젯 제목*/
@@ -368,9 +368,15 @@ note-widget[type='2'] .noteWidget {
 }
 
 /* 위젯 화면. 한 줄에 안 들어가는 위젯은 다음 줄로 내려감 */
+/* 모든 화면의 마지막 내용이 하단 바(190px)에 가리지 않게 아래 여백 */
+main-div {
+  display: block;
+  padding-bottom: 230px;
+}
+
 #widgetBoard {
   width: 1040px;
-  margin: 40px auto 230px; /* 아래쪽은 하단 바(190px)에 가리지 않게 함 */
+  margin: 40px auto; /* 아래 여백은 main-div가 줌 */
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
@@ -397,6 +403,7 @@ note-widget[type='2'] .noteWidget {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
 }
 
 .header {
@@ -404,6 +411,7 @@ note-widget[type='2'] .noteWidget {
   justify-content: space-around;
   flex-direction: row;
   flex-shrink: 0; /* header 영역은 고정 */
+  text-align: center;
 }
 
 #title {
@@ -414,15 +422,15 @@ note-widget[type='2'] .noteWidget {
   margin: 50px 0 0 40px;
   display: flex; /* 자식요소 flex 사용 */
   flex-direction: row; /* 자식요소 가로 배치 */
+  line-height: 50px;
 }
 
 #input {
   width: 440px;
   height: 60px;
   display: flex;
-  margin: 30px;
+  margin-right: 15px;
   margin-top: 50px;
-
   font-size: 40px;
   flex-direction: row;
 }
@@ -451,14 +459,18 @@ li.completed {
 /* widget-list 관련 css */
 widget-list {
   width: 100%;
-  height: 0px;
+  /* 높이와 안쪽 스크롤 없이 내용만큼 늘어남 → 페이지 스크롤로 저장 버튼까지 내려감 */
+  padding-bottom: 80px;
   background-color: var(--light-pink-color);
   border-radius: 100px;
-  overflow: auto;
 
   display: flex;
   flex-direction: column;
   align-items: center;
+}
+/* display: flex가 hidden 속성을 덮어쓰지 않게 */
+widget-list[hidden] {
+  display: none;
 }
 #widgetList {
   display: flex;
@@ -478,6 +490,13 @@ widget-list {
 
 #weather > div {
   color: white;
+}
+
+/* 날씨를 못 불러왔을 때 안내 문구 */
+#weather > .weatherError {
+  margin: auto 50px;
+  font-size: 40px;
+  text-align: center;
 }
 #weather_1 > div {
   margin-left: 50px;
