@@ -755,7 +755,10 @@ class NavigationWidget extends HTMLElement {
     area.addEventListener(
       'pointermove',
       (e) => {
-        if (Math.abs(e.clientX - pressX) > 10 || Math.abs(e.clientY - pressY) > 10) {
+        if (
+          Math.abs(e.clientX - pressX) > 10 ||
+          Math.abs(e.clientY - pressY) > 10
+        ) {
           cancelPress();
         }
       },

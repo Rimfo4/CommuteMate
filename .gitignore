@@ -1,2 +1,4 @@
 key.js
 test/
+.vercel
+.DS_Store
