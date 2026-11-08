@@ -70,6 +70,15 @@ start-screen.hide {
   background-position: center;
   background-size: 110px;
 }
+.repeatImg {
+  width: 100px;
+  height: 100px;
+  background-image: url("./assets/ArrowRepeat.svg");
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  margin: 40px 40px 0px 0px;
+}
 /* 기존 위젯 버튼 */
 #widget {
   width: 1025px;
@@ -565,4 +574,93 @@ widget-btn {
   display: flex;
   justify-content: center;
   cursor: pointer;
+}
+
+/* 선택된 위젯 */
+.smallOption.selected,
+.bigOption.selected {
+  border: 10px solid #f89292;
+}
+
+.trafficWidget {
+  width: 1000px;
+  height: 500px;
+  border: 1px solid #ccc;
+  border-radius: 116px;
+  margin-top: 20px;
+  background-color: #efefef;
+  display: flex;
+  flex-direction: column;
+}
+#widgetTitle {
+  font-size: 64px;
+  font-weight: bold;
+  text-align: left;
+  height: 64px;
+  width: 300px;
+  margin: 50px 0 0 40px;
+}
+/* 교통정보 목록 */
+#trafficData {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 20px 40px;
+}
+
+traffic-widget[type="2"] .trafficWidget {
+  width: 1000px;
+  height: 1000px;
+  border-radius: 75px;
+  /* pointer-events: none; */
+}
+traffic-widget[type="1"] .trafficWidget {
+  width: 1000px;
+  height: 500px;
+  border-radius: 75px;
+  /* pointer-events: none; */
+}
+
+#trafficData article h3 {
+  font-size: 64px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+#trafficData article p {
+  font-size: 40px;
+  font-weight: regular;
+  margin-bottom: 20px;
+}
+
+/* 교통돌발정보 불러오기 버튼
+#loadTraffic {
+  font-size: 32px;
+  font-weight: bold;
+  background-color: #f89292;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  height: 50px;
+  width: 300px;
+  margin: 40px 0 20px 40px;
+} */
+
+#trafficHeader {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+/* 가져온 교통 정보 갯수 표시 */
+#status {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 60px 0 20px 40px;
 }

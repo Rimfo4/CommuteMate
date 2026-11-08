@@ -1,0 +1,126 @@
+<result>
+    <record>
+    <incidentId>DEMO-001</incidentId>
+    <incidenteTypeCd>1</incidenteTypeCd>
+    <incidenteSubTypeCd>255</incidenteSubTypeCd>
+    <addressJibun>서울 관악구 호암로 546 인근</addressJibun>
+    <addressJibunCd>1141011700</addressJibunCd>
+    <addressNew>서울 관악구 호암로 546 인근</addressNew>
+    <linkId>1120005302</linkId>
+    <locationDataX>126.93290</locationDataX>
+    <locationDataY>37.46965</locationDataY>
+    <locationTypeCd>C0101</locationTypeCd>
+    <locationData>POINT(126.93290 37.46965)</locationData>
+    <incidenteTrafficCd>A0503</incidenteTrafficCd>
+    <incidenteGradeCd>A0402</incidenteGradeCd>
+    <incidentTitle>[사고] 미림마이스터고 인근 호암로 승용차 접촉사고</incidentTitle>
+    <incTrafficCode>A0503</incTrafficCode>
+    <incidentRegionCd>01</incidentRegionCd>
+    <startDate>2026년 10월 30일 00시 00분</startDate>
+    <endDate>2026년 11월 05일 23시 59분</endDate>
+    <lane>2차로</lane>
+    <roadName>호암로</roadName>
+    <sourceCode>W001</sourceCode>
+    <lineLinkId>1120005302</lineLinkId>
+    <controlType>0</controlType>
+    <important>00</important>
+    <updateDate/>
+    </record>
+
+    <record>
+    <incidentId>DEMO-002</incidentId>
+    <incidenteTypeCd>1</incidenteTypeCd>
+    <incidenteSubTypeCd>255</incidenteSubTypeCd>
+    <addressJibun>서울 관악구 호암로 550 인근</addressJibun>
+    <addressJibunCd>1141011700</addressJibunCd>
+    <addressNew>서울 관악구 호암로 550 인근</addressNew>
+    <linkId>1120005302</linkId>
+    <locationDataX>126.93230</locationDataX>
+    <locationDataY>37.47020</locationDataY>
+    <locationTypeCd>C0101</locationTypeCd>
+    <locationData>POINT(126.93230 37.47020)</locationData>
+    <incidenteTrafficCd>A0503</incidenteTrafficCd>
+    <incidenteGradeCd>A0402</incidenteGradeCd>
+    <incidentTitle>[공사] 미림마이스터고 인근 호암로 노면 보수공사</incidentTitle>
+    <incTrafficCode>A0503</incTrafficCode>
+    <incidentRegionCd>01</incidentRegionCd>
+    <startDate>2026년 10월 30일 00시 00분</startDate>
+    <endDate>2026년 11월 05일 23시 59분</endDate>
+    <lane>1차로</lane>
+    <roadName>호암로</roadName>
+    <sourceCode>W001</sourceCode>
+    <lineLinkId>1120005302</lineLinkId>
+    <controlType>0</controlType>
+    <important>00</important>
+    <updateDate/>
+    </record>
+
+
+    <record>
+    <incidentId>DEMO-003</incidentId>
+    <incidenteTypeCd>1</incidenteTypeCd>
+    <incidenteSubTypeCd>8</incidenteSubTypeCd>
+    <addressJibun>서울 관악구 호암로 540 인근</addressJibun>
+    <addressJibunCd>4117110300</addressJibunCd>
+    <addressNew>서울 관악구 호암로 540 인근</addressNew>
+    <linkId>2080001901</linkId>
+    <locationDataX>126.93340</locationDataX>
+    <locationDataY>37.46880</locationDataY>
+    <locationTypeCd>C0101</locationTypeCd>
+    <locationData>POINT(126.889627 37.411868)</locationData>
+    <incidenteTrafficCd>A0503</incidenteTrafficCd>
+    <incidenteGradeCd>A0402</incidenteGradeCd>
+    <incidentTitle>[사고] 미림마이스터고 인근 교차로 차량 추돌사고</incidentTitle>
+    <incTrafficCode>A0503</incTrafficCode>
+    <incidentRegionCd>19</incidentRegionCd>
+    <startDate>2026년 10월 30일 00시 00분</startDate>
+    <endDate>2026년 11월 05일 23시 59분</endDate>
+    <lane>2차로</lane>
+    <roadName>호암로</roadName>
+    <sourceCode>H000</sourceCode>
+    <lineLinkId>null</lineLinkId>
+    <controlType>0</controlType>
+    <important>00</important>
+    <updateDate/>
+    </record>
+    <record>
+    <incidentId>DEMO-004</incidentId>
+    <incidenteTypeCd>1</incidenteTypeCd>
+    <incidenteSubTypeCd>8</incidenteSubTypeCd>
+    <addressJibun>서울 관악구 호암로 530 인근</addressJibun>
+    <addressJibunCd>4113510900</addressJibunCd>
+    <addressNew>서울 관악구 호암로 530 인근</addressNew>
+    <linkId>2060181600</linkId>
+    <locationDataX>126.93160</locationDataX>
+    <locationDataY>37.46910</locationDataY>
+    <locationTypeCd>C0101</locationTypeCd>
+    </record>
+
+    <record>
+        <incidentId>L91175040185</incidentId>
+        <incidenteTypeCd>1</incidenteTypeCd>
+        <incidenteSubTypeCd>255</incidenteSubTypeCd>
+        <addressJibun>대구 북구 서변동 115-13</addressJibun>
+        <addressJibunCd>2723011500</addressJibunCd>
+        <addressNew/>
+        <linkId>2080001903</linkId>
+        <locationDataX>128.601349</locationDataX>
+        <locationDataY>35.932953</locationDataY>
+        <locationTypeCd>C0101</locationTypeCd>
+        <locationData>POINT(128.601349 35.932953)</locationData>
+        <incidenteTrafficCd>A0502</incidenteTrafficCd>
+        <incidenteGradeCd>A0402</incidenteGradeCd>
+        <incidentTitle>[사고] 대구외곽순환선 종점방향 2차로 사고</incidentTitle>
+        <incTrafficCode>A0502</incTrafficCode>
+        <incidentRegionCd>29</incidentRegionCd>
+        <startDate>2026년 10월 30일 20시 49분</startDate>
+        <endDate>2026년 10월 30일 21시 19분</endDate>
+        <lane/>
+        <roadName>대구외곽순환선</roadName>
+        <sourceCode>H000</sourceCode>
+        <lineLinkId>null</lineLinkId>
+        <controlType/>
+        <important>00</important>
+        <updateDate/>
+    </record>
+</result>
