@@ -25,11 +25,11 @@ start-screen {
 }
 
 @keyframes behind {
-  40% {
-    opacity: 1;
+  0% {
+    opacity: 0;
   }
   100% {
-    opacity: 0;
+    opacity: 1;
   }
 }
 /* 시작 화면 */
@@ -41,7 +41,7 @@ start-screen {
   justify-content: center;
   font-family: 'LGOTFBold';
   font-size: 200px;
-  animation: behind 1s forwards;
+  animation: behind 3s forwards;
 }
 
 /* 이건 상단바이에요. */
@@ -105,7 +105,6 @@ login-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
   font-family: 'LGOTFRegular';
 }
 #formTitle {
@@ -128,7 +127,7 @@ form {
 }
 #usname {
   display: inline-block;
-  font-size: 80px;
+  font-size: 70px; /* 비밀번호 라벨과 같은 크기 */
 }
 #uspw {
   display: inline-block;
@@ -141,16 +140,94 @@ form {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+  align-items: center; /* 라벨을 입력창 세로 가운데에 맞춤 */
 }
-Login Input {
+/* 라벨 칸 너비를 고정하고 오른쪽 정렬 → 입력창 시작 위치와 너비가 같아짐 */
+#name span,
+#pw span {
+  width: 240px;
+  text-align: right;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* 입력창은 남은 공간만 차지 */
+#name input,
+#pw input {
+  flex: 1;
+  min-width: 0;
+  margin-left: 30px;
   width: 750px;
+  background-color: #eecbcb;
+  opacity: 0.5;
   border: 2px solid black;
   border-radius: 5px; /* 모서리 둥글게*/
 }
-#formButton {
+#submit {
+  margin-top: 150px;
+  width: 215px;
+  height: 100px;
   text-align: center;
+  line-height: 100px;
+  font-size: 50px;
+  background-color: #eecbcb;
+  border: 2px solid #999898;
+  cursor: pointer;
 }
-
+/* 주소 입력 화면 */
+address-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'LGOTFRegular';
+}
+.formSub {
+  font-size: 30px;
+  margin-top: -80px;
+}
+.formRow {
+  width: 950px;
+  margin-top: 130px;
+  display: flex;
+  align-items: center;
+}
+.formRow span {
+  width: 240px;
+  font-size: 70px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.formRow input {
+  flex: 1;
+  min-width: 0;
+  margin-left: 30px;
+  font-size: 50px;
+  background-color: #eecbcb;
+  opacity: 0.5;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+/* 선택 입력(장소)은 회색 */
+.formRow.extra span {
+  color: #8a8a8a;
+}
+.formRow.extra input {
+  opacity: 0.3;
+}
+.formBottom {
+  position: relative;
+  width: 950px;
+  display: flex;
+  justify-content: center;
+}
+.plusBtn {
+  position: absolute;
+  left: 0;
+  top: 60px;
+  width: 80px;
+  height: 80px;
+  background: url(./assets/PlusCircle.svg) no-repeat center / contain;
+  cursor: pointer;
+}
 /* 기존 위젯 버튼 */
 #widget {
   width: 1025px;
@@ -400,7 +477,7 @@ widget-list {
 }
 
 #weather > div {
-  color: black;
+  color: white;
 }
 #weather_1 > div {
   margin-left: 50px;

@@ -72,34 +72,94 @@ class FootNavigationBar extends HTMLElement {
 
 class Login extends HTMLElement {
   connectedCallback() {
-    // <div class="title">사용자 확인</div>
-    //   <form class="user">
-    //     <div>
-    //       <span id="usname">이름</span>
-    //       <input id="name" type = "text" placeholder="이름을 입력해주세요"></input>
-    //     </div>
-    //   </br>
-    //   <div>
-    //     <span id="uspw">비밀번호</span>
-    //     <input id="pw" type = "password" placeholder="비밀번호를 입력해주세요"></input>
-    //   </div>
-    //   </br>
-    //     <button type="submit">로그인</button>
-    //   </form>
-
     let title = document.createElement('div');
     title.innerHTML = '사용자 확인';
     title.id = 'formTitle';
 
     let form = document.createElement('div');
-    form.innerHTML =
-      '<form class="user"><div id="name"><span id="usname">이름</span><input id="usname" type = "text" placeholder="이름을 입력해주세요"></input></div></br><div id="pw"><span id="uspw">비밀번호</span><input id="uspw" type = "password" placeholder="비밀번호를 입력해주세요"></input></div></br><button type="submit">로그인</button></form>';
+    form.innerHTML = `<form class="user"><div id="name"><span id="usname">이름</span><input id="usname" type = "text"></input></div></br><div id="pw"><span id="uspw">비밀번호</span><input id="uspw" type = "password"></input></div></br><div id="submit">저장</div></form>`;
+
+    let sumbmitBtn = form.querySelector('#submit');
+
+    //localStrage에 저장.
+    sumbmitBtn.addEventListener('click', () => {
+      const name = form.querySelector('input#usname').value.trim();
+      const password = form.querySelector('input#uspw').value.trim();
+
+      // 값 여부 조건
+      if (name === '' || password === '') {
+        alert('이름 또는 비밀번호를 작성해주세요.');
+        return;
+      }
+
+      const user = getStorage('user');
+      user.name = name;
+      user.password = password;
+      user.firstStart = false; // 다음부터 로그인 화면이 안 나오게
+      setStorage('user', user);
+
+      this.closest('main-div').render(); // Main의 if문 다시 실행 → 위젯 추가 화면
+    });
 
     this.appendChild(title);
     this.appendChild(form);
   }
 }
+class AddressScreen extends HTMLElement {
+  connectedCallback() {
+    this.innerHTML = `
+      <div id="formTitle">주소를 입력해주세요</div>
+      <div class="formSub">네비게이션에 사용합니다</div>
+      <form class="address">
+        <div class="formRow"><span>집</span><input type="text" data-name="집" /></div>
+        <div class="formRow"><span>회사</span><input type="text" data-name="회사" /></div>
+        <div class="formRow extra"><span>장소1</span><input type="text" data-name="장소1" /></div>
+        <div class="formBottom">
+          <div class="plusBtn"></div>
+          <div id="submit">저장</div>
+        </div>
+      </form>`;
 
+    const form = this.querySelector('form');
+    const bottom = this.querySelector('.formBottom');
+
+    // + 버튼 → 장소 입력칸 추가 (저장 버튼 위에)
+    let placeCount = 1; // 처음 화면에 장소1부터 시작
+    this.querySelector('.plusBtn').addEventListener('click', () => {
+      placeCount++;
+      const row = document.createElement('div');
+      row.className = 'formRow extra';
+      row.innerHTML = `<span>장소${placeCount}</span><input type="text" data-name="장소${placeCount}" />`;
+      form.insertBefore(row, bottom);
+    });
+
+    // 저장 버튼 → localStorage에 저장 후 다음 화면
+    this.querySelector('#submit').addEventListener('click', () => {
+      const place = [];
+
+      this.querySelectorAll('.formRow input').forEach((input) => {
+        const address = input.value.trim();
+        if (address !== '') {
+          place.push({ name: input.dataset.name, address });
+        }
+      });
+
+      // 집, 회사는 필수
+      const hasHome = place.some((p) => p.name === '집');
+      const hasWork = place.some((p) => p.name === '회사');
+      if (!hasHome || !hasWork) {
+        alert('집과 회사 주소를 입력해주세요.');
+        return;
+      }
+
+      const user = getStorage('user');
+      user.place = place;
+      setStorage('user', user);
+
+      this.closest('main-div').render(); // → 위젯 추가 화면
+    });
+  }
+}
 class AddWidget extends HTMLElement {
   connectedCallback() {
     //div 가이드 추가 코드
@@ -142,13 +202,23 @@ class Main extends HTMLElement {
     this.innerHTML = ''; // 이전 화면 비우기
     const user = getStorage('user');
 
+    //첫 시작 => 로그인 창
     if (user.firstStart) {
       const login = document.createElement('login-screen');
       this.appendChild(login);
-    } else if (user.widgetList.length === 0) {
+    }
+    //장소, 회사 설정 창
+    else if (user.place.length === 0) {
+      const address = document.createElement('address-screen');
+      this.appendChild(address);
+    }
+    //위젯 설정 창.
+    else if (user.widgetList.length === 0) {
       const addWidget = document.createElement('add-widget');
       this.appendChild(addWidget);
-    } else {
+    }
+    //메인 home화면 창
+    else {
       document.querySelector('navigation-bar').hidden = false;
 
       //유저 데이터의 위젯 리스트 가지고 와서 뿌리기.
@@ -383,7 +453,6 @@ class NoteWidget extends HTMLElement {
       list.push({
         text: input_value, // 사용자가 입력한 값 (string)
         completed: false, // 완료 여부 (boolean)
-        createdAt: Date.now(), // 리스트 등록 시간 (number)
         completedTime: null, // 완료한 시간 (number)
       });
       localStorage.setItem('list', JSON.stringify(list)); // 배열 -> 문자열 => 저장
@@ -578,7 +647,6 @@ class TrafficWidget extends HTMLElement {
 
                 item.append(heading, detail);
                 list.appendChild(item);
-                console.log(item);
                 count++;
               }
             }
@@ -614,7 +682,7 @@ class WeatherWidget extends HTMLElement {
     this.innerHTML = ` <div id="weather">
           <div id="weather_1">
             <div id="type${nowWeather[2]}" class="weatherImg"></div>
-            <div class="date">${getTime.getMonth() + 1}월 ${getTime.getDate()}일 금요일</div>
+            <div class="date">${getTime.getMonth() + 1}월 ${getTime.getDate()}일 ${['일', '월', '화', '수', '목', '금', '토'][getTime.getDay()]}요일</div>
             <div class="time">${getTime.getHours().toString().padStart(2, '0')}:${getTime.getMinutes().toString().padStart(2, '0')}</div>
           </div>
           <div id="weather_2">
@@ -633,6 +701,7 @@ class WeatherWidget extends HTMLElement {
 // 커스텀 태그를 정의한다는 의미.
 customElements.define('start-screen', StartScreen);
 customElements.define('login-screen', Login);
+customElements.define('address-screen', AddressScreen);
 customElements.define('add-widget', AddWidget);
 customElements.define('top-bar', TopBar);
 customElements.define('navigation-bar', FootNavigationBar);
