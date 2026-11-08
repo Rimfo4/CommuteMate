@@ -1,72 +1,1252 @@
-/* 이건 상단바이고요. */
-#topColorBar{
-    background-color: var(--main-color);
-    height: 190px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+start-screen {
+  position: fixed;
+  inset: 0; /* 화면 전체를 덮음 */
+  z-index: 1000;
+  background-color: white;
+  transition:
+    opacity 0.3s,
+    visibility 0.3s; /* 의미 : 투명도와 가시성을 3초 동안 전환 */
 }
-/* 이거는 아래 하단바 입ㄴ디ㅏ. */
-#footNavigationBar{
-    background-color: var(--main-gray-color);
-    height: 190px;
-    display: flex;
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
+@keyframes slideUp {
+  100% {
+    height: 1900px;
+  }
 }
-.footBtn{
-    width: 130px;
-    height: 130px;
-    border: 0px;
-}
-#widgetAddBtn{
-    background-image: url('./assets/PlusCircle.svg');
-}
-#homeBtn{
-    background-image: url(./assets/home.svg);
-    background-repeat: no-repeat; 
-    background-position: center;
-    background-size: 90px; 
-}
-#settingBtn{
-    background-image: url(./assets/setting.svg);
-    background-repeat: no-repeat; 
-    background-position: center;
-    background-size: 110px; 
-}
-/* 아래는 위젯 바 입니다. */
-#widget{
-    width: 1025px;
-    height: 250px;
-    background-color: var(--main-gray-color);
-    display: flex;  
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-around;
-    border-radius: 40px;
-    border: 1px solid var(--line-pink-color);
+/* 위젯이 위로 올라가는 애니메이션. */
+.widgetSlideUp {
+  /* div 태그가 y좌료 기준 위로 1초동안 -700px 이동 */
+  /* 따로 키프레임을 지정하여 애니메이션 구현 */
+  animation: slideUp 1s forwards;
+  transform-origin: top;
 }
 
-#thirdsImg{
-    width: 85px;
-    height: 58px;
-    background-image: url(./assets/thrid.svg);
-    background-repeat: no-repeat; 
-    background-position: center;
+#tong {
+  color: var(--text-color);
 }
 
-#widgetText{
-    width: 462px;
-    height: 95px;
-    font-size: 100px;
-    font-family: "LGOTFRegular";
-    
+@keyframes behind {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+/* 시작 화면 */
+#startScreen {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'LGOTFBold';
+  font-size: 200px;
+  animation: behind 3s forwards;
 }
 
-#light{
-    width: 60px;
-    height: 60px;
-    background-color: #F89292;
-    border-radius: 100px;
+/* 이건 상단바이에요. */
+#topColorBar {
+  background-color: var(--main-color);
+  height: 190px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+/* 이거는 아래 하단바 입니다. */
+navigation-bar {
+  background-color: var(--main-gray-color);
+  position: fixed;
+  left: 0px;
+  bottom: 0px;
+  width: 100%;
+  height: 190px;
+  display: flex; /* 요소들을 가로로 나열 */
+  /* 하단에 고정시키기 :*/
+
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around; /* 공간을 균등하게 배분 */
+}
+navigation-bar[hidden] {
+  display: none;
+}
+.footBtn {
+  width: 130px;
+  height: 130px;
+  border: 0px;
+}
+#widgetAddBtn {
+  background-image: url('./assets/PlusCircle.svg');
+}
+#homeBtn {
+  background-image: url(./assets/home.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 90px;
+}
+#settingBtn {
+  background-image: url(./assets/setting.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 110px;
+}
+.repeatImg {
+  width: 100px;
+  height: 100px;
+  background-image: url('./assets/ArrowRepeat.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  border: none;
+  margin: 40px 40px 0px 0px;
+}
+
+/* //signUp, login 위젯용 */
+login-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'LGOTFRegular';
+}
+#formTitle {
+  height: 210px;
+  font-size: 100px;
+  margin-top: 500px;
+  text-align: center;
+  font-family: 'LGOTFRegular';
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+.title {
+  text-align: center;
+  margin: 10px 0px 120px 0px;
+  font-size: 100px;
+}
+#usname {
+  display: inline-block;
+  font-size: 70px; /* 비밀번호 라벨과 같은 크기 */
+}
+#uspw {
+  display: inline-block;
+  font-size: 70px;
+}
+#name,
+#pw {
+  width: 950px;
+  margin-top: 130px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center; /* 라벨을 입력창 세로 가운데에 맞춤 */
+}
+/* 라벨 칸 너비를 고정하고 오른쪽 정렬 → 입력창 시작 위치와 너비가 같아짐 */
+#name span,
+#pw span {
+  width: 240px;
+  text-align: right;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+/* 입력창은 남은 공간만 차지 */
+#name input,
+#pw input {
+  flex: 1;
+  min-width: 0;
+  margin-left: 30px;
+  width: 750px;
+  background-color: #eecbcb;
+  opacity: 0.5;
+  border: 2px solid black;
+  border-radius: 5px; /* 모서리 둥글게*/
+}
+#submit {
+  margin-top: 150px;
+  width: 215px;
+  height: 100px;
+  text-align: center;
+  line-height: 100px;
+  font-size: 50px;
+  background-color: #eecbcb;
+  border: 2px solid #999898;
+  cursor: pointer;
+}
+/* 주소 입력 화면 */
+address-screen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-family: 'LGOTFRegular';
+}
+.formSub {
+  font-size: 30px;
+  margin-top: -80px;
+}
+.formRow {
+  width: 950px;
+  margin-top: 130px;
+  display: flex;
+  align-items: center;
+}
+.formRow span {
+  width: 240px;
+  font-size: 70px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.formRow input {
+  flex: 1;
+  min-width: 0;
+  margin-left: 30px;
+  font-size: 50px;
+  background-color: #eecbcb;
+  opacity: 0.5;
+  border: 2px solid black;
+  border-radius: 5px;
+}
+/* 선택 입력(장소)은 회색 */
+.formRow.extra span {
+  color: #8a8a8a;
+}
+.formRow.extra input {
+  opacity: 0.3;
+}
+.formBottom {
+  position: relative;
+  width: 950px;
+  display: flex;
+  justify-content: center;
+}
+.plusBtn {
+  position: absolute;
+  left: 0;
+  top: 60px;
+  width: 80px;
+  height: 80px;
+  background: url(./assets/PlusCircle.svg) no-repeat center / contain;
+  cursor: pointer;
+}
+/* 기존 위젯 버튼 */
+#widget {
+  width: 1025px;
+  height: 250px;
+  margin: 30px;
+  background-color: var(--main-gray-color);
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  border-radius: 40px;
+  border: 1px solid var(--line-pink-color);
+}
+#thirdsImg {
+  width: 85px;
+  height: 58px;
+  background-image: url(./assets/thrid.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  flex-direction: column;
+  align-items: center;
+}
+#widgetSubmit {
+  width: 100px;
+  height: 100px;
+  margin-top: 80px;
+  background-repeat: no-repeat;
+  background-position: center;
+  background-image: url(./assets/submit.svg);
+}
+
+#clickVectorImg {
+  width: 85px;
+  height: 58px;
+  background-image: url(./assets/Vector.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+}
+/* -> .vectorImg*/
+/* #thirdsImg {
+  width: 85px;
+  height: 58px;
+  background: url("./assets/thrid.svg") no-repeat center;
+} */
+
+/* 위젯 이름 */
+/* #widgetText {
+  width: 462px;
+  height: 95px;
+  font-size: 90px;
+  left: 10px;
+  font-family: "LGOTFRegular";
+} */
+
+/* 위젯 추가 여부 표시*/
+/* #light {
+  width: 60px;
+  height: 60px;
+  background-color: #f89292;
+  border-radius: 100px;
+} */
+
+#widgetPopup {
+  position: fixed;
+  bottom: 190px;
+  left: 0;
+  box-sizing: border-box;
+  width: 100%;
+
+  height: auto;
+  max-height: calc(100vh - 190px);
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  visibility: hidden;
+  display: flex;
+  flex-direction: column;
+
+  overflow: hidden;
+
+  background-color: var(--light-pink-color);
+  border-radius: 113px 113px 0 0;
+
+  padding: 60px 20px 0;
+}
+
+.popupWidget {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+#widgetPopup.show {
+  visibility: visible;
+}
+
+#noteWidget {
+  width: 1000px;
+  height: 620px;
+  border-radius: 75px;
+}
+
+note-widget[type='1'] .noteWidget {
+  width: 1000px;
+  height: 620px;
+  border-radius: 75px;
+  pointer-events: none;
+  align-items: center;
+  justify-content: center;
+}
+
+note-widget[type='2'] .noteWidget {
+  width: 1000px;
+  height: 1000px;
+  border-radius: 75px;
+  pointer-events: none;
+}
+
+/* 위젯 제목*/
+.title {
+  font-size: 64px;
+  width: 320px;
+  height: 80px;
+}
+
+#mainPart {
+  width: 100%;
+  min-height: 1500px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow: auto;
+}
+
+/* 위젯 화면. 한 줄에 안 들어가는 위젯은 다음 줄로 내려감 */
+#widgetBoard {
+  width: 1040px;
+  margin: 40px auto 230px; /* 아래쪽은 하단 바(190px)에 가리지 않게 함 */
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 40px;
+}
+
+/* 위젯 추가되어있지 않을 때*/
+#none {
+  font-size: 100px;
+  width: 550px;
+  height: 210px;
+  text-align: center;
+  align-items: center;
+  justify-content: center;
+  font-family: 'LGOTFRegular';
+}
+
+/* 업무 기록 위젯 */
+.noteWidget {
+  width: 1000px;
+  height: 500px;
+  background-color: #efefef;
+  border-radius: 75px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.header {
+  display: flex;
+  justify-content: space-around;
+  flex-direction: row;
+  flex-shrink: 0; /* header 영역은 고정 */
+}
+
+#title {
+  font-size: 64px;
+  font-weight: bold;
+  width: 400px;
+  height: 85px;
+  margin: 50px 0 0 40px;
+  display: flex; /* 자식요소 flex 사용 */
+  flex-direction: row; /* 자식요소 가로 배치 */
+}
+
+#input {
+  width: 440px;
+  height: 60px;
+  display: flex;
+  margin: 30px;
+  margin-top: 50px;
+
+  font-size: 40px;
+  flex-direction: row;
+}
+#addBtn {
+  width: 79px;
+  height: 60px;
+  margin-top: 50px;
+  margin-right: 40px;
+  font-size: 30px;
+}
+li {
+  font-size: 50px;
+  margin: 40px;
+  margin-left: 60px;
+}
+
+#listContainer {
+  flex: 1;
+  overflow-y: auto;
+}
+
+li.completed {
+  text-decoration: line-through;
+}
+
+/* widget-list 관련 css */
+widget-list {
+  width: 100%;
+  height: 0px;
+  background-color: var(--light-pink-color);
+  border-radius: 100px;
+  overflow: auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+#widgetList {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* 날씨 위젯 관련 css */
+#weather {
+  height: 500px;
+  width: 500px;
+  background-color: #89baff;
+  border-radius: 116px;
+  display: flex;
+  flex-direction: column;
+}
+
+#weather > div {
+  color: white;
+}
+#weather_1 > div {
+  margin-left: 50px;
+}
+
+#weather_1 > .date {
+  font-size: 40px;
+  margin-top: 30px;
+}
+#weather_1 > .time {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+#water {
+  width: 27px;
+  height: 40px;
+  margin: 0px !important;
+  background-image: url(./assets/weather/water.svg);
+  background-size: contain;
+}
+#weather_2 {
+  margin-top: -70px;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  margin-right: 32px;
+  overflow: visible;
+}
+#weather_2 > div {
+  font-weight: 700;
+}
+#humidity {
+  padding-left: 10px;
+  font-size: 48px;
+}
+#temp {
+  font-size: 128px;
+  line-height: 0.7;
+  margin-top: 0;
+}
+
+weather-widget[type='2'] > div#weather {
+  width: 1000px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+weather-widget[type='2'] #weather_1 div {
+  margin: 0px 0px 0px 100px;
+}
+weather-widget[type='2'] #weather_2 {
+  margin: 240px 100px 0px 0px;
+}
+
+/* 날씨 이미지 */
+.weatherImg {
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-top: 50px !important;
+  margin-bottom: 30px !important;
+}
+weather-widget[type='1'] #type1 {
+  width: 242px;
+  height: 160px;
+  margin-top: 54px;
+  background-image: url(./assets/weather/cloud1.svg);
+}
+weather-widget[type='2'] #type1 {
+  width: 371px;
+  height: 160px;
+  background-image: url(./assets/weather/cloud2.svg);
+}
+weather-widget #type2 {
+  width: 160px;
+  height: 160px;
+  background-image: url(./assets/weather/sunny.svg);
+}
+weather-widget #type3 {
+  width: 245px;
+  height: 182px;
+  background-image: url(./assets/weather/cloud_sunny.svg);
+}
+weather-widget #type4 {
+  width: 160px;
+  height: 160px;
+  background-image: url(./assets/weather/rainy.svg);
+}
+weather-widget #type5 {
+  width: 160px;
+  height: 160px;
+  background-image: url(./assets/weather/snow.svg);
+}
+
+/* type="1" : 500*500 */
+.alarmWidget {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 500px;
+  height: 500px;
+  padding-top: 32px;
+  background-color: #efefef;
+  border-radius: 116px;
+}
+.alarmTop {
+  /* 아이콘 + 시간이 들어가는 윗줄 */
+  display: flex;
+  align-items: center;
+  width: 432px;
+  height: 160px;
+}
+.alarmClock {
+  width: 160px;
+  height: 160px;
+  margin-left: 13px;
+}
+.alarmTime {
+  margin-left: 40px;
+  font-size: 64px;
+  font-weight: bold;
+  line-height: 80px;
+  color: #555555;
+}
+.alarmInfo {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-sizing: border-box;
+  width: 432px;
+  height: 113px;
+  margin-top: 19px;
+  font-size: 50px;
+  font-weight: bold;
+  color: #555555;
+  background-color: #cfcfcf;
+  border-radius: 56px;
+}
+.alarmAddBtn {
+  /* 아래 빈칸 = + 버튼 */
+  padding: 0px;
+  border: none;
+  font-size: 80px;
+  cursor: pointer;
+}
+
+/* type="2" : 1000*1000 (시간 한 줄 + 알람 칸 4개) */
+alarm-widget[type='2'] .alarmWidget {
+  width: 1000px;
+  height: 1000px;
+  padding-top: 70px;
+  border-radius: 100px;
+}
+alarm-widget[type='2'] .alarmTop {
+  width: 864px;
+  height: 180px;
+  margin-bottom: 20px;
+}
+alarm-widget[type='2'] .alarmClock {
+  width: 180px;
+  height: 180px;
+  margin-left: 30px;
+}
+alarm-widget[type='2'] .alarmTime {
+  /* 오전/오후와 시간을 한 줄로 */
+  display: flex;
+  gap: 28px;
+  margin-left: 80px;
+  font-size: 100px;
+  line-height: normal;
+}
+alarm-widget[type='2'] .alarmInfo {
+  /* 글자를 왼쪽에 붙임 */
+  justify-content: flex-start;
+  width: 864px;
+  height: 110px;
+  margin-top: 36px;
+  padding-left: 50px;
+  font-size: 48px;
+  border-radius: 55px;
+}
+/* 마지막 칸 = + 버튼 (가운데 정렬) */
+alarm-widget[type='2'] .alarmAddBtn {
+  justify-content: center;
+  padding-left: 0px;
+  font-size: 90px;
+}
+/* 위젯의 알람 칸 (누르면 알람 모달) */
+.alarmRow {
+  cursor: pointer;
+}
+.alarmRow.off {
+  /* 꺼진 알람은 흐리게 */
+  color: #9a9a9a;
+}
+
+/* ===== 알람 모달 ===== */
+alarm-modal {
+  position: fixed;
+  inset: 0;
+  z-index: 2000; /* 하단바보다 위 */
+}
+@keyframes alarmSlideUp {
+  from {
+    transform: translateY(100%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+.alarmPanel {
+  /* 아래에서 올라오는 분홍 판 */
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 75%;
+  box-sizing: border-box;
+  padding: 50px 40px;
+  overflow-y: auto;
+  background-color: var(--light-pink-color);
+  border-radius: 100px 100px 0px 0px;
+  box-shadow: 0px -4px 12px rgba(0, 0, 0, 0.15);
+  animation: alarmSlideUp 0.3s ease-out;
+}
+.alarmPanelTop {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 40px;
+}
+.alarmPanelClock {
+  width: 150px;
+  height: 150px;
+}
+.alarmClose {
+  width: 110px;
+  height: 110px;
+  padding: 0px;
+  font-size: 60px;
+  background-color: #e3e3e3;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+/* 알람 카드 (alarm_basic.html 기준) */
+.alarmCard {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  box-sizing: border-box;
+  width: 100%;
+  height: 464px;
+  margin-bottom: 43px;
+  padding: 0px 61px;
+  background-color: #efefef;
+  border: 2px solid #9a9a9a;
+  border-radius: 85px;
+}
+.alarmCardTime {
+  font-size: 140px;
+  font-weight: bold;
+  color: #555555;
+}
+.alarmCardDelete {
+  /* 카드 오른쪽 위 휴지통 */
+  position: absolute;
+  top: 30px;
+  right: 40px;
+  width: 100px;
+  height: 100px;
+  padding: 0px;
+  background-color: #e3e3e3;
+  background-image: url(./assets/delete.svg);
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: 60%;
+  border: 4px solid #555555;
+  border-radius: 50%;
+  cursor: pointer;
+}
+.alarmEmpty {
+  margin: 100px 0px;
+  text-align: center;
+  font-size: 60px;
+  font-weight: bold;
+  color: #888888;
+}
+
+/* 토글 스위치 */
+.alarmSwitch {
+  position: relative;
+  display: inline-block;
+  width: 160px;
+  height: 80px;
+  flex-shrink: 0;
+}
+.alarmSwitch input {
+  /* 진짜 체크박스는 숨기고 slider로 모양을 만듦 */
+  opacity: 0;
+  width: 0px;
+  height: 0px;
+}
+.alarmSlider {
+  /* 꺼진 상태: 회색 바탕 */
+  position: absolute;
+  inset: 0;
+  background-color: #c8c8c8;
+  border-radius: 40px;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.alarmSlider::before {
+  /* 하얀 동그라미 */
+  content: '';
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  width: 64px;
+  height: 64px;
+  background-color: white;
+  border-radius: 50%;
+  transition: transform 0.2s;
+}
+.alarmSwitch input:checked + .alarmSlider {
+  /* 켜진 상태: 초록 바탕 */
+  background-color: #19c319;
+}
+.alarmSwitch input:checked + .alarmSlider::before {
+  transform: translateX(80px);
+}
+
+/* 목록 아래 + 버튼 */
+.alarmPlus {
+  display: block;
+  width: 100%;
+  height: 160px;
+  padding: 0px;
+  background-color: white;
+  border: 8px solid #888888;
+  border-radius: 80px;
+  font-size: 110px;
+  color: black;
+  cursor: pointer;
+}
+
+/* 시간 설정 화면 (alarm_ setting.html 기준) */
+.alarmPicker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  box-sizing: border-box;
+  width: 100%;
+  padding: 60px 0px;
+  background-color: white;
+  border-radius: 90px;
+  box-shadow: 0px 0px 6px rgba(0, 0, 0, 0.3);
+}
+.alarmWheels {
+  /* 휠 3개가 들어가는 칸 (한 줄 150px x 3줄) */
+  position: relative;
+  display: flex;
+  width: 902px;
+  height: 450px;
+}
+.alarmSelectLine {
+  /* 가운데 선택된 줄의 위아래 선 */
+  position: absolute;
+  left: 0px;
+  top: 150px;
+  width: 100%;
+  height: 150px;
+  box-sizing: border-box;
+  border-top: 4px solid black;
+  border-bottom: 4px solid black;
+  pointer-events: none; /* 선이 터치/클릭을 막지 않게 */
+}
+.alarmWheel {
+  /* 위아래로 돌아가는 칸 */
+  height: 450px;
+  padding: 150px 0px; /* 처음/마지막 값도 가운데로 올 수 있게 위아래 여백 */
+  box-sizing: border-box;
+  overflow-y: auto;
+  scroll-snap-type: y mandatory; /* 스크롤하면 한 줄씩 딱딱 멈춤 */
+  scrollbar-width: none; /* 스크롤바 숨기기 */
+}
+.alarmWheel::-webkit-scrollbar {
+  display: none;
+}
+.alarmWheel.ampm {
+  width: 348px;
+}
+.alarmWheel.hour {
+  width: 194px;
+}
+.alarmWheel.min {
+  width: 208px;
+}
+.alarmItem {
+  height: 150px;
+  line-height: 150px;
+  text-align: center;
+  font-size: 55px;
+  font-weight: bold;
+  scroll-snap-align: center;
+  cursor: pointer;
+}
+.alarmColon {
+  /* 가운데 줄에만 보이는 : */
+  width: 68px;
+  height: 150px;
+  margin-top: 150px;
+  line-height: 150px;
+  text-align: center;
+  font-size: 55px;
+  font-weight: bold;
+}
+.alarmOk {
+  width: 860px;
+  height: 133px;
+  margin-top: 60px;
+  font-size: 55px;
+  font-weight: bold;
+  background-color: #eaeaea;
+  border: none;
+  border-radius: 67px;
+  cursor: pointer;
+}
+widget-btn {
+  display: block;
+  width: 100%;
+  flex-shrink: 0;
+}
+
+.widgetWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+/* 위젯 하나를 감싸는 영역 */
+widget-btn {
+  display: block;
+  width: 100%;
+  margin-top: 30px;
+}
+
+/* 기존 위젯 버튼 */
+.widgetButton {
+  width: 1025px;
+  max-width: 100%;
+  height: 250px;
+  background-color: var(--main-gray-color);
+  border: 1px solid var(--line-pink-color);
+  border-radius: 40px;
+
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: space-around;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+}
+
+/* 펼치기 아이콘 */
+#vectorImg {
+  width: 85px;
+  height: 58px;
+  background-image: url('./assets/Vector.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  cursor: pointer;
+}
+
+#vectorImg.open {
+  width: 85px;
+  height: 58px;
+
+  background-image: url('./assets/clickVector.png');
+  background-size: 50px 50px;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* 위젯 이름 */
+#widgetText {
+  width: 462px;
+  font-size: 90px;
+  font-family: 'LGOTFRegular';
+}
+
+/* 오른쪽 표시 원 */
+#light {
+  width: 60px;
+  height: 60px;
+  background-color: #f89292;
+  border-radius: 50%;
+}
+#lightOn {
+  width: 60px;
+  height: 60px;
+  background-color: #92f897;
+  border-radius: 50%;
+}
+
+.widgetWrapper {
+  width: 1025px;
+  max-width: 100%;
+  margin: 0 auto;
+
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+}
+
+/* 옵션이 펼쳐졌을 때 버튼 아래쪽 모서리 변경 */
+.widgetWrapper.expanded .widgetButton {
+  border-radius: 40px 40px 0 0;
+}
+
+/* 펼치기 아이콘 */
+.vectorImg {
+  width: 85px;
+  height: 58px;
+  flex-shrink: 0;
+
+  background-color: transparent;
+  background-image: url('./assets/Vector.svg');
+  background-repeat: no-repeat;
+  background-position: center;
+  background-size: contain;
+
+  border: none;
+  cursor: pointer;
+}
+
+/* 클릭 후 아이콘 */
+.vectorImg.open {
+  background-image: url('./assets/clickVector.png');
+  background-size: 50px auto;
+}
+
+/* 위젯 이름 */
+.widgetText {
+  width: 462px;
+  font-size: 90px;
+  font-family: 'LGOTFRegular';
+  text-align: center;
+}
+
+/* 오른쪽 표시 원 */
+.light {
+  width: 60px;
+  height: 60px;
+  flex-shrink: 0;
+
+  background-color: #f89292;
+  border-radius: 50%;
+}
+
+/* 선택된 위젯의 표시 원 */
+.light.on {
+  background-color: #a3f59a;
+}
+
+/* 위젯 옵션 영역 */
+.widgetOption {
+  display: none;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  background-color: #d9d9d9;
+  border: 1px solid #888888;
+  border-top: none;
+  border-radius: 0 0 20px 20px;
+
+  padding: 15px 10px 10px;
+}
+
+/* 클릭하면 옵션 영역 표시 */
+.widgetOption.show {
+  display: block;
+}
+
+/* 실제 위젯들이 들어가는 영역 */
+.optionBody {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+
+  width: 100%;
+  gap: 30px;
+}
+
+/* 작은 위젯 */
+.smallOption {
+  position: relative;
+  width: fit-content; /* 옆의 빈 공간을 눌러도 선택되지 않게 함 */
+  display: flex;
+  justify-content: flex-start; /* 왼쪽 정렬 */
+  cursor: pointer; /* 클릭 가능 */
+}
+
+/* 큰 위젯 */
+.bigOption {
+  position: relative;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+}
+
+/* 미리보기 안쪽의 입력창과 버튼이 눌리지 않게 함 */
+.optionBody [type] {
+  pointer-events: none;
+}
+
+/* 누른 순서 번호 */
+.widgetOrder {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  z-index: 1;
+
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  background-color: var(--text-color);
+  border-radius: 50%;
+  color: white;
+  font-size: 50px;
+  font-weight: bold;
+}
+
+.trafficWidget {
+  width: 1000px;
+  height: 500px;
+  border: 1px solid #ccc;
+  border-radius: 116px;
+  margin-top: 20px;
+  background-color: #efefef;
+  display: flex;
+  flex-direction: column;
+}
+#widgetTitle {
+  font-size: 64px;
+  font-weight: bold;
+  text-align: left;
+  height: 64px;
+  width: 300px;
+  margin: 50px 0 0 40px;
+}
+/* 교통정보 목록 */
+#trafficData {
+  flex: 1;
+  min-height: 0;
+  min-width: 0;
+
+  width: 100%;
+  box-sizing: border-box;
+
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  padding: 20px 40px;
+}
+
+traffic-widget[type='2'] .trafficWidget {
+  width: 1000px;
+  height: 1000px;
+  border-radius: 75px;
+  /* pointer-events: none; */
+}
+traffic-widget[type='1'] .trafficWidget {
+  width: 1000px;
+  height: 500px;
+  border-radius: 75px;
+  /* pointer-events: none; */
+}
+
+#trafficData article h3 {
+  font-size: 64px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+#trafficData article p {
+  font-size: 40px;
+  font-weight: regular;
+  margin-bottom: 20px;
+}
+
+/* 교통돌발정보 불러오기 버튼
+#loadTraffic {
+  font-size: 32px;
+  font-weight: bold;
+  background-color: #f89292;
+  border: none;
+  border-radius: 50px;
+  cursor: pointer;
+  height: 50px;
+  width: 300px;
+  margin: 40px 0 20px 40px;
+} */
+
+#trafficHeader {
+  display: flex;
+  justify-content: space-between;
+  flex-direction: row;
+}
+
+/* 가져온 교통 정보 갯수 표시 */
+#status {
+  font-size: 32px;
+  font-weight: bold;
+  margin: 60px 0 20px 40px;
+}
+
+/* ===== 알람 울림 창 ===== */
+alarm-ring {
+  /* 화면 전체를 어둡게 덮고 가운데에 창 */
+  position: fixed;
+  inset: 0;
+  z-index: 3000; /* 알람 모달보다 위 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.alarmRingBox {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 880px;
+  padding: 50px 70px 70px;
+  background-color: white;
+  border-radius: 90px;
+}
+.alarmRingClock {
+  align-self: center;
+  width: 110px;
+  height: 110px;
+}
+.alarmRingAmpm {
+  margin-top: 20px;
+  font-size: 90px;
+  font-weight: bold;
+}
+.alarmRingTime {
+  text-align: center;
+  font-size: 180px;
+  font-weight: bold;
+  line-height: 1.1;
+}
+.alarmRingOff {
+  height: 170px;
+  margin-top: 50px;
+  font-size: 90px;
+  font-weight: bold;
+  background-color: #e3e3e3;
+  border: 4px solid #9a9a9a;
+  border-radius: 85px;
+  cursor: pointer;
 }

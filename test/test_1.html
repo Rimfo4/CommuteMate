@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+    <style>
+      .login {
+        width: 100%;
+        height: 1229px;
+        margin-top: 533px;
+      }
+      .title {
+        text-align: center; /*가운데 정렬*/
+        margin: 10px 0px 120px 0px;
+        font-size: 100px;
+      }
+      #usname {
+        display: inline-block;
+        font-size: 80px;
+        margin: 50px 25px 0px 120px;
+      }
+      #uspw {
+        display: inline-block;
+        font-size: 70px;
+        margin: 50px 17px 0px 20px;
+      }
+      #name, #pw {
+        width: 751px;
+        height: 107px;
+        font-size: 45px;
+      
+      }
+
+      input {
+        margin: 50px 50px 50px 0px;
+        border: 2px solid black;
+        border-radius: 5px; /* 모서리 둥글게*/
+      }
+      button {
+        text-align: center;
+      }
+
+    </style>
+  </head>
+  <body>
+    <div class="login">
+      <div class="title">사용자 확인</div>
+      <form class="user">
+        <div><span id="usname">이름</span> 
+          <input id="name" type = "text" placeholder="이름을 입력해주세요"></input>
+        </div>
+        <br/>
+        <span id="uspw">비밀번호</span>
+        <input id="pw" type = "password" placeholder="비밀번호를 입력해주세요"></input>
+        <br/>
+        <button type="submit">로그인</button>
+      </form>
+    </div>
+  </body>
+</html>
