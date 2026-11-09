@@ -71,7 +71,7 @@ navigation-bar[hidden] {
   border: 0px;
 }
 #widgetAddBtn {
-  background-image: url('./assets/PlusCircle.svg');
+  background-image: url("./assets/PlusCircle.svg");
 }
 #homeBtn {
   background-image: url(./assets/home.svg);
@@ -88,7 +88,7 @@ navigation-bar[hidden] {
 .repeatImg {
   width: 100px;
   height: 100px;
-  background-image: url('./assets/ArrowRepeat.svg');
+  background-image: url("./assets/ArrowRepeat.svg");
   background-repeat: no-repeat;
   background-position: center;
   border: none;
@@ -100,14 +100,14 @@ login-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: 'LGOTFRegular';
+  font-family: "LGOTFRegular";
 }
 #formTitle {
   height: 210px;
   font-size: 100px;
   margin-top: 500px;
   text-align: center;
-  font-family: 'LGOTFRegular';
+  font-family: "LGOTFRegular";
 }
 
 form {
@@ -152,7 +152,7 @@ form {
   min-width: 0;
   margin-left: 30px;
   width: 750px;
-  background-color: #eecbcb;
+  background-color: var(--main-color);
   opacity: 0.5;
   border: 2px solid black;
   border-radius: 5px; /* 모서리 둥글게*/
@@ -164,7 +164,7 @@ form {
   text-align: center;
   line-height: 100px;
   font-size: 50px;
-  background-color: #eecbcb;
+  background-color: var(--main-color);
   border: 2px solid #999898;
   cursor: pointer;
 }
@@ -173,7 +173,7 @@ address-screen {
   display: flex;
   flex-direction: column;
   align-items: center;
-  font-family: 'LGOTFRegular';
+  font-family: "LGOTFRegular";
 }
 .formSub {
   font-size: 30px;
@@ -196,7 +196,7 @@ address-screen {
   min-width: 0;
   margin-left: 30px;
   font-size: 50px;
-  background-color: #eecbcb;
+  background-color: var(--main-color);
   opacity: 0.5;
   border: 2px solid black;
   border-radius: 5px;
@@ -281,7 +281,7 @@ address-screen {
 /* #light {
   width: 60px;
   height: 60px;
-  background-color: #f89292;
+  background-color: var(--line-pink-color);
   border-radius: 100px;
 } */
 
@@ -329,13 +329,13 @@ address-screen {
   border-radius: 75px;
 }
 
-note-widget[type='1'] .noteWidget {
+note-widget[type="1"] .noteWidget {
   width: 1000px;
   height: 620px;
   border-radius: 75px;
 }
 
-note-widget[type='2'] .noteWidget {
+note-widget[type="2"] .noteWidget {
   width: 1000px;
   height: 1000px;
   border-radius: 75px;
@@ -383,14 +383,14 @@ main-div {
   text-align: center;
   align-items: center;
   justify-content: center;
-  font-family: 'LGOTFRegular';
+  font-family: "LGOTFRegular";
 }
 
 /* 업무 기록 위젯 */
 .noteWidget {
   width: 1000px;
   height: 500px;
-  background-color: #efefef;
+  background-color: var(--main-gray-color);
   border-radius: 75px;
   overflow: hidden;
   display: flex;
@@ -523,24 +523,24 @@ widget-list[hidden] {
 }
 #humidity {
   padding-left: 10px;
-  font-size: 48px;
+  font-size: 50px;
 }
 #temp {
   font-size: 128px;
   line-height: 0.7;
-  margin-top: 0;
+  margin-top: 10px;
 }
 
-weather-widget[type='2'] > div#weather {
+weather-widget[type="2"] > div#weather {
   width: 1000px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-weather-widget[type='2'] #weather_1 div {
+weather-widget[type="2"] #weather_1 div {
   margin: 0px 0px 0px 100px;
 }
-weather-widget[type='2'] #weather_2 {
+weather-widget[type="2"] #weather_2 {
   margin: 240px 100px 0px 0px;
 }
 
@@ -551,13 +551,13 @@ weather-widget[type='2'] #weather_2 {
   margin-top: 50px !important;
   margin-bottom: 30px !important;
 }
-weather-widget[type='1'] #type1 {
+weather-widget[type="1"] #type1 {
   width: 242px;
   height: 160px;
   margin-top: 54px;
   background-image: url(./assets/weather/cloud1.svg);
 }
-weather-widget[type='2'] #type1 {
+weather-widget[type="2"] #type1 {
   width: 371px;
   height: 160px;
   background-image: url(./assets/weather/cloud2.svg);
@@ -592,7 +592,7 @@ weather-widget #type5 {
   width: 500px;
   height: 500px;
   padding-top: 32px;
-  background-color: #efefef;
+  background-color: var(--main-gray-color);
   border-radius: 116px;
 }
 .alarmTop {
@@ -637,23 +637,23 @@ weather-widget #type5 {
 }
 
 /* type="2" : 1000*1000 (시간 한 줄 + 알람 칸 4개) */
-alarm-widget[type='2'] .alarmWidget {
+alarm-widget[type="2"] .alarmWidget {
   width: 1000px;
   height: 1000px;
   padding-top: 70px;
   border-radius: 100px;
 }
-alarm-widget[type='2'] .alarmTop {
+alarm-widget[type="2"] .alarmTop {
   width: 864px;
   height: 180px;
   margin-bottom: 20px;
 }
-alarm-widget[type='2'] .alarmClock {
+alarm-widget[type="2"] .alarmClock {
   width: 180px;
   height: 180px;
   margin-left: 30px;
 }
-alarm-widget[type='2'] .alarmTime {
+alarm-widget[type="2"] .alarmTime {
   /* 오전/오후와 시간을 한 줄로 */
   display: flex;
   gap: 28px;
@@ -661,7 +661,7 @@ alarm-widget[type='2'] .alarmTime {
   font-size: 100px;
   line-height: normal;
 }
-alarm-widget[type='2'] .alarmInfo {
+alarm-widget[type="2"] .alarmInfo {
   /* 글자를 왼쪽에 붙임 */
   justify-content: flex-start;
   width: 864px;
@@ -672,7 +672,7 @@ alarm-widget[type='2'] .alarmInfo {
   border-radius: 55px;
 }
 /* 마지막 칸 = + 버튼 (가운데 정렬) */
-alarm-widget[type='2'] .alarmAddBtn {
+alarm-widget[type="2"] .alarmAddBtn {
   justify-content: center;
   padding-left: 0px;
   font-size: 90px;
@@ -747,7 +747,7 @@ alarm-modal {
   height: 464px;
   margin-bottom: 43px;
   padding: 0px 61px;
-  background-color: #efefef;
+  background-color: var(--main-gray-color);
   border: 2px solid #9a9a9a;
   border-radius: 85px;
 }
@@ -806,7 +806,7 @@ alarm-modal {
 }
 .alarmSlider::before {
   /* 하얀 동그라미 */
-  content: '';
+  content: "";
   position: absolute;
   top: 8px;
   left: 8px;
@@ -962,7 +962,7 @@ widget-btn {
 #vectorImg {
   width: 85px;
   height: 58px;
-  background-image: url('./assets/Vector.svg');
+  background-image: url("./assets/Vector.svg");
   background-repeat: no-repeat;
   background-position: center;
   cursor: pointer;
@@ -972,7 +972,7 @@ widget-btn {
   width: 85px;
   height: 58px;
 
-  background-image: url('./assets/clickVector.png');
+  background-image: url("./assets/clickVector.png");
   background-size: 50px 50px;
   background-repeat: no-repeat;
   background-position: center;
@@ -982,14 +982,14 @@ widget-btn {
 #widgetText {
   width: 462px;
   font-size: 90px;
-  font-family: 'LGOTFRegular';
+  font-family: "LGOTFRegular";
 }
 
 /* 오른쪽 표시 원 */
 #light {
   width: 60px;
   height: 60px;
-  background-color: #f89292;
+  background-color: var(--line-pink-color);
   border-radius: 50%;
 }
 #lightOn {
@@ -1021,7 +1021,7 @@ widget-btn {
   flex-shrink: 0;
 
   background-color: transparent;
-  background-image: url('./assets/Vector.svg');
+  background-image: url("./assets/Vector.svg");
   background-repeat: no-repeat;
   background-position: center;
   background-size: contain;
@@ -1032,7 +1032,7 @@ widget-btn {
 
 /* 클릭 후 아이콘 */
 .vectorImg.open {
-  background-image: url('./assets/clickVector.png');
+  background-image: url("./assets/clickVector.png");
   background-size: 50px auto;
 }
 
@@ -1040,7 +1040,7 @@ widget-btn {
 .widgetText {
   width: 462px;
   font-size: 90px;
-  font-family: 'LGOTFRegular';
+  font-family: "LGOTFRegular";
   text-align: center;
 }
 
@@ -1050,7 +1050,7 @@ widget-btn {
   height: 60px;
   flex-shrink: 0;
 
-  background-color: #f89292;
+  background-color: var(--line-pink-color);
   border-radius: 50%;
 }
 
@@ -1138,7 +1138,7 @@ widget-btn {
   border: 1px solid #ccc;
   border-radius: 116px;
   margin-top: 20px;
-  background-color: #efefef;
+  background-color: var(--main-gray-color);
   display: flex;
   flex-direction: column;
 }
@@ -1165,13 +1165,13 @@ widget-btn {
   padding: 20px 40px;
 }
 
-traffic-widget[type='2'] .trafficWidget {
+traffic-widget[type="2"] .trafficWidget {
   width: 1000px;
   height: 1000px;
   border-radius: 75px;
   /* pointer-events: none; */
 }
-traffic-widget[type='1'] .trafficWidget {
+traffic-widget[type="1"] .trafficWidget {
   width: 1000px;
   height: 500px;
   border-radius: 75px;
@@ -1188,19 +1188,6 @@ traffic-widget[type='1'] .trafficWidget {
   font-weight: regular;
   margin-bottom: 20px;
 }
-
-/* 교통돌발정보 불러오기 버튼
-#loadTraffic {
-  font-size: 32px;
-  font-weight: bold;
-  background-color: #f89292;
-  border: none;
-  border-radius: 50px;
-  cursor: pointer;
-  height: 50px;
-  width: 300px;
-  margin: 40px 0 20px 40px;
-} */
 
 #trafficHeader {
   display: flex;
