@@ -28,16 +28,14 @@ const widgetKind = [
 //리액트 처럼 component 형식으로 제작할 수 있는 순수 custom tag 기능.
 class StartScreen extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<div id="startScreen">
-    <p id = "tong">통근</p>
-    <p>이</p></div>`;
+    this.innerHTML = `<div id="startScreen"></div>`;
 
     const userData = getStorage('user');
     console.log(userData);
 
     setTimeout(() => {
       this.hidden = true;
-    }, 3000);
+    }, 2000);
   }
 }
 
@@ -45,7 +43,7 @@ class StartScreen extends HTMLElement {
 class TopBar extends HTMLElement {
   //HTML에서 태그를 부를 때 실행되는 함수.
   connectedCallback() {
-    this.innerHTML = `<div id="topColorBar"><div class="fontBold">통근이</div></div>`;
+    this.innerHTML = `<div id="topColorBar"><div id='tongLogo'></div></div>`;
   }
 }
 

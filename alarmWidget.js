@@ -70,6 +70,7 @@ class AlarmModal extends HTMLElement {
           <button type="button" class="alarmClose">✕</button>
         </div>
         <div class="alarmPanelBody"></div>
+        <div id="tongAlarm"></div>
       </div>
     `;
 
