@@ -26,6 +26,7 @@ const widgetKind = [
 ];
 
 //리액트 처럼 component 형식으로 제작할 수 있는 순수 custom tag 기능.
+// 통근이 시작 화면
 class StartScreen extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `<div id="startScreen">
@@ -35,6 +36,7 @@ class StartScreen extends HTMLElement {
     const userData = getStorage("user");
     console.log(userData);
 
+    // 3초동안 화면 띄움
     setTimeout(() => {
       this.hidden = true;
     }, 3000);
@@ -58,18 +60,8 @@ class FootNavigationBar extends HTMLElement {
         <button id="settingBtn" class="footBtn"></button>
         `;
 
-    //<div id = "widgetPopup">
-    //   <div class="popupWidget">
-    //     <widget-btn id="navigation"></widget-btn>
-    //     <widget-btn id="weather"></widget-btn>
-    //     <widget-btn id="alarm"></widget-btn>
-    //     <widget-btn id="note"></widget-btn>
-    //     <widget-btn id="traffic"></widget-btn>
-    //   </div>
-    // </div>
     const addBtn = this.querySelector("#widgetAddBtn");
     const homeBtn = this.querySelector("#homeBtn");
-    const popup = document.getElementById("widgetPopup");
 
     // + 버튼 → 위젯 추가 화면
     addBtn.addEventListener("click", () => {
@@ -95,6 +87,7 @@ class FootNavigationBar extends HTMLElement {
   }
 }
 
+// 사용자 확인 화면
 class Login extends HTMLElement {
   connectedCallback() {
     let title = document.createElement("div");
@@ -130,6 +123,8 @@ class Login extends HTMLElement {
     this.appendChild(form);
   }
 }
+
+// 주소 입력 화면
 class AddressScreen extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
@@ -485,6 +480,7 @@ class NoteWidget extends HTMLElement {
       }
     }
 
+    // 완료한 항목
     function completeList(index) {
       const list = JSON.parse(localStorage.getItem("list")) || [];
       const now = Date.now();
@@ -507,6 +503,7 @@ class NoteWidget extends HTMLElement {
       const input_value = input.value.trim(); // 사용자가 입력한 값
 
       if (input_value === "") {
+        alert("할 일을 입력해주세요");
         return;
       }
 
