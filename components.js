@@ -29,9 +29,7 @@ const widgetKind = [
 // 통근이 시작 화면
 class StartScreen extends HTMLElement {
   connectedCallback() {
-    this.innerHTML = `<div id="startScreen">
-    <p id = "tong">통근</p>
-    <p>이</p></div>`;
+    this.innerHTML = `<div id="startScreen"></div>`;
 
     const userData = getStorage("user");
     console.log(userData);
@@ -39,7 +37,7 @@ class StartScreen extends HTMLElement {
     // 3초동안 화면 띄움
     setTimeout(() => {
       this.hidden = true;
-    }, 3000);
+    }, 2000);
   }
 }
 
@@ -47,7 +45,7 @@ class StartScreen extends HTMLElement {
 class TopBar extends HTMLElement {
   //HTML에서 태그를 부를 때 실행되는 함수.
   connectedCallback() {
-    this.innerHTML = `<div id="topColorBar"><div class="fontBold">통근이</div></div>`;
+    this.innerHTML = `<div id="topColorBar"><div id='tongLogo'></div></div>`;
   }
 }
 

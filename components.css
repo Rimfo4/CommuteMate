@@ -1,11 +1,18 @@
+/* 시작 화면 */
+@keyframes behind {
+  80% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
 start-screen {
   position: fixed;
   inset: 0; /* 화면 전체를 덮음 */
   z-index: 1000;
-  background-color: white;
-  transition:
-    opacity 0.3s,
-    visibility 0.3s; /* 의미 : 투명도와 가시성을 3초 동안 전환 */
+  background-image: url(./assets/tong/startScreen.svg);
+  animation: behind 2s forwards;
 }
 @keyframes slideUp {
   from {
@@ -23,31 +30,15 @@ start-screen {
   overflow: hidden; /* 펼쳐지는 동안 아직 안 보일 부분은 가림 */
 }
 
-#tong {
-  color: var(--text-color);
-}
-
-@keyframes behind {
-  0% {
-    opacity: 0;
-  }
-  100% {
-    opacity: 1;
-  }
-}
-/* 시작 화면 */
-#startScreen {
+/* 이건 상단바이에요. 스크롤해도 화면 맨 위에 고정 */
+top-bar {
+  display: block;
+  position: fixed;
+  top: 0px;
+  left: 0px;
   width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-family: "LGOTFBold";
-  font-size: 200px;
-  animation: behind 3s forwards;
+  z-index: 500; /* 하단 바와 같음: 위젯보다 위, 시작 화면(1000)·알람 모달(2000)보다 아래 */
 }
-
-/* 이건 상단바이에요. */
 #topColorBar {
   background-color: var(--main-color);
   height: 190px;
@@ -371,6 +362,7 @@ note-widget[type="2"] .noteWidget {
 /* 모든 화면의 마지막 내용이 하단 바(190px)에 가리지 않게 아래 여백 */
 main-div {
   display: block;
+  padding-top: 190px; /* 고정된 상단 바(190px) 밑에 내용이 숨지 않게 */
   padding-bottom: 230px;
 }
 
