@@ -2,3 +2,7 @@ key.js
 test/
 .vercel
 .DS_Store
+
+.env
+.env.local
+.env.*.local
