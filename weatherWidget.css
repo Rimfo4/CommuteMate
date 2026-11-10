@@ -1,0 +1,119 @@
+
+/* 날씨 위젯 관련 css */
+#weather {
+  height: 500px;
+  width: 500px;
+  background-color: #89baff;
+  border-radius: 116px;
+  display: flex;
+  flex-direction: column;
+}
+
+#weather > div {
+  color: white;
+}
+
+/* 날씨를 못 불러왔을 때 안내 문구 */
+#weather > .weatherError {
+  margin: auto 50px;
+  font-size: 40px;
+  text-align: center;
+}
+#weather_1 > div {
+  margin-left: 50px;
+}
+
+#weather_1 > .date {
+  font-size: 40px;
+  margin-top: 30px;
+}
+#weather_1 > .time {
+  font-size: 48px;
+  font-weight: 700;
+}
+
+#water {
+  width: 27px;
+  height: 40px;
+  margin: 0px !important;
+  background-image: url(./assets/weather/water.svg);
+  background-size: contain;
+}
+#weather_2 {
+  margin-top: -70px;
+  display: flex;
+  flex-direction: column;
+  align-items: end;
+  margin-right: 32px;
+  overflow: visible;
+}
+#weather_2 > div {
+  font-weight: 700;
+}
+#humidity {
+  padding-left: 10px;
+  font-size: 50px;
+}
+#temp {
+  font-size: 128px;
+  line-height: 0.7;
+  margin-top: 10px;
+}
+
+weather-widget[type="2"] > div#weather {
+  width: 1000px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+}
+weather-widget[type="2"] #weather_1 div {
+  margin: 0px 0px 0px 100px;
+}
+weather-widget[type="2"] #weather_2 {
+  margin: 240px 100px 0px 0px;
+}
+
+/* 날씨 이미지 */
+.weatherImg {
+  background-repeat: no-repeat;
+  background-position: center;
+  margin-top: 50px !important;
+  margin-bottom: 30px !important;
+}
+weather-widget[type="1"] #type1 {
+  width: 242px;
+  height: 160px;
+  margin-top: 54px;
+  background-image: url(./assets/weather/cloud1.svg);
+}
+weather-widget[type="2"] #type1 {
+  width: 371px;
+  height: 160px;
+  background-image: url(./assets/weather/cloud2.svg);
+}
+weather-widget #type2 {
+  width: 160px;
+  height: 160px;
+  background-image: url(./assets/weather/sunny.svg);
+}
+weather-widget #type3 {
+  width: 245px;
+  height: 182px;
+  background-image: url(./assets/weather/cloud_sunny.svg);
+}
+weather-widget #type4 {
+  width: 160px;
+  height: 160px;
+  background-image: url(./assets/weather/rainy.svg);
+}
+weather-widget #type5 {
+  width: 160px;
+  height: 160px;
+  background-image: url(./assets/weather/snow.svg);
+}
+
+widget-btn {
+  display: block;
+  width: 100%;
+  flex-shrink: 0;
+}
