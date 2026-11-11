@@ -145,8 +145,8 @@ function drawRoute(map, route, start, end, drawn) {
     });
   });
 
-  // 걷는 구간 (점선). ODsay가 좌표를 안 줘서 정류장끼리 직선으로 이음
-  // [출발지, 1구간 승차, 1구간 하차, 2구간 승차, ..., 도착지] → 두 개씩 짝지어 그림
+  //걷는 구간 (점선). ODsay가 좌표를 안 줘서 정류장끼리 직선으로 이음
+  //[출발지, 1구간 승차, 1구간 하차, 2구간 승차, ..., 도착지] → 두 개씩 짝지어 그림
   const stops = [start];
   route.subPath
     .filter((sub) => sub.trafficType !== 3) // 1 지하철, 2 버스, 3 도보
@@ -198,9 +198,9 @@ function drawRoute(map, route, start, end, drawn) {
   map.setBounds(bounds); // 경로 전체가 화면에 들어오게
 }
 
-// ===== 대중교통 경로 목록 (지도 위젯을 꾹 누르면 나오는 화면) =====
+//@@@@@@@@@ 대중교통 경로 목록 (지도 위젯을 꾹 누르면 나오는 화면)@@@@@@@@@
 
-// 저장 용량을 줄이려고 경로 목록에는 화면에 필요한 값만 남김
+//저장 용량을 줄이려고 경로 목록에는 화면에 필요한 값만 남김
 function trimPath(path) {
   return {
     info: path.info,
