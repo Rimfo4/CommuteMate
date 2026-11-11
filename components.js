@@ -80,7 +80,7 @@ class FootNavigationBar extends HTMLElement {
   }
 }
 
-// 사용자 확인 화면
+//사용자 확인 화면
 class Login extends HTMLElement {
   connectedCallback() {
     let title = document.createElement('div');
@@ -117,7 +117,7 @@ class Login extends HTMLElement {
   }
 }
 
-// 주소 입력 화면
+//주소 입력 화면
 class AddressScreen extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `
@@ -195,6 +195,8 @@ class AddressScreen extends HTMLElement {
     });
   }
 }
+//위젯 추가 화면
+//renderWidgetOrder(), toggleWidget()
 class AddWidget extends HTMLElement {
   connectedCallback() {
     //div 가이드 추가 코드
@@ -232,10 +234,13 @@ class Main extends HTMLElement {
     this.render();
   }
 
+  //Main 커스텀 태그는 라우터의 개념을 갖고 있음.
+  //상태에 따라 분기하여 사용자에게 필요한 화면을 띄움.
+
   //렌더 할때 마다 그리는 거임
   render(screen) {
     this.innerHTML = ''; // 이전 화면 비우기
-    this.screen = screen; // 지금 보이는 화면 (home 화면이면 아래에서 'home'으로 바뀜)
+    this.screen = screen; //지금 보이는 화면 (home 화면이면 아래에서 'home'으로 바뀜)
     const user = getStorage('user');
 
     // 하단바 + 버튼 → 위젯이 있어도 위젯 추가 화면
@@ -585,7 +590,7 @@ class NavigationWidget extends HTMLElement {
       return;
     }
 
-    // 주소를 못 찾아도 지도는 먼저 띄움 (처음엔 서울시청, 경로를 그리면 경로에 맞춰 이동)
+    //주소를 못 찾아도 지도는 먼저 띄움 (처음엔 서울시청, 경로를 그리면 경로에 맞춰 이동)
     const map = new kakao.maps.Map(this.querySelector('.mapBox'), {
       center: new kakao.maps.LatLng(37.5665, 126.978),
       level: 6,
@@ -593,7 +598,8 @@ class NavigationWidget extends HTMLElement {
 
     const drawn = []; // 지도에 그린 선과 마커 (다시 그릴 때 지우려고 보관)
 
-    // 경로 그리기. work = 집 → 고른 장소, home = 고른 장소 → 집
+    //경로 그리기. work = 집 → 고른 장소, home = 고른 장소 → 집
+    //비동기 처리로
     const showRoute = async (mode, target) => {
       const { place } = getStorage('user');
       const home = place.find((p) => p.name === '집');
@@ -693,31 +699,32 @@ class NavigationWidget extends HTMLElement {
       }),
     );
 
-    // 지도 영역을 꾹 누르면(0.6초) 지도 ↔ 대중교통 경로 목록 전환
+    // 지도 영역을 꾹 누르면(1초) 지도 ↔ 대중교통 경로 목록 전환
     const area = this.querySelector('.mapArea');
-    const LONG_PRESS_TIME = 600;
+    const LONG_PRESS_TIME = 1000;
     let pressTimer = null;
     let pressX = 0;
     let pressY = 0;
-    let justToggled = false; // 꾹 누른 뒤 손을 뗄 때 생기는 클릭은 무시
+    let toggled = false; // 꾹 누른 뒤 손을 뗄 때 생기는 클릭은 무시
 
     const toggleView = () => {
       if (!placeList.hidden) return; // 목적지 목록이 열려 있으면 전환하지 않음
 
       routeBox.hidden = !routeBox.hidden;
       if (!routeBox.hidden) renderRoutes(); // 열 때마다 출발·도착 시각을 지금 기준으로
-      justToggled = true;
+      toggled = true;
     };
 
     const cancelPress = () => clearTimeout(pressTimer);
 
-    // capture: true → 카카오맵이 이벤트를 가져가기 전에 먼저 받음
+    //capture: true → 카카오맵이 이벤트를 가져가기 전에 먼저 받음
+    //그러면 카카오맵이 터치가 로직이 작동하기 않고 대중교통 위젯으로 전환.
     area.addEventListener(
       'pointerdown',
       (e) => {
         pressX = e.clientX;
         pressY = e.clientY;
-        justToggled = false;
+        toggled = false;
         pressTimer = setTimeout(toggleView, LONG_PRESS_TIME);
       },
       true,
@@ -740,13 +747,14 @@ class NavigationWidget extends HTMLElement {
     area.addEventListener('pointerup', cancelPress, true);
     area.addEventListener('pointercancel', cancelPress, true);
 
+    //손 땔때 클릭은 무시하는 것으로 판별.
     area.addEventListener(
       'click',
       (e) => {
-        if (!justToggled) return;
+        if (!toggled) return;
         e.stopPropagation();
         e.preventDefault();
-        justToggled = false;
+        toggled = false;
       },
       true,
     );

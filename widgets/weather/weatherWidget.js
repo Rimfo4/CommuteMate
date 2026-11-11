@@ -5,6 +5,7 @@ const BASE_URL =
   'https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst';
 
 // 위경도 -> 기상청 격자(nx, ny) 변환
+// 위도, 경도로 날씨를 불러오는게 아닌 대한민국을 5km로 구간별로 나누기에 그에 맞게 격자로 데이터 뽑기.
 function convertToGrid(lat, lon) {
   //기상청이 고정한 상수들임.
   const RE = 6371.00877, //지구의 반지름값.
@@ -50,12 +51,15 @@ function convertToGrid(lat, lon) {
 }
 
 // base_date / base_time 계산 (가장 최근 발표시각)
+// 객체 형태로 발표 시각을 돌려줌.
 function getBaseDateTime() {
+  //기상청 단기예보는 하루에 8번만 발표 => 발표후 10분이 지나야 조회 가능.
   const baseTimes = [2, 5, 8, 11, 14, 17, 20, 23];
   const now = new Date();
   let hour = now.getHours();
   let minute = now.getMinutes();
 
+  //14시 05분이면 14시 발표 없음 => 11시 발표를 보여줌.
   let candidate = baseTimes.filter(
     (t) => hour > t || (hour === t && minute >= 10),
   );
@@ -78,6 +82,7 @@ function getBaseDateTime() {
   return { baseDate: baseDateStr, baseTime: baseTimeStr };
 }
 
+//실제 기상청 api를 받은 예보를 현재 시간 그 전꺼는 다 버림.
 function filterFromNow(items) {
   const now = new Date();
   const nowStr =
@@ -89,6 +94,9 @@ function filterFromNow(items) {
   // 날짜+시간 문자열끼리 비교 (23시 이후에는 다음 날 예보만 오기 때문에 날짜 조건은 넣지 않음)
   return items.filter((item) => item.fcstDate + item.fcstTime >= nowDateTime);
 }
+
+// 비동기 함수로 실제 기상청 api를 호출.
+// 날씨예보 로우 300개를 받아옴.
 async function fetchWeather(lat, lon) {
   const { nx, ny } = convertToGrid(lat, lon);
   // baseDate => 조회 가능한 기준 날짜.
@@ -122,7 +130,7 @@ async function fetchWeather(lat, lon) {
   return json.response.body.items.item;
 }
 
-// 같은 시각에 여러 정보(습도, 온도)를 하나의 객체로 그룹핑하기
+// 같은 시각에 여러 정보(습도, 온도, 하늘 상태)를 하나의 객체로 그룹화하기
 function groupTime(item) {
   let result = {};
   for (let r of item) {
@@ -137,6 +145,7 @@ function groupTime(item) {
   return result;
 }
 
+//묶은 결과에서 가장 가까운 시각 데이터를 [온도, 습도, 날씨 종류 번호] 형식으로 만들고 리턴.
 function getNowWetherType(data) {
   const nowTime = Object.keys(data)[0];
   const nowData = data[nowTime];
