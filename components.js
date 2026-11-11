@@ -1,6 +1,6 @@
-import { getStorage, setStorage, removeStorage } from "./db.js";
-import "./localStroge.js";
-import { getWeather } from "./weatherWidget.js";
+import { getStorage, setStorage } from './db.js';
+import './localStroge.js';
+import { getWeather } from './widgets/weather/weatherWidget.js';
 import {
   loadKakaoMap,
   getCoords,
@@ -8,21 +8,21 @@ import {
   drawRoute,
   sortPaths,
   makeRouteCard,
-} from "./navigationWidget.js";
+} from './widgets/navigation/navigationWidget.js';
 import {
   loadAlarms,
   pad,
   formatAlarmShort,
   openAlarmModal,
-} from "./alarmWidget.js";
+} from './widgets/alarm/alarmWidget.js';
 
-const widgetName = ["navigation", "weather", "alarm", "note", "traffic"];
+const widgetName = ['navigation', 'weather', 'alarm', 'note', 'traffic'];
 const widgetKind = [
-  "네비게이션",
-  "날씨 보기",
-  "알람",
-  "업무 기록",
-  "교통량 보기",
+  '네비게이션',
+  '날씨 보기',
+  '알람',
+  '업무 기록',
+  '교통량 보기',
 ];
 
 //리액트 처럼 component 형식으로 제작할 수 있는 순수 custom tag 기능.
@@ -31,10 +31,10 @@ class StartScreen extends HTMLElement {
   connectedCallback() {
     this.innerHTML = `<div id="startScreen"></div>`;
 
-    const userData = getStorage("user");
-    console.log(userData);
+    const userData = getStorage('user');
+    // console.log(userData);
 
-    // 3초동안 화면 띄움
+    // 2초동안 화면 띄움
     setTimeout(() => {
       this.hidden = true;
     }, 2000);
@@ -58,29 +58,24 @@ class FootNavigationBar extends HTMLElement {
         <button id="settingBtn" class="footBtn"></button>
         `;
 
-    const addBtn = this.querySelector("#widgetAddBtn");
-    const homeBtn = this.querySelector("#homeBtn");
-
     // + 버튼 → 위젯 추가 화면
-    addBtn.addEventListener("click", () => {
-      document.querySelector("main-div").render("addWidget");
+    this.querySelector('#widgetAddBtn').addEventListener('click', () => {
+      document.querySelector('main-div').render('addWidget');
     });
 
     // home 버튼 → Main의 if문 맨 아래 home 화면
-    homeBtn.addEventListener("click", () => {
-      const main = document.querySelector("main-div");
+    this.querySelector('#homeBtn').addEventListener('click', () => {
+      const main = document.querySelector('main-div');
 
       // 이미 home 화면이면 다시 그리지 않음 (위젯이 새로 만들어지면서 API를 또 부르는 것 방지)
-      if (main.screen === "home") return;
+      if (main.screen === 'home') return;
 
       main.render();
     });
 
-    const settingBtn = this.querySelector("#settingBtn");
-
     // 리스트 버튼 → 장소(주소) 수정 화면
-    settingBtn.addEventListener("click", () => {
-      document.querySelector("main-div").render("address");
+    this.querySelector('#settingBtn').addEventListener('click', () => {
+      document.querySelector('main-div').render('address');
     });
   }
 }
@@ -88,33 +83,33 @@ class FootNavigationBar extends HTMLElement {
 // 사용자 확인 화면
 class Login extends HTMLElement {
   connectedCallback() {
-    let title = document.createElement("div");
-    title.innerHTML = "사용자 확인";
-    title.id = "formTitle";
+    let title = document.createElement('div');
+    title.innerHTML = '사용자 확인';
+    title.id = 'formTitle';
 
-    let form = document.createElement("div");
+    let form = document.createElement('div');
     form.innerHTML = `<form class="user"><div id="name"><span id="usname">이름</span><input id="usname" type = "text"></input></div></br><div id="pw"><span id="uspw">비밀번호</span><input id="uspw" type = "password"></input></div></br><div id="submit">저장</div></form>`;
 
-    let sumbmitBtn = form.querySelector("#submit");
+    let sumbmitBtn = form.querySelector('#submit');
 
     //localStrage에 저장.
-    sumbmitBtn.addEventListener("click", () => {
-      const name = form.querySelector("input#usname").value.trim();
-      const password = form.querySelector("input#uspw").value.trim();
+    sumbmitBtn.addEventListener('click', () => {
+      const name = form.querySelector('input#usname').value.trim();
+      const password = form.querySelector('input#uspw').value.trim();
 
       // 값 여부 조건
-      if (name === "" || password === "") {
-        alert("이름 또는 비밀번호를 작성해주세요.");
+      if (name === '' || password === '') {
+        alert('이름 또는 비밀번호를 작성해주세요.');
         return;
       }
 
-      const user = getStorage("user");
+      const user = getStorage('user');
       user.name = name;
       user.password = password;
       user.firstStart = false; // 다음부터 로그인 화면이 안 나오게
-      setStorage("user", user);
+      setStorage('user', user);
 
-      this.closest("main-div").render(); // Main의 if문 다시 실행 → 위젯 추가 화면
+      this.closest('main-div').render(); // Main의 if문 다시 실행 → 위젯 추가 화면
     });
 
     this.appendChild(title);
@@ -138,29 +133,29 @@ class AddressScreen extends HTMLElement {
         </div>
       </form>`;
 
-    const form = this.querySelector("form");
-    const bottom = this.querySelector(".formBottom");
+    const form = this.querySelector('form');
+    const bottom = this.querySelector('.formBottom');
 
     // 장소 입력칸 하나 추가 (저장 버튼 위에)
     let placeCount = 1; // 처음 화면에 장소1부터 시작
-    const addRow = (value = "") => {
+    const addRow = (value = '') => {
       placeCount++;
-      const row = document.createElement("div");
-      row.className = "formRow extra";
+      const row = document.createElement('div');
+      row.className = 'formRow extra';
       row.innerHTML = `<span>장소${placeCount}</span><input type="text" data-name="장소${placeCount}" />`;
-      row.querySelector("input").value = value;
+      row.querySelector('input').value = value;
       form.insertBefore(row, bottom);
     };
 
     // + 버튼 → 장소 입력칸 추가
-    this.querySelector(".plusBtn").addEventListener("click", () => addRow());
+    this.querySelector('.plusBtn').addEventListener('click', () => addRow());
 
     // 저장된 장소가 있으면 입력칸에 채워 넣기 (하단바 리스트 버튼으로 다시 열었을 때)
-    const saved = getStorage("user").place;
-    const extras = saved.filter((p) => p.name !== "집" && p.name !== "회사");
+    const saved = getStorage('user').place;
+    const extras = saved.filter((p) => p.name !== '집' && p.name !== '회사');
 
     saved.forEach((p) => {
-      if (p.name === "집" || p.name === "회사") {
+      if (p.name === '집' || p.name === '회사') {
         this.querySelector(`input[data-name="${p.name}"]`).value = p.address;
       }
     });
@@ -174,52 +169,52 @@ class AddressScreen extends HTMLElement {
     });
 
     // 저장 버튼 → localStorage에 저장 후 다음 화면
-    this.querySelector("#submit").addEventListener("click", () => {
+    this.querySelector('#submit').addEventListener('click', () => {
       const place = [];
 
-      this.querySelectorAll(".formRow input").forEach((input) => {
+      this.querySelectorAll('.formRow input').forEach((input) => {
         const address = input.value.trim();
-        if (address !== "") {
+        if (address !== '') {
           place.push({ name: input.dataset.name, address });
         }
       });
 
       // 집, 회사는 필수
-      const hasHome = place.some((p) => p.name === "집");
-      const hasWork = place.some((p) => p.name === "회사");
+      const hasHome = place.some((p) => p.name === '집');
+      const hasWork = place.some((p) => p.name === '회사');
       if (!hasHome || !hasWork) {
-        alert("집과 회사 주소를 입력해주세요.");
+        alert('집과 회사 주소를 입력해주세요.');
         return;
       }
 
-      const user = getStorage("user");
+      const user = getStorage('user');
       user.place = place;
-      setStorage("user", user);
+      setStorage('user', user);
 
-      this.closest("main-div").render(); // → 위젯 추가 화면
+      this.closest('main-div').render(); // → 위젯 추가 화면
     });
   }
 }
 class AddWidget extends HTMLElement {
   connectedCallback() {
     //div 가이드 추가 코드
-    const noneDiv = document.createElement("div");
-    noneDiv.id = "none";
-    noneDiv.style.marginTop = "140px";
-    noneDiv.style.marginBottom = "70px";
-    noneDiv.innerHTML = "원하는 위젯을<br>추가해주세요";
+    const noneDiv = document.createElement('div');
+    noneDiv.id = 'none';
+    noneDiv.style.marginTop = '140px';
+    noneDiv.style.marginBottom = '70px';
+    noneDiv.innerHTML = '원하는 위젯을<br>추가해주세요';
 
     //widget 스크롤
-    const widgetScroll = document.createElement("widget-list");
+    const widgetScroll = document.createElement('widget-list');
     widgetScroll.hidden = true;
 
-    noneDiv.addEventListener("click", () => {
-      widgetScroll.classList.add("widgetSlideUp");
+    noneDiv.addEventListener('click', () => {
+      widgetScroll.classList.add('widgetSlideUp');
       widgetScroll.hidden = false;
     });
 
-    const mainPartDiv = document.createElement("div");
-    mainPartDiv.id = "mainPart";
+    const mainPartDiv = document.createElement('div');
+    mainPartDiv.id = 'mainPart';
     mainPartDiv.appendChild(noneDiv);
     mainPartDiv.appendChild(widgetScroll);
 
@@ -239,51 +234,48 @@ class Main extends HTMLElement {
 
   //렌더 할때 마다 그리는 거임
   render(screen) {
-    this.innerHTML = ""; // 이전 화면 비우기
+    this.innerHTML = ''; // 이전 화면 비우기
     this.screen = screen; // 지금 보이는 화면 (home 화면이면 아래에서 'home'으로 바뀜)
-    const user = getStorage("user");
+    const user = getStorage('user');
 
     // 하단바 + 버튼 → 위젯이 있어도 위젯 추가 화면
-    if (screen === "addWidget") {
-      const addWidget = document.createElement("add-widget");
-      addWidget.setAttribute("open", ""); // 목록을 바로 열기
+    if (screen === 'addWidget') {
+      const addWidget = document.createElement('add-widget');
+      addWidget.setAttribute('open', ''); // 목록을 바로 열기
       this.appendChild(addWidget);
       return;
     }
 
     // 하단바 리스트 버튼 → 장소 수정 화면
-    if (screen === "address") {
-      this.appendChild(document.createElement("address-screen"));
+    if (screen === 'address') {
+      this.appendChild(document.createElement('address-screen'));
       return;
     }
 
     //첫 시작 => 로그인 창
     if (user.firstStart) {
-      const login = document.createElement("login-screen");
-      this.appendChild(login);
+      this.appendChild(document.createElement('login-screen'));
     }
     //장소, 회사 설정 창
     else if (user.place.length === 0) {
-      const address = document.createElement("address-screen");
-      this.appendChild(address);
+      this.appendChild(document.createElement('address-screen'));
     }
     //위젯 설정 창.
     else if (user.widgetList.length === 0) {
-      const addWidget = document.createElement("add-widget");
-      this.appendChild(addWidget);
+      this.appendChild(document.createElement('add-widget'));
     }
     //메인 home화면 창
     else {
-      this.screen = "home";
-      document.querySelector("navigation-bar").hidden = false;
+      this.screen = 'home';
+      document.querySelector('navigation-bar').hidden = false;
 
       //유저 데이터의 위젯 리스트 가지고 와서 뿌리기.
-      const widgetBoard = document.createElement("div");
-      widgetBoard.id = "widgetBoard";
+      const widgetBoard = document.createElement('div');
+      widgetBoard.id = 'widgetBoard';
 
       user.widgetList.forEach((el) => {
         const widget = document.createElement(`${el.name}-widget`);
-        widget.setAttribute("type", el.type);
+        widget.setAttribute('type', el.type);
         widgetBoard.appendChild(widget);
       });
 
@@ -294,30 +286,30 @@ class Main extends HTMLElement {
 
 // 저장된 배열을 기준으로 번호와 불빛을 다시 그림
 function renderWidgetOrder() {
-  const { widgetList } = getStorage("user");
+  const { widgetList } = getStorage('user');
 
-  document.querySelectorAll(".widgetOrder").forEach((el) => el.remove());
+  document.querySelectorAll('.widgetOrder').forEach((el) => el.remove());
   document
-    .querySelectorAll("widget-btn .light")
-    .forEach((el) => el.classList.remove("on"));
+    .querySelectorAll('widget-btn .light')
+    .forEach((el) => el.classList.remove('on'));
 
   widgetList.forEach((widget, index) => {
     const option = document.querySelector(
       `[data-name="${widget.name}"][data-type="${widget.type}"]`,
     );
 
-    const order = document.createElement("div");
-    order.className = "widgetOrder";
+    const order = document.createElement('div');
+    order.className = 'widgetOrder';
     order.textContent = index + 1;
     option.appendChild(order);
 
-    option.closest("widget-btn").querySelector(".light").classList.add("on");
+    option.closest('widget-btn').querySelector('.light').classList.add('on');
   });
 }
 
 // 위젯을 눌렀을 때 배열을 바꾸고 localStorage에 저장
 function toggleWidget(name, type) {
-  const user = getStorage("user");
+  const user = getStorage('user');
   const found = user.widgetList.find((widget) => widget.name === name);
 
   if (!found) {
@@ -328,14 +320,14 @@ function toggleWidget(name, type) {
     found.type = type; // 다른 크기를 누르면 번호는 유지하고 크기만 변경
   }
 
-  setStorage("user", user);
+  setStorage('user', user);
   renderWidgetOrder();
 }
 
 class WidgetList extends HTMLElement {
   connectedCallback() {
-    const widgetList = document.createElement("div");
-    widgetList.id = "widgetList";
+    const widgetList = document.createElement('div');
+    widgetList.id = 'widgetList';
 
     for (let i in widgetName) {
       let nav = document.createElement(`widget-btn`);
@@ -344,18 +336,18 @@ class WidgetList extends HTMLElement {
     }
 
     //확인 버튼
-    const finishDiv = document.createElement("div");
-    finishDiv.id = "widgetSubmit";
+    const finishDiv = document.createElement('div');
+    finishDiv.id = 'widgetSubmit';
 
-    finishDiv.addEventListener("click", () => {
-      const user = getStorage("user");
+    finishDiv.addEventListener('click', () => {
+      const user = getStorage('user');
       // 고른 위젯이 없으면 넘어가지 않음
       if (user.widgetList.length === 0) return;
 
       user.firstStart = false;
-      setStorage("user", user);
+      setStorage('user', user);
 
-      this.closest("main-div").render();
+      this.closest('main-div').render();
     });
 
     this.appendChild(widgetList);
@@ -402,19 +394,19 @@ class WidgetBtn extends HTMLElement {
       </div>
     `;
 
-    const vectorImg = this.querySelector(".vectorImg");
-    const option = this.querySelector(".widgetOption");
-    const wrapper = this.querySelector(".widgetWrapper");
+    const vectorImg = this.querySelector('.vectorImg');
+    const option = this.querySelector('.widgetOption');
+    const wrapper = this.querySelector('.widgetWrapper');
 
-    vectorImg.addEventListener("click", () => {
-      const isOpen = option.classList.toggle("show");
+    vectorImg.addEventListener('click', () => {
+      const isOpen = option.classList.toggle('show');
 
-      vectorImg.classList.toggle("open", isOpen);
-      wrapper.classList.toggle("expanded", isOpen);
+      vectorImg.classList.toggle('open', isOpen);
+      wrapper.classList.toggle('expanded', isOpen);
     });
 
-    this.querySelectorAll(".smallOption, .bigOption").forEach((option) => {
-      option.addEventListener("click", () => {
+    this.querySelectorAll('.smallOption, .bigOption').forEach((option) => {
+      option.addEventListener('click', () => {
         toggleWidget(option.dataset.name, option.dataset.type);
       });
     });
@@ -437,42 +429,34 @@ class NoteWidget extends HTMLElement {
       </div>
     `;
 
-    const ul = this.querySelector("ul"); // ul 태그 선택
+    const ul = this.querySelector('ul'); // ul 태그 선택
 
-    const input = this.querySelector("input"); // input 태그 선택
-    const addBtn = this.querySelector("#addBtn");
+    const input = this.querySelector('input'); // input 태그 선택
+    const addBtn = this.querySelector('#addBtn');
 
     const LIMIT_TIME = 24 * 60 * 60 * 1000; // 24시간 -> 밀리초 계산
 
     // 리스트 띄우기
     function renderList() {
-      ul.innerHTML = ""; // ul 태그 초기화
-      let list = JSON.parse(localStorage.getItem("list")) || [];
+      ul.innerHTML = ''; // ul 태그 초기화
+      let list = JSON.parse(localStorage.getItem('list')) || [];
       const now = Date.now(); // 밀리초 현재 시간
 
-      list = list.filter((item) => {
-        // 완료(true) + 완료 시간(not null)
-        // 완료된 항목만 필터링
-        if (item.completed && item.completedTime) {
-          if (now - item.completedTime < LIMIT_TIME) {
-            return true; // 24시간 미만 - 유지
-          } else {
-            return false; // 24시간 이상 - 제거
-          }
-        }
-        return true; // 완료되지 않은 항목 유지
-      });
+      // 완료되지 않은 항목은 유지, 완료한 항목은 완료 후 24시간 미만일 때만 유지
+      list = list.filter(
+        (item) =>
+          !(item.completed && item.completedTime) ||
+          now - item.completedTime < LIMIT_TIME,
+      );
 
-      localStorage.setItem("list", JSON.stringify(list));
+      localStorage.setItem('list', JSON.stringify(list));
 
       for (let i = 0; i < list.length; i++) {
-        const li = document.createElement("li");
+        const li = document.createElement('li');
         li.innerHTML = list[i].text;
 
-        if (list[i].completed) {
-          li.classList.add("completed");
-        }
-        li.addEventListener("click", () => completeList(i));
+        if (list[i].completed) li.classList.add('completed');
+        li.addEventListener('click', () => completeList(i));
 
         ul.appendChild(li);
       }
@@ -480,18 +464,12 @@ class NoteWidget extends HTMLElement {
 
     // 완료한 항목
     function completeList(index) {
-      const list = JSON.parse(localStorage.getItem("list")) || [];
-      const now = Date.now();
+      const list = JSON.parse(localStorage.getItem('list')) || [];
+      // 완료 ↔ 미완료 전환 (완료하면 완료 시간 기록)
+      list[index].completed = !list[index].completed;
+      list[index].completedTime = list[index].completed ? Date.now() : null;
 
-      if (!list[index].completed) {
-        list[index].completed = true;
-        list[index].completedTime = now; // 완료 시간
-      } else {
-        list[index].completed = false;
-        list[index].completedTime = null;
-      }
-
-      localStorage.setItem("list", JSON.stringify(list));
+      localStorage.setItem('list', JSON.stringify(list));
 
       renderList();
     }
@@ -500,31 +478,31 @@ class NoteWidget extends HTMLElement {
     function addList() {
       const input_value = input.value.trim(); // 사용자가 입력한 값
 
-      if (input_value === "") {
-        alert("할 일을 입력해주세요");
+      if (input_value === '') {
+        alert('할 일을 입력해주세요');
         return;
       }
 
-      const list = JSON.parse(localStorage.getItem("list")) || [];
+      const list = JSON.parse(localStorage.getItem('list')) || [];
       list.push({
         text: input_value, // 사용자가 입력한 값 (string)
         completed: false, // 완료 여부 (boolean)
         completedTime: null, // 완료한 시간 (number)
       });
-      localStorage.setItem("list", JSON.stringify(list)); // 배열 -> 문자열 => 저장
+      localStorage.setItem('list', JSON.stringify(list)); // 배열 -> 문자열 => 저장
 
       renderList();
 
       // document.getElementById("input").value = ""; // 입력창 초기화
-      input.value = "";
+      input.value = '';
     }
 
-    addBtn.addEventListener("click", addList);
+    addBtn.addEventListener('click', addList);
     renderList();
   }
 }
 
-// 네비게이션 위젯
+// 네비게이션 위젯(틀만 존재)
 class NavigationWidget extends HTMLElement {
   async connectedCallback() {
     this.innerHTML = `
@@ -557,35 +535,35 @@ class NavigationWidget extends HTMLElement {
       </div>
     `;
 
-    const info = this.querySelector(".navInfo");
-    const buttons = this.querySelectorAll(".navBtn");
-    const placeList = this.querySelector(".placeList");
-    const mapMessage = this.querySelector(".mapMessage");
-    const routeBox = this.querySelector(".routeBox");
-    const routeSort = this.querySelector(".routeSort");
-    const routeCards = this.querySelector(".routeCards");
+    const info = this.querySelector('.navInfo');
+    const buttons = this.querySelectorAll('.navBtn');
+    const placeList = this.querySelector('.placeList');
+    const mapMessage = this.querySelector('.mapMessage');
+    const routeBox = this.querySelector('.routeBox');
+    const routeSort = this.querySelector('.routeSort');
+    const routeCards = this.querySelector('.routeCards');
 
     let routePaths = null; // 마지막으로 검색한 경로 목록 (대중교통 화면에서 씀)
 
     // 대중교통 경로 카드 그리기 (큰 위젯 3개, 작은 위젯 1개)
     const renderRoutes = () => {
-      routeCards.innerHTML = "";
+      routeCards.innerHTML = '';
 
       if (!routePaths) {
-        const empty = document.createElement("div");
-        empty.className = "routeEmpty";
-        empty.textContent = "출근이나 퇴근 경로를 먼저 골라주세요.";
+        const empty = document.createElement('div');
+        empty.className = 'routeEmpty';
+        empty.textContent = '출근이나 퇴근 경로를 먼저 골라주세요.';
         routeCards.appendChild(empty);
         return;
       }
 
-      const count = this.getAttribute("type") === "2" ? 3 : 1;
+      const count = this.getAttribute('type') === '2' ? 3 : 1;
       sortPaths(routePaths, routeSort.value)
         .slice(0, count)
         .forEach((path) => routeCards.appendChild(makeRouteCard(path)));
     };
 
-    routeSort.addEventListener("change", renderRoutes);
+    routeSort.addEventListener('change', renderRoutes);
     renderRoutes();
 
     // 지도 위에 안내 문구 띄우기 (빈 문자열이면 숨김)
@@ -595,8 +573,8 @@ class NavigationWidget extends HTMLElement {
     };
 
     // 위젯 선택 화면의 미리보기에서는 API를 부르지 않음 (호출 횟수 절약)
-    if (this.closest(".optionBody")) {
-      info.textContent = "미리보기";
+    if (this.closest('.optionBody')) {
+      info.textContent = '미리보기';
       return;
     }
 
@@ -608,7 +586,7 @@ class NavigationWidget extends HTMLElement {
     }
 
     // 주소를 못 찾아도 지도는 먼저 띄움 (처음엔 서울시청, 경로를 그리면 경로에 맞춰 이동)
-    const map = new kakao.maps.Map(this.querySelector(".mapBox"), {
+    const map = new kakao.maps.Map(this.querySelector('.mapBox'), {
       center: new kakao.maps.LatLng(37.5665, 126.978),
       level: 6,
     });
@@ -617,21 +595,21 @@ class NavigationWidget extends HTMLElement {
 
     // 경로 그리기. work = 집 → 고른 장소, home = 고른 장소 → 집
     const showRoute = async (mode, target) => {
-      const { place } = getStorage("user");
-      const home = place.find((p) => p.name === "집");
+      const { place } = getStorage('user');
+      const home = place.find((p) => p.name === '집');
 
       buttons.forEach((btn) =>
-        btn.classList.toggle("active", btn.dataset.mode === mode),
+        btn.classList.toggle('active', btn.dataset.mode === mode),
       );
 
       if (!home) {
-        info.textContent = "";
-        showMessage("집 주소를 먼저 입력해주세요.");
+        info.textContent = '';
+        showMessage('집 주소를 먼저 입력해주세요.');
         return;
       }
 
-      showMessage("");
-      info.textContent = "경로를 찾는 중...";
+      showMessage('');
+      info.textContent = '경로를 찾는 중...';
 
       try {
         const [homeXY, targetXY] = await Promise.all([
@@ -639,7 +617,7 @@ class NavigationWidget extends HTMLElement {
           getCoords(target.address),
         ]);
         const [start, end] =
-          mode === "work" ? [homeXY, targetXY] : [targetXY, homeXY];
+          mode === 'work' ? [homeXY, targetXY] : [targetXY, homeXY];
 
         const route = await searchRoute(start, end);
         drawRoute(map, route, start, end, drawn);
@@ -648,48 +626,48 @@ class NavigationWidget extends HTMLElement {
         renderRoutes();
         info.textContent = `${target.name} · ${route.info.totalTime}분 · ${route.info.payment.toLocaleString()}원`;
       } catch (err) {
-        info.textContent = "";
+        info.textContent = '';
         showMessage(err.message);
       }
     };
 
     // 목적지 목록 열기 (집을 뺀 저장된 장소들)
     const openList = (mode) => {
-      const { place } = getStorage("user");
-      const targets = place.filter((p) => p.name !== "집");
+      const { place } = getStorage('user');
+      const targets = place.filter((p) => p.name !== '집');
 
-      placeList.innerHTML = "";
+      placeList.innerHTML = '';
 
-      const title = document.createElement("div");
-      title.className = "placeListTitle";
+      const title = document.createElement('div');
+      title.className = 'placeListTitle';
       title.textContent =
-        mode === "work" ? "어디로 출근할까요?" : "어디서 퇴근할까요?";
+        mode === 'work' ? '어디로 출근할까요?' : '어디서 퇴근할까요?';
       placeList.appendChild(title);
 
       if (targets.length === 0) {
-        const empty = document.createElement("div");
-        empty.className = "placeRow";
-        empty.textContent = "저장된 장소가 없습니다.";
+        const empty = document.createElement('div');
+        empty.className = 'placeRow';
+        empty.textContent = '저장된 장소가 없습니다.';
         placeList.appendChild(empty);
       }
 
       targets.forEach((target) => {
-        const row = document.createElement("button");
-        row.type = "button";
-        row.className = "placeRow";
+        const row = document.createElement('button');
+        row.type = 'button';
+        row.className = 'placeRow';
 
-        const name = document.createElement("span");
-        name.className = "placeName";
+        const name = document.createElement('span');
+        name.className = 'placeName';
         name.textContent = target.name;
 
-        const address = document.createElement("span");
-        address.className = "placeAddress";
+        const address = document.createElement('span');
+        address.className = 'placeAddress';
         address.textContent = target.address;
 
         row.append(name, address);
 
         // 장소를 고르면 목록을 닫고 경로 그리기
-        row.addEventListener("click", () => {
+        row.addEventListener('click', () => {
           placeList.hidden = true;
           showRoute(mode, target);
         });
@@ -702,7 +680,7 @@ class NavigationWidget extends HTMLElement {
     };
 
     buttons.forEach((btn) =>
-      btn.addEventListener("click", () => {
+      btn.addEventListener('click', () => {
         const mode = btn.dataset.mode;
 
         // 같은 버튼을 다시 누르면 목록 닫기
@@ -716,7 +694,7 @@ class NavigationWidget extends HTMLElement {
     );
 
     // 지도 영역을 꾹 누르면(0.6초) 지도 ↔ 대중교통 경로 목록 전환
-    const area = this.querySelector(".mapArea");
+    const area = this.querySelector('.mapArea');
     const LONG_PRESS_TIME = 600;
     let pressTimer = null;
     let pressX = 0;
@@ -735,7 +713,7 @@ class NavigationWidget extends HTMLElement {
 
     // capture: true → 카카오맵이 이벤트를 가져가기 전에 먼저 받음
     area.addEventListener(
-      "pointerdown",
+      'pointerdown',
       (e) => {
         pressX = e.clientX;
         pressY = e.clientY;
@@ -747,7 +725,7 @@ class NavigationWidget extends HTMLElement {
 
     // 지도를 끌고 있으면(10px 넘게 움직이면) 꾹 누르기 취소
     area.addEventListener(
-      "pointermove",
+      'pointermove',
       (e) => {
         if (
           Math.abs(e.clientX - pressX) > 10 ||
@@ -759,11 +737,11 @@ class NavigationWidget extends HTMLElement {
       true,
     );
 
-    area.addEventListener("pointerup", cancelPress, true);
-    area.addEventListener("pointercancel", cancelPress, true);
+    area.addEventListener('pointerup', cancelPress, true);
+    area.addEventListener('pointercancel', cancelPress, true);
 
     area.addEventListener(
-      "click",
+      'click',
       (e) => {
         if (!justToggled) return;
         e.stopPropagation();
@@ -774,11 +752,11 @@ class NavigationWidget extends HTMLElement {
     );
 
     // 모바일에서 꾹 누를 때 뜨는 메뉴 막기
-    area.addEventListener("contextmenu", (e) => e.preventDefault());
+    area.addEventListener('contextmenu', (e) => e.preventDefault());
 
     // 처음에는 회사 경로를 보여줌 (오전이면 출근, 오후면 퇴근)
-    const work = getStorage("user").place.find((p) => p.name === "회사");
-    if (work) showRoute(new Date().getHours() < 12 ? "work" : "home", work);
+    const work = getStorage('user').place.find((p) => p.name === '회사');
+    if (work) showRoute(new Date().getHours() < 12 ? 'work' : 'home', work);
   }
 }
 
@@ -798,9 +776,9 @@ class TrafficWidget extends HTMLElement {
 
     </div>`;
 
-    const repeatImg = this.querySelector(".repeatImg");
+    const repeatImg = this.querySelector('.repeatImg');
 
-    repeatImg.addEventListener("click", async () => {
+    repeatImg.addEventListener('click', async () => {
       // 현재 위치 좌표 변수 선언
       let currentLat = 0;
       let currentLng = 0;
@@ -853,10 +831,10 @@ class TrafficWidget extends HTMLElement {
       // 사용자 현재 날짜(숫자 형)
       // const userDate = Number(`${year}${month}${date}${hour}${min}`);
 
-      const status = this.querySelector("#status");
-      const list = this.querySelector("#trafficData");
+      const status = this.querySelector('#status');
+      const list = this.querySelector('#trafficData');
 
-      status.textContent = "교통돌발정보를 불러오는 중...";
+      status.textContent = '교통돌발정보를 불러오는 중...';
       list.replaceChildren(); // 새로운 정보로 업데이트
 
       try {
@@ -870,42 +848,38 @@ class TrafficWidget extends HTMLElement {
         currentLat = 37.4661018035835;
         currentLng = 126.931927855676;
 
-        fetch("traffic.xml")
+        fetch('traffic.xml')
           .then((response) => response.text())
           .then((xmlString) => {
             const parser = new DOMParser();
-            const xmlDoc = parser.parseFromString(xmlString, "text/xml");
+            const xmlDoc = parser.parseFromString(xmlString, 'text/xml');
 
-            const records = [...xmlDoc.querySelectorAll("record")];
+            const records = [...xmlDoc.querySelectorAll('record')];
 
             if (records.length === 0) {
-              const message = xml.querySelector("resultMsg")?.textContent;
+              const message = xml.querySelector('resultMsg')?.textContent;
 
               status.textContent =
                 message ||
-                "표시할 돌발정보가 없거나 API 응답을 확인해야 합니다.";
+                '표시할 돌발정보가 없거나 API 응답을 확인해야 합니다.';
 
-              console.log("UTIC 응답:", responseText);
+              console.log('UTIC 응답:', responseText);
               return;
             }
 
-            let lat = "";
-            let lng = "";
             let count = 0; // 사건 건수 카운트
-            let startDate = "";
-            let endDate = "";
 
             //사고 데이터 출력
             for (const record of records) {
-              lat = record.querySelector("locationDataY")?.textContent;
-              lng = record.querySelector("locationDataX")?.textContent;
+              const lat = record.querySelector('locationDataY')?.textContent;
+              const lng = record.querySelector('locationDataX')?.textContent;
 
               let between = getDistance(currentLat, currentLng, lat, lng);
 
               // ---년 --월 --일  --시 --분
               let startDate =
-                record.querySelector("startDate")?.textContent || "";
-              let endDate = record.querySelector("endDate")?.textContent || "";
+                record.querySelector('startDate')?.textContent || '';
+              let endDate = record.querySelector('endDate')?.textContent || '';
 
               // 시작 시간이나 종료 시간이 없으면 건너뛰기
               if (!startDate || !endDate) {
@@ -913,8 +887,8 @@ class TrafficWidget extends HTMLElement {
               }
 
               // 숫자형태로 바꾸기 (202610190034)
-              startDate = Number(startDate.replace(/[^0-9]/g, ""));
-              endDate = Number(endDate.replace(/[^0-9]/g, ""));
+              startDate = Number(startDate.replace(/[^0-9]/g, ''));
+              endDate = Number(endDate.replace(/[^0-9]/g, ''));
 
               // if (
               //   +between <= 3 &&
@@ -923,30 +897,28 @@ class TrafficWidget extends HTMLElement {
               // )
               if (between <= 5) {
                 const title =
-                  record.querySelector("incidentTitle")?.textContent ||
-                  "제목 없음";
+                  record.querySelector('incidentTitle')?.textContent ||
+                  '제목 없음';
 
                 const road =
-                  record.querySelector("roadName")?.textContent || "";
+                  record.querySelector('roadName')?.textContent || '';
 
                 const address =
-                  record.querySelector("addressNew")?.textContent ||
-                  record.querySelector("addressJibun")?.textContent ||
-                  "";
+                  record.querySelector('addressNew')?.textContent ||
+                  record.querySelector('addressJibun')?.textContent ||
+                  '';
 
                 const start =
-                  record.querySelector("startDate")?.textContent || "";
+                  record.querySelector('startDate')?.textContent || '';
 
-                const type = record.querySelector("title");
-
-                const item = document.createElement("article");
-                const heading = document.createElement("h3");
-                const detail = document.createElement("p");
+                const item = document.createElement('article');
+                const heading = document.createElement('h3');
+                const detail = document.createElement('p');
 
                 heading.textContent = title;
                 detail.textContent = [road, address, start]
                   .filter(Boolean)
-                  .join(" · ");
+                  .join(' · ');
 
                 item.append(heading, detail);
                 list.appendChild(item);
@@ -956,7 +928,7 @@ class TrafficWidget extends HTMLElement {
             status.textContent = `돌발정보 ${count}건을 불러왔습니다.`;
           });
       } catch (error) {
-        console.error("API 요청 실패:", error);
+        console.error('API 요청 실패:', error);
         status.textContent = error.message;
       }
     });
@@ -983,8 +955,8 @@ class AlarmWidget extends HTMLElement {
 
     this.renderList();
 
-    const ampmText = this.querySelector(".ampmText");
-    const timeText = this.querySelector(".timeText");
+    const ampmText = this.querySelector('.ampmText');
+    const timeText = this.querySelector('.timeText');
 
     // 현재 시각을 읽어서 화면에 넣는 함수
     const updateClock = () => {
@@ -992,7 +964,7 @@ class AlarmWidget extends HTMLElement {
       let hour = now.getHours();
       const min = now.getMinutes();
 
-      ampmText.textContent = hour >= 12 ? "오후" : "오전";
+      ampmText.textContent = hour >= 12 ? '오후' : '오전';
 
       hour = hour % 12;
       if (hour === 0) hour = 12; // 0시, 12시는 12로 표시
@@ -1004,33 +976,33 @@ class AlarmWidget extends HTMLElement {
     this.timer = setInterval(updateClock, 1000); // 1초마다 실시간으로 바꾸기
 
     // + 버튼 → 모달을 시간 설정 화면으로 열기
-    this.querySelector(".alarmAddBtn").addEventListener("click", () => {
-      openAlarmModal("setting");
+    this.querySelector('.alarmAddBtn').addEventListener('click', () => {
+      openAlarmModal('setting');
     });
   }
 
   // 저장된 알람으로 위젯의 알람 칸 다시 그리기 (작은 위젯 1칸, 큰 위젯 3칸)
   renderList() {
-    const box = this.querySelector(".alarmWidget");
-    const addBtn = this.querySelector(".alarmAddBtn");
+    const box = this.querySelector('.alarmWidget');
+    const addBtn = this.querySelector('.alarmAddBtn');
     const alarms = loadAlarms();
-    const count = this.getAttribute("type") === "2" ? 3 : 1;
+    const count = this.getAttribute('type') === '2' ? 3 : 1;
 
-    box.querySelectorAll(".alarmRow").forEach((el) => el.remove());
+    box.querySelectorAll('.alarmRow').forEach((el) => el.remove());
 
     for (let i = 0; i < count; i++) {
-      const row = document.createElement("div");
-      row.className = "alarmInfo alarmRow";
+      const row = document.createElement('div');
+      row.className = 'alarmInfo alarmRow';
 
       if (alarms[i]) {
         row.textContent = formatAlarmShort(alarms[i].time);
-        if (!alarms[i].on) row.classList.add("off"); // 꺼진 알람은 흐리게
+        if (!alarms[i].on) row.classList.add('off'); // 꺼진 알람은 흐리게
       } else if (i === 0) {
-        row.textContent = "설정된 알람 없음";
+        row.textContent = '설정된 알람 없음';
       }
 
       // 알람 칸 누르면 → 알람 목록 모달
-      row.addEventListener("click", () => openAlarmModal());
+      row.addEventListener('click', () => openAlarmModal());
 
       box.insertBefore(row, addBtn);
     }
@@ -1063,8 +1035,8 @@ class WeatherWidget extends HTMLElement {
     this.innerHTML = ` <div id="weather">
           <div id="weather_1">
             <div id="type${nowWeather[2]}" class="weatherImg"></div>
-            <div class="date">${getTime.getMonth() + 1}월 ${getTime.getDate()}일 ${["일", "월", "화", "수", "목", "금", "토"][getTime.getDay()]}요일</div>
-            <div class="time">${getTime.getHours().toString().padStart(2, "0")}:${getTime.getMinutes().toString().padStart(2, "0")}</div>
+            <div class="date">${getTime.getMonth() + 1}월 ${getTime.getDate()}일 ${['일', '월', '화', '수', '목', '금', '토'][getTime.getDay()]}요일</div>
+            <div class="time">${pad(getTime.getHours())}:${pad(getTime.getMinutes())}</div>
           </div>
           <div id="weather_2">
             <div
@@ -1080,17 +1052,17 @@ class WeatherWidget extends HTMLElement {
 }
 
 // 커스텀 태그를 정의한다는 의미.
-customElements.define("start-screen", StartScreen);
-customElements.define("login-screen", Login);
-customElements.define("address-screen", AddressScreen);
-customElements.define("add-widget", AddWidget);
-customElements.define("top-bar", TopBar);
-customElements.define("navigation-bar", FootNavigationBar);
-customElements.define("navigation-widget", NavigationWidget);
-customElements.define("alarm-widget", AlarmWidget);
-customElements.define("widget-btn", WidgetBtn);
-customElements.define("note-widget", NoteWidget);
-customElements.define("traffic-widget", TrafficWidget);
-customElements.define("main-div", Main);
-customElements.define("weather-widget", WeatherWidget);
-customElements.define("widget-list", WidgetList);
+customElements.define('start-screen', StartScreen);
+customElements.define('login-screen', Login);
+customElements.define('address-screen', AddressScreen);
+customElements.define('add-widget', AddWidget);
+customElements.define('top-bar', TopBar);
+customElements.define('navigation-bar', FootNavigationBar);
+customElements.define('navigation-widget', NavigationWidget);
+customElements.define('alarm-widget', AlarmWidget);
+customElements.define('widget-btn', WidgetBtn);
+customElements.define('note-widget', NoteWidget);
+customElements.define('traffic-widget', TrafficWidget);
+customElements.define('main-div', Main);
+customElements.define('weather-widget', WeatherWidget);
+customElements.define('widget-list', WidgetList);

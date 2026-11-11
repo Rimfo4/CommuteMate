@@ -180,7 +180,7 @@ alarm-modal {
   height: 100px;
   padding: 0px;
   background-color: #e3e3e3;
-  background-image: url(./assets/delete.svg);
+  background-image: url(../../assets/delete.svg);
   background-repeat: no-repeat;
   background-position: center;
   background-size: 60%;
@@ -333,5 +333,52 @@ alarm-modal {
   background-color: #eaeaea;
   border: none;
   border-radius: 67px;
+  cursor: pointer;
+}
+
+/* ===== 알람 울림 창 ===== */
+alarm-ring {
+  /* 화면 전체를 어둡게 덮고 가운데에 창 */
+  position: fixed;
+  inset: 0;
+  z-index: 3000; /* 알람 모달보다 위 */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+}
+.alarmRingBox {
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+  width: 880px;
+  padding: 50px 70px 70px;
+  background-color: white;
+  border-radius: 90px;
+}
+.alarmRingClock {
+  align-self: center;
+  width: 110px;
+  height: 110px;
+}
+.alarmRingAmpm {
+  margin-top: 20px;
+  font-size: 90px;
+  font-weight: bold;
+}
+.alarmRingTime {
+  text-align: center;
+  font-size: 180px;
+  font-weight: bold;
+  line-height: 1.1;
+}
+.alarmRingOff {
+  height: 170px;
+  margin-top: 50px;
+  font-size: 90px;
+  font-weight: bold;
+  background-color: #e3e3e3;
+  border: 4px solid #9a9a9a;
+  border-radius: 85px;
   cursor: pointer;
 }

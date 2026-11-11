@@ -1,6 +1,6 @@
 //네비게이션 관련 로직 모음 (카카오맵 불러오기, 주소 → 좌표, ODsay 경로 검색, 지도에 경로 그리기)
-import { odsayKey, kakaoMapKey } from './key.js';
-import { getStorage, setStorage } from './db.js';
+import { odsayKey, kakaoMapKey } from '../../key.js';
+import { getStorage, setStorage } from '../../db.js';
 
 const ODSAY_URL = 'https://api.odsay.com/v1/api';
 
@@ -73,7 +73,11 @@ async function searchRoute(start, end) {
 
   const saved = cache[key];
   // 예전에 저장된 결과에는 경로 목록(paths)이 없어서 다시 받음
-  if (saved && saved.route.paths && Date.now() - saved.savedAt < ROUTE_CACHE_TIME) {
+  if (
+    saved &&
+    saved.route.paths &&
+    Date.now() - saved.savedAt < ROUTE_CACHE_TIME
+  ) {
     return saved.route;
   }
 
@@ -82,7 +86,9 @@ async function searchRoute(start, end) {
   cache[key] = { savedAt: Date.now(), route };
 
   // 오래된 것부터 지워서 최근 ROUTE_CACHE_MAX개만 남김
-  const keys = Object.keys(cache).sort((a, b) => cache[b].savedAt - cache[a].savedAt);
+  const keys = Object.keys(cache).sort(
+    (a, b) => cache[b].savedAt - cache[a].savedAt,
+  );
   keys.slice(ROUTE_CACHE_MAX).forEach((oldKey) => delete cache[oldKey]);
 
   setStorage('routeCache', cache);

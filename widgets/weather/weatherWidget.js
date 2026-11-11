@@ -1,4 +1,4 @@
-import { wetherApiKey } from './key.js';
+import { wetherApiKey } from '../../key.js';
 
 const SERVICE_KEY = wetherApiKey;
 const BASE_URL =
@@ -84,16 +84,10 @@ function filterFromNow(items) {
     now.getFullYear() +
     String(now.getMonth() + 1).padStart(2, '0') +
     String(now.getDate()).padStart(2, '0');
-  const nowTimeStr = String(now.getHours()).padStart(2, '0') + '00';
+  const nowDateTime = nowStr + String(now.getHours()).padStart(2, '0') + '00';
 
-  let filterItem = items.filter((item) => {
-    const itemDateTime = item.fcstDate + item.fcstTime;
-    const nowDateTime = nowStr + nowTimeStr;
-    // 날짜+시간 문자열끼리 비교 (23시 이후에는 다음 날 예보만 오기 때문에 날짜 조건은 넣지 않음)
-    return itemDateTime >= nowDateTime;
-  });
-  // console.log(filterItem);
-  return filterItem;
+  // 날짜+시간 문자열끼리 비교 (23시 이후에는 다음 날 예보만 오기 때문에 날짜 조건은 넣지 않음)
+  return items.filter((item) => item.fcstDate + item.fcstTime >= nowDateTime);
 }
 async function fetchWeather(lat, lon) {
   const { nx, ny } = convertToGrid(lat, lon);
@@ -101,7 +95,7 @@ async function fetchWeather(lat, lon) {
   // baseTime => 기준 시간.
   const { baseDate, baseTime } = getBaseDateTime();
   console.log(convertToGrid(lat, lon));
-  console.log(getBaseDateTime());
+  // console.log(getBaseDateTime());
 
   //URLSearchParams는 JS 내장 인터페이스 유틸임
   // => 즉 URL의 쿼리를 추가, 수정, 읽기를 매우 쉽게 해주느 효자임.
@@ -134,10 +128,7 @@ function groupTime(item) {
   for (let r of item) {
     // console.log(r);
     const time = r.fcstDate + r.fcstTime;
-
-    if (!result[time]) {
-      result[time] = {};
-    }
+    if (!result[time]) result[time] = {};
 
     //result.time.r.category = 데이터 안에 데이터.
     result[time][r.category] = r.fcstValue;
@@ -168,14 +159,14 @@ function getNowWetherType(data) {
       4: 3, //'흐름'
     },
   };
-  //날씨 배열 0.온도, 1.습도, 2.날씨타입.
-  let wetherList = [nowData.TMP, nowData.REH];
-
-  if (+nowData.PTY === 0) {
-    wetherList.push(wetherType[nowData.PTY][nowData.SKY]);
-  } else wetherList.push(wetherType[nowData.PTY]);
-
-  return wetherList;
+  //날씨 배열 0.온도, 1.습도, 2.날씨타입. (비·눈이 안 오면 하늘 상태로)
+  return [
+    nowData.TMP,
+    nowData.REH,
+    +nowData.PTY === 0
+      ? wetherType[nowData.PTY][nowData.SKY]
+      : wetherType[nowData.PTY],
+  ];
 }
 
 export const getWeather = () => {
