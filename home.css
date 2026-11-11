@@ -1,8 +1,8 @@
 /* 외부 css 파일을 다른 css파일에서 import 가능. */
 @import url('./components.css');
-@import url('./navigationWidget.css');
-@import url('./alarmWidget.css');
-@import url('./weatherWidget.css');
+@import url('./widgets/navigation/navigationWidget.css');
+@import url('./widgets/alarm/alarmWidget.css');
+@import url('./widgets/weather/weatherWidget.css');
 
 * {
   margin: 0px;

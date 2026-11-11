@@ -1,4 +1,3 @@
-
 /* 날씨 위젯 관련 css */
 #weather {
   height: 500px;
@@ -36,7 +35,7 @@
   width: 27px;
   height: 40px;
   margin: 0px !important;
-  background-image: url(./assets/weather/water.svg);
+  background-image: url(../../assets/weather/water.svg);
   background-size: contain;
 }
 #weather_2 {
@@ -60,16 +59,16 @@
   margin-top: 10px;
 }
 
-weather-widget[type="2"] > div#weather {
+weather-widget[type='2'] > div#weather {
   width: 1000px;
   display: flex;
   flex-direction: row;
   justify-content: space-between;
 }
-weather-widget[type="2"] #weather_1 div {
+weather-widget[type='2'] #weather_1 div {
   margin: 0px 0px 0px 100px;
 }
-weather-widget[type="2"] #weather_2 {
+weather-widget[type='2'] #weather_2 {
   margin: 240px 100px 0px 0px;
 }
 
@@ -80,36 +79,36 @@ weather-widget[type="2"] #weather_2 {
   margin-top: 50px !important;
   margin-bottom: 30px !important;
 }
-weather-widget[type="1"] #type1 {
+weather-widget[type='1'] #type1 {
   width: 242px;
   height: 160px;
   margin-top: 54px;
-  background-image: url(./assets/weather/cloud1.svg);
+  background-image: url(../../assets/weather/cloud1.svg);
 }
-weather-widget[type="2"] #type1 {
+weather-widget[type='2'] #type1 {
   width: 371px;
   height: 160px;
-  background-image: url(./assets/weather/cloud2.svg);
+  background-image: url(../../assets/weather/cloud2.svg);
 }
 weather-widget #type2 {
   width: 160px;
   height: 160px;
-  background-image: url(./assets/weather/sunny.svg);
+  background-image: url(../../assets/weather/sunny.svg);
 }
 weather-widget #type3 {
   width: 245px;
   height: 182px;
-  background-image: url(./assets/weather/cloud_sunny.svg);
+  background-image: url(../../assets/weather/cloud_sunny.svg);
 }
 weather-widget #type4 {
   width: 160px;
   height: 160px;
-  background-image: url(./assets/weather/rainy.svg);
+  background-image: url(../../assets/weather/rainy.svg);
 }
 weather-widget #type5 {
   width: 160px;
   height: 160px;
-  background-image: url(./assets/weather/snow.svg);
+  background-image: url(../../assets/weather/snow.svg);
 }
 
 widget-btn {
