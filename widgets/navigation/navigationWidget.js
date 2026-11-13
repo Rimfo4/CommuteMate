@@ -1,43 +1,51 @@
-//네비게이션 관련 로직 모음 (카카오맵 불러오기, 주소 → 좌표, ODsay 경로 검색, 지도에 경로 그리기)
+//네비게이션 관련 함수 로직 모음 (카카오맵 불러오기, 주소 → 좌표, ODsay 경로 검색, 지도에 경로 그리기)
+
 import { odsayKey, kakaoMapKey } from '../../key.js';
 import { getStorage, setStorage } from '../../db.js';
 
+//Odsay api의 기본 url 주소.
 const ODSAY_URL = 'https://api.odsay.com/v1/api';
+const KAKAO_URL = 'https://dapi.kakao.com/v2/maps/sdk.js';
+//저장 형식: routeCache = { '출발x,출발y>도착x,도착y': { savedAt: 저장 시각(ms), route: { info, subPath, lanes } } }
 
-// 경로 검색 결과 저장 (ODsay 일일 한도 아끼기)
-// 저장 형식: routeCache = { '출발x,출발y>도착x,도착y': { savedAt: 저장 시각(ms), route: { info, subPath, lanes } } }
-const ROUTE_CACHE_TIME = 6 * 60 * 60 * 1000; // 6시간 동안은 저장된 경로 사용
-const ROUTE_CACHE_MAX = 10; // 경로 좌표가 커서 최근 10개까지만 저장
+// 경로 검색 결과 저장(ODsay 일일 한도 아끼기)
+const ROUTE_CACHE_TIME = 6 * 60 * 60 * 1000; //(6시간 밀리초) 6시간 동안은 저장된 경로 사용
+const ROUTE_CACHE_MAX = 10; // 경로 좌표 데이터 커서 최근 10개까지만 저장
 
 let kakaoReady = null; // 카카오맵 SDK는 한 번만 불러오기
 
-// 카카오맵 SDK 불러오기 (키가 git에 안 올라가도록 script 태그를 JS로 붙임)
+// 카카오맵 SDK 불러오기(키가 git에 안 올라가도록 script 태그를 JS로 붙임)
 function loadKakaoMap() {
   if (kakaoReady) return kakaoReady;
 
   kakaoReady = new Promise((resolve, reject) => {
     const script = document.createElement('script');
-    script.src = `https://dapi.kakao.com/v2/maps/sdk.js?appkey=${kakaoMapKey}&libraries=services&autoload=false`;
+    script.src = `${KAKAO_URL}?appkey=${kakaoMapKey}&libraries=services&autoload=false`;
     script.onload = () => kakao.maps.load(resolve); // autoload=false라서 직접 load
     script.onerror = () => reject(new Error('카카오맵을 불러오지 못했습니다.'));
-    document.head.appendChild(script);
+    document.head.appendChild(script); //그러면 head에 script 태그 추가 후 다운로드 시작.
   });
 
   return kakaoReady;
 }
 
+//인자로 건너온 주소(장소)를 카카오의 좌표로 변환.
 // 주소 → 좌표 { x: 경도, y: 위도 }
 function getCoords(address) {
   return new Promise((resolve, reject) => {
+    //주소 검색
     const geocoder = new kakao.maps.services.Geocoder();
 
     geocoder.addressSearch(address, (result, status) => {
+      //주소에 따라 장소가 검색 되었음(성공)
       if (status === kakao.maps.services.Status.OK) {
+        //result[0] => 가장 정확한 첫번째 후보
         resolve({ x: Number(result[0].x), y: Number(result[0].y) });
         return;
       }
+      //주소를 못찾으면 아래 코드 실행.
 
-      // 주소 형식이 아니면 장소 이름으로 한 번 더 찾기 (예: '미림마이스터고')
+      //주소 형식이 아니면 장소 이름으로 한 번 더 찾기 (예: '미림마이스터고')
       const places = new kakao.maps.services.Places();
       places.keywordSearch(address, (result, status) => {
         if (status === kakao.maps.services.Status.OK) {
@@ -50,7 +58,7 @@ function getCoords(address) {
   });
 }
 
-// ODsay API 호출 공통 함수
+// ODsay API 호출 공통 만능 함수
 async function odsay(api, params) {
   const query = new URLSearchParams({ ...params, apiKey: odsayKey }); // 키의 +, / 를 자동으로 인코딩
   const res = await fetch(`${ODSAY_URL}/${api}?${query}`);
@@ -65,14 +73,19 @@ async function odsay(api, params) {
   return json.result;
 }
 
-// 대중교통 경로 검색 → { info: 시간·요금, subPath: 구간들, lanes: 선 좌표 }
-// 6시간 안에 같은 경로를 검색했으면 ODsay를 부르지 않고 저장된 결과를 씀
+//대중교통 경로 검색 → { info: 시간·요금, subPath: 구간들, lanes: 선 좌표 }
+//6시간 안에 같은 경로를 검색했으면 ODsay를 부르지 않고 저장된 결과를 씀
 async function searchRoute(start, end) {
   const key = `${start.x},${start.y}>${end.x},${end.y}`;
+  //routeCache 데이터가 없다면 빈 객체 {}.
   const cache = getStorage('routeCache') || {};
+
+  //저장 형식: routeCache = { '출발x,출발y>도착x,도착y': { savedAt: 저장 시각(ms), route: { info, subPath, lanes } } }
 
   const saved = cache[key];
   // 예전에 저장된 결과에는 경로 목록(paths)이 없어서 다시 받음
+
+  //키 데이터 && 경로 목록 && 6시간 이전 이라면 저장된 route나옴.
   if (
     saved &&
     saved.route.paths &&
@@ -81,22 +94,30 @@ async function searchRoute(start, end) {
     return saved.route;
   }
 
+  //위 if문이 false => 경로를 탐색해야한다는 것.1
+
+  //경로 받기위한 요청.
   const route = await fetchRoute(start, end);
 
+  //
   cache[key] = { savedAt: Date.now(), route };
 
-  // 오래된 것부터 지워서 최근 ROUTE_CACHE_MAX개만 남김
+  //오래된 것부터 지워서 최근 ROUTE_CACHE_MAX개만 남김
+  //시간순으로 삭제.
   const keys = Object.keys(cache).sort(
     (a, b) => cache[b].savedAt - cache[a].savedAt,
   );
   keys.slice(ROUTE_CACHE_MAX).forEach((oldKey) => delete cache[oldKey]);
 
+  //새 값을 다시 localStorage에 저장.
   setStorage('routeCache', cache);
   return route;
 }
 
 // ODsay에 실제로 경로를 요청 (경로 검색 1번 + 경로 선 좌표 1번)
+//searchRoute메소드만 본 메소드를 사용함. => 서버 요청을 따로 뺀거임.
 async function fetchRoute(start, end) {
+  //요금, 시간, 구간 정보 담당.
   const result = await odsay('searchPubTransPathT', {
     SX: start.x,
     SY: start.y,
@@ -104,10 +125,12 @@ async function fetchRoute(start, end) {
     EY: end.y,
   });
 
+  console.log(result);
   const path = result.path[0]; // 가장 추천하는 경로
 
-  // 버스·지하철이 실제로 지나가는 길의 좌표
+  // 버스·지하철이 실제로 지나가는 길의 좌표 => 지도에 그릴 선 좌표
   const laneResult = await odsay('loadLane', {
+    //받은 경로에 .mapObj 문자열을 넘기면 대중교통이 지나가는 좌표를 얻을 수 있음.
     mapObject: `0:0@${path.info.mapObj}`,
   });
 
@@ -121,14 +144,21 @@ async function fetchRoute(start, end) {
 
 // 지도에 경로 그리기. 전에 그린 선과 마커는 지우고 새로 그림
 function drawRoute(map, route, start, end, drawn) {
+  //drawn => 지금까지 지도에 그려 놓은 객체들을 담아 둔 배열
+
+  //setMap(null)로 객체를 지도에서 때어내기.
   drawn.forEach((item) => item.setMap(null));
+  //배열 비우기.
   drawn.length = 0;
 
+  //이 점들이 모두 들어오는 영역 계산 객체.
   const bounds = new kakao.maps.LatLngBounds();
   const toLatLng = (x, y) => new kakao.maps.LatLng(y, x); // x=경도, y=위도 → LatLng는 순서가 반대
 
+  // [{class: 2, type: 2, section: [{,…}]}, {class: 1, type: 3, section: [{,…}]}]
+
   // 버스·지하철 구간 (실선)
-  route.lanes.forEach((lane) => {
+  lanes: route.lanes.forEach((lane) => {
     lane.section.forEach((section) => {
       const path = section.graphPos.map((pos) => toLatLng(pos.x, pos.y));
       path.forEach((point) => bounds.extend(point));
@@ -195,6 +225,7 @@ function drawRoute(map, route, start, end, drawn) {
     );
   });
 
+  //자동으로 지도를 조절함.
   map.setBounds(bounds); // 경로 전체가 화면에 들어오게
 }
 
@@ -211,7 +242,7 @@ function trimPath(path) {
   };
 }
 
-// 분 → '59분', '1시간', '1시간 20분'
+// 분 → '59분', '1시간', '1시간 20분' 포멧
 function formatMinutes(min) {
   const hour = Math.floor(min / 60);
   const rest = min % 60;
@@ -220,7 +251,7 @@ function formatMinutes(min) {
   return rest === 0 ? `${hour}시간` : `${hour}시간 ${rest}분`;
 }
 
-// Date → '07:17'
+// Date → '07:17' 포멧
 function formatClock(date) {
   const hour = String(date.getHours()).padStart(2, '0');
   const min = String(date.getMinutes()).padStart(2, '0');
@@ -230,6 +261,7 @@ function formatClock(date) {
 // 정렬 기준: best = ODsay 추천순, time = 최소 시간, transfer = 최소 환승, walk = 최소 도보
 function sortPaths(paths, sortBy) {
   const transfer = (p) => p.info.busTransitCount + p.info.subwayTransitCount;
+  
   const rules = {
     time: (a, b) => a.info.totalTime - b.info.totalTime,
     transfer: (a, b) => transfer(a) - transfer(b),
