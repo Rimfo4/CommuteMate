@@ -5,7 +5,8 @@ const BASE_URL =
   'https://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getVilageFcst';
 
 // 위경도 -> 기상청 격자(nx, ny) 변환
-// 위도, 경도로 날씨를 불러오는게 아닌 대한민국을 5km로 구간별로 나누기에 그에 맞게 격자로 데이터 뽑기.
+//위도, 경도로 날씨를 불러오는게 아닌 대한민국을 5km로 구간별로 나누기에 그에 맞게 격자로 데이터 뽑기.
+//해당 계산식은 ppt폴더에 docx 참조.(c언어로 되어있음.)
 function convertToGrid(lat, lon) {
   //기상청이 고정한 상수들임.
   const RE = 6371.00877, //지구의 반지름값.

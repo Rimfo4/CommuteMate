@@ -1,5 +1,7 @@
 import { setStorage, getStorage } from './db.js';
 
+//최대 5MB 정도 저장가능함.
+
 // 객체 데이터 저장 (자동으로 JSON 변환됨)
 // 일단은 평문으로 저장.(혼자서 사용하는 애플리케이션이기에 때문.)
 const userProfile = {
